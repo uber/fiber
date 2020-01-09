@@ -1,0 +1,761 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Distributed Computing for AI Made Simple">
+      
+      
+      
+        <meta name="author" content="Jiale Zhi">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Platforms and Backends - Fiber</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="white" data-md-color-accent="">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#supported-platforms" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a class="md-header-nav__button md-logo"
+                   href=".." title="Fiber">
+                    <img src="../img/fiber_logo.png" style="height:1.4rem;">
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                    <span class="md-header-nav__topic">
+                    Platforms and Backends
+                    </span>
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                
+                <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+                
+                
+            </div>
+            
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <div class="md-header-nav__source">
+                    
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+    <label class="md-nav__title md-nav__title--site" for="__drawer">
+        <a class="md-nav__button md-logo" href=".."
+           title="Fiber">
+            <img src="../img/fiber_logo.png" style="width: 10rem">
+        </a>
+    </label>
+    
+    <div class="md-nav__source">
+        
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+    </div>
+    
+    <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../why/" title="Why Use Fiber" class="md-nav__link">
+      Why Use Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../introduction/" title="Introduction to Fiber" class="md-nav__link">
+      Introduction to Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../getting-started/" title="Getting Started" class="md-nav__link">
+      Getting Started
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../advanced/" title="More about Fiber" class="md-nav__link">
+      More about Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../examples/" title="Examples" class="md-nav__link">
+      Examples
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Platforms and Backends
+      </label>
+    
+    <a href="./" title="Platforms and Backends" class="md-nav__link md-nav__link--active">
+      Platforms and Backends
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    Supported platforms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#different-fiber-backends" class="md-nav__link">
+    Different fiber backends
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#local" class="md-nav__link">
+    local
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    docker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    kubernetes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-backend-selection" class="md-nav__link">
+    Automatic backend selection
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9">
+    
+    <label class="md-nav__link" for="nav-9">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-9">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../process/" title="Process" class="md-nav__link">
+      Process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../queues/" title="Queues" class="md-nav__link">
+      Queues
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pool/" title="Pool" class="md-nav__link">
+      Pool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../managers/" title="Managers" class="md-nav__link">
+      Managers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../experimental/ring/" title="Ring" class="md-nav__link">
+      Ring
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Config" class="md-nav__link">
+      Config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../meta/" title="Metadata" class="md-nav__link">
+      Metadata
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../cli/" title="Command Line Tool" class="md-nav__link">
+      Command Line Tool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+    </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-platforms" class="md-nav__link">
+    Supported platforms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#different-fiber-backends" class="md-nav__link">
+    Different fiber backends
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#local" class="md-nav__link">
+    local
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    docker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    kubernetes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-backend-selection" class="md-nav__link">
+    Automatic backend selection
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/uber/fiber/edit/master/mkdocs/platforms.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Platforms and Backends</h1>
+                
+                <h3 id="supported-platforms">Supported platforms<a class="headerlink" href="#supported-platforms" title="Permanent link">&para;</a></h3>
+<p>Currently the following platforms are supported:</p>
+<ul>
+<li>Operating system: Linux, MacOS (local backend only)</li>
+<li>Python: 3.6+</li>
+<li>Supported cluster management systems:<ul>
+<li>Kubernetes (Tested with Google Kubernetes Engine on Google cloud)</li>
+</ul>
+</li>
+</ul>
+<p>We are interested in supporting other cluster management systems like
+<a href="https://slurm.schedmd.com/">Slurm</a>, if you want to contribute to it please let
+us know.</p>
+<h3 id="different-fiber-backends">Different fiber backends<a class="headerlink" href="#different-fiber-backends" title="Permanent link">&para;</a></h3>
+<p>Fiber provides 3 built-in backends currently:</p>
+<h5 id="local">local<a class="headerlink" href="#local" title="Permanent link">&para;</a></h5>
+<p>This backend is the default backend used by Fiber. It starts new processes
+locally on your computer. The child process shares the same running environment
+as the parent process. When using this backend, Fiber works the same as
+<code>multiprocessing</code>.</p>
+<p>The <code>local</code> backend works on Linux and MacOS.</p>
+<h5 id="docker">docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h5>
+<p>This backend starts new processes with docker containers. This backend still
+works locally but compared to <code>local</code> backend, <code>docker</code> backend runs child
+processes in a completed isolated docker environment. You need to build a
+docker image for your project before running processes with this backend.
+Examples of using this backend can be found
+<a href="/getting-started/#containerize-your-program">here</a>. This
+backend is usually used as a way to test your containerized application before
+you run everything on a large scale on a computer cluster.</p>
+<p>The <code>docker</code> backend currently only works on Linux and doesn't work on MacOS,
+we will add support for it soon.</p>
+<h5 id="kubernetes">kubernetes<a class="headerlink" href="#kubernetes" title="Permanent link">&para;</a></h5>
+<p>This backend is the backend to use when you want to run your application on
+Kubernetes cluster. When starting new processes, it creates a new
+<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">Kubernetes pod</a> for
+it. Each process also runs in an isolated environment. You also need to build a
+docker image and push it to the appropriate container image registry for your
+Kubernetes platform. Example usage of this backend can be found
+<a href="/getting-started/#running-on-a-computer-cluster">here</a>.</p>
+<p>See how to configure Fiber to use each backend <a href="/config">here</a></p>
+<h3 id="automatic-backend-selection">Automatic backend selection<a class="headerlink" href="#automatic-backend-selection" title="Permanent link">&para;</a></h3>
+<p>Fiber also supports automatically detect which backend to use when no backend
+is explicitly set. When fiber runs on a non-cluster environment, it uses <code>local</code>
+backend by default. When it runs inside a Kubernetes pod, it will select
+<code>kubernetes</code> as the backend to use.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page -->
+    
+    <div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               href="../installation/"
+               rel="prev"
+               title="Installation">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Installation
+              </span>
+                </div>
+            </a>
+            
+
+            <!-- Link to next page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               href="../process/"
+               rel="next"
+               title="Process">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Process
+              </span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a>
+            
+        </nav>
+    </div>
+    
+
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <div class="footer-logo-smallpad"></div>
+                
+                <div class="md-footer-copyright__highlight">
+                    Copyright &copy; 2020 Uber Technologies Inc.
+                </div>
+                
+                Website by <a href="https://twitter.com/_calio">calio</a> powered by
+                <a href="https://www.mkdocs.org">MkDocs</a>,
+                <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>,
+                <a href="http://www.styleshout.com/">styleshout</a>.
+            </div>
+
+            <!-- Social links -->
+            
+            
+            
+        </div>
+    </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../js/canvas.js"></script>
+      
+    
+  </body>
+</html>

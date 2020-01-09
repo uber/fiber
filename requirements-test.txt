@@ -1,0 +1,6 @@
+pytest
+docker
+flake8
+psutil
+requests
+numpy

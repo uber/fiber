@@ -1,0 +1,5 @@
+[default]
+image=demo-image:latest
+log_level=INFO
+ipc_active=False
+mem_per_job=12345

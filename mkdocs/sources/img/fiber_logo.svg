@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="975px" height="333px" viewBox="0 0 975 333" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>Fiber 2</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-3">
+            <rect id="Rectangle" fill-opacity="0.75" fill="#205475" style="mix-blend-mode: multiply;" x="118" y="118" width="97" height="97" rx="4"></rect>
+            <rect id="Rectangle" fill-opacity="0.75" fill="#56A9D5" style="mix-blend-mode: multiply;" transform="translate(166.500000, 166.500000) rotate(-315.000000) translate(-166.500000, -166.500000) " x="118" y="118" width="97" height="97" rx="4"></rect>
+            <rect id="Rectangle" fill="#56A9D5" style="mix-blend-mode: multiply;" transform="translate(49.500000, 166.500000) rotate(-315.000000) translate(-49.500000, -166.500000) " x="15" y="132" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#56A9D5" style="mix-blend-mode: multiply;" transform="translate(166.500000, 49.500000) rotate(-315.000000) translate(-166.500000, -49.500000) " x="132" y="15" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#56A9D5" style="mix-blend-mode: multiply;" transform="translate(283.500000, 166.500000) rotate(-315.000000) translate(-283.500000, -166.500000) " x="249" y="132" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#56A9D5" style="mix-blend-mode: multiply;" transform="translate(166.500000, 283.500000) rotate(-315.000000) translate(-166.500000, -283.500000) " x="132" y="249" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#416D89" style="mix-blend-mode: multiply;" x="49" y="215" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#416D89" style="mix-blend-mode: multiply;" x="49" y="49" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#416D89" style="mix-blend-mode: multiply;" x="215" y="49" width="69" height="69" rx="9"></rect>
+            <rect id="Rectangle" fill="#416D89" style="mix-blend-mode: multiply;" x="215" y="215" width="69" height="69" rx="9"></rect>
+        </g>
+        <text id="Fiber" fill="#393737" font-family="Lato-Regular, Lato" font-size="252" font-weight="normal">
+            <tspan x="406" y="259">Fiber</tspan>
+        </text>
+    </g>
+</svg>

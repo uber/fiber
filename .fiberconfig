@@ -1,0 +1,3 @@
+# This is an empty fiber config so that when fiber runs, it loads it's
+# default config (for testing, etc.)
+[default]

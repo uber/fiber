@@ -1,0 +1,44 @@
+copyright: Copyright &copy; 2020 Uber Technologies Inc.
+docs_dir: _build/pydocmd
+edit_uri: edit/master/mkdocs/
+extra_javascript:
+- js/canvas.js
+markdown_extensions:
+- toc:
+    baselevel: 2
+    permalink: true
+- codehilite:
+    guess_lang: false
+nav:
+- Home: index.md
+- Why Use Fiber: why.md
+- Introduction to Fiber: introduction.md
+- Getting Started: getting-started.md
+- More about Fiber: advanced.md
+- Examples: examples.md
+- Installation: installation.md
+- Platforms and Backends: platforms.md
+- API Documentation:
+  - Process: process.md
+  - Queues: queues.md
+  - Pool: pool.md
+  - Managers: managers.md
+  - Ring: experimental/ring.md
+  - Config: config.md
+  - Metadata: meta.md
+  - Command Line Tool: cli.md
+  - Misc: misc.md
+repo_name: uber/fiber
+repo_url: https://github.com/uber/fiber
+site_author: Jiale Zhi
+site_description: Distributed Computing for AI Made Simple
+site_dir: _build/site
+site_name: Fiber
+theme:
+  custom_dir: custom/
+  favicon: img/favicon.ico
+  language: en
+  logo: img/fiber_logo.png
+  name: material
+  palette:
+    primary: white

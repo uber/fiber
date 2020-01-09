@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!--[if lt IE 9 ]><html class="no-js oldie" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="no-js oldie ie9" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+
+    <!--- basic page needs
+   ================================================== -->
+    <meta charset="utf-8">
+    <title>Fiber</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+   ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+   ================================================== -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/vendor.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/extras.css">
+
+    <!-- script
+   ================================================== -->
+    <script src="js/modernizr.js"></script>
+    <script src="js/pace.min.js"></script>
+
+
+    <!-- favicons
+	================================================== -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+</head>
+
+<body id="top">
+
+    <!-- header
+   ================================================== -->
+   <header id="header">
+
+            <div class="header-logo">
+	        <a href="index.html">Fiber</a>
+	    </div>
+
+	   	<nav id="header-nav-wrap">
+                    <ul class="header-main-nav">
+                        <li><a class="nav-entry" href="getting-started/" title="getting-started">Get Started</a></li>
+                        <li><a href="installation/" title="installation">Install</a></li>
+                        <li><a href="examples/" title="examples">Examples</a></li>
+                        <li><a href="advanced/" title="user-guide">User Guide</a></li>
+                        <li><a href="process/" title="api">API</a></li>
+                        <!--li><a href="faq/" title="faq">FAQ</a></li-->
+                    </ul>
+
+        <a class="button button-primary cta" href="http://github.com/uber/fiber" title="repo"><i class="fa fa-github"></i> Repo</a>
+            <!--a href="#" title="sign-up" class="button button-primary cta">Sign Up</a-->
+		</nav>
+
+		<a class="header-menu-toggle" href="#"><span>Menu</span></a>
+
+   </header> <!-- /header -->
+
+
+   <!-- home
+   ================================================== -->
+   <!--section id="home" data-parallax="scroll" data-image-src="images/hero-bg.jpg" data-natural-width=3000 data-natural-height=2000!-->
+    <section id="home">
+        <!--div class="canvas-container">
+            <canvas id="glcanvas" width="100vw" height="100vh"></canvas>
+            <canvas id="glcanvas" width="1000" height="500"></canvas>
+        </div-->
+
+        <div class="canvas-container">
+            <canvas id="glcanvas" width="100vw" height="100vh"></canvas>
+        </div>
+        <script src="js/canvas.js"></script>
+
+        <!--div class="overlay"></div-->
+        <div class="home-content">
+
+            <div class="row contents">
+                <div class="home-content-left">
+
+                    <h3 data-aos="fade-up">Welcome to Fiber</h3>
+
+                    <h1 data-aos="fade-up">
+                        Distributed Computing <br>
+                        for AI Made <br>
+                        Simple.
+                    </h1>
+
+                    <div class="buttons" data-aos="fade-up">
+                        <a href="installation" class="button stroke">
+                            <span class="icon-circle-down" aria-hidden="true"></span>
+                            Install Fiber
+                        </a>
+                        <a href="introduction" class="button stroke">
+                            <span class="icon-play" aria-hidden="true"></span>
+                            Read Introduction
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="home-image-right">
+                    <img src="img/fiber_illustration_website.png"
+                        data-aos="fade-up">
+                </div>
+            </div>
+
+        </div> <!-- end home-content -->
+
+        <!--ul class="home-social-list">
+            <li>
+                <a href="#"><i class="fa fa-facebook-square"></i></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-instagram"></i></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-youtube-play"></i></a>
+            </li>
+        </ul-->
+        <!-- end home-social-list -->
+
+        <div class="home-scrolldown">
+            <a href="#about" class="scroll-icon smoothscroll">
+                <span>Scroll Down</span>
+                <i class="icon-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+
+    </section> <!-- end home -->
+
+
+    <!-- about
+    ================================================== -->
+    <section id="about">
+
+        <div class="row about-intro">
+
+            <div class="col-four">
+                <h1 class="intro-header" data-aos="fade-up">About Fiber</h1>
+            </div>
+            <div class="col-eight">
+                <p class="lead" data-aos="fade-up">
+                Fiber is a Python-based distributed computing library for modern computer clusters. Instead of programming your desktop or laptop, now you can program the whole computer cluster. It was developed to power large scale parallel scientific computation projects like <a href="https://arxiv.org/abs/2003.08536">POET</a>.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="row about-features">
+
+            <div class="features-list block-1-3 block-m-1-2 block-mob-full group">
+
+                <div class="bgrid feature" data-aos="fade-up">
+
+                    <span class="icon"><i class="icon-sliders"></i></span>
+
+                    <div class="service-content">
+
+                        <h3>Easy to use</h3>
+
+                        <p>Fiber allows you to write programs that run on a computer cluster level without the need to dive into the details of computer cluster.
+                        </p>
+
+                    </div>
+
+                    </div> <!-- /bgrid -->
+
+                    <div class="bgrid feature" data-aos="fade-up">
+
+                        <span class="icon"><i class="icon-education"></i></span>
+
+                    <div class="service-content">
+                        <h3>Easy to learn</h3>
+
+                        <p>Fiber provides the same API as Python's standard <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a> library that you are familiar with. If you know how to use multiprocessing, you can program a computer cluster with Fiber.
+                        </p>
+
+
+                    </div>
+
+                </div> <!-- /bgrid -->
+
+                <div class="bgrid feature" data-aos="fade-up">
+
+                    <span class="icon"><i class="icon-thunderbolt"></i></span>
+
+                    <div class="service-content">
+                        <h3>Fast</h3>
+
+                        <p>Fiber's communication backbone is built on top of <a href="https://nanomsg.org/">Nanomsg</a> which is a high-performance asynchronous messaging library to allow fast and reliable communication.
+                        </p>
+
+                    </div>
+
+                </div> <!-- /bgrid -->
+
+                    <div class="bgrid feature" data-aos="fade-up">
+
+                        <span class="icon"><i class="icon-battery-high"></i></span>
+
+                    <div class="service-content">
+                        <h3>Batteries included</h3>
+
+                        <p>You don't need to deploy Fiber on computer clusters. You run it as the same way as running a normal application on a computer cluster and Fiber handles the rest for you.
+
+                        </p>
+
+                    </div>
+
+                    </div> <!-- /bgrid -->
+
+                <div class="bgrid feature" data-aos="fade-up">
+
+                    <span class="icon"><i class="icon-shield"></i></span>
+
+                    <div class="service-content">
+                        <h3>Reliable</h3>
+
+                        <p>Fiber has built-in error handling when you are running a pool of workers. Users can focus on writing the actual application code instead of dealing with crashed workers.
+
+                        </p>
+                    </div>
+
+                </div> <!-- /bgrid -->
+
+                <div class="bgrid feature" data-aos="fade-up">
+
+                    <span class="icon"><i class="icon-margin"></i></span>
+
+                    <div class="service-content">
+                        <h3>Dynamic scaling</h3>
+
+                        <p>Fiber can dynamically allocate resources from computer clusters including CPU/Memory/GPU etc. It can scale up and down according to the computation needed by the user.
+                        </p>
+
+                    </div>
+
+                </div> <!-- /bgrid -->
+
+            </div> <!-- end features-list -->
+
+        </div> <!-- end about-features -->
+
+        <div class="row about-how">
+
+            <h1 class="intro-header" data-aos="fade-up">How Fiber Works?</h1>
+
+            <div class="about-how-content" data-aos="fade-up">
+                <div class="about-how-steps block-1-2 block-tab-full group">
+
+                    <div class="bgrid step" data-item="1">
+                        <h3>Install</h3>
+                        <p>Installing Fiber is simple, just do <code>pip install fiber</code> and you are ready to <a a href="getting-started/">get started</a>.
+                        </p>
+                    </div>
+
+                    <div class="bgrid step" data-item="2">
+                        <h3>Develop</h3>
+                        <p>Whether you decide to convert an exiting program to run on a computer or you are starting from scratch, you will find Fiber's multiprocessing compatible <a href="process">API</a> easy to use.
+                        </p>
+                    </div>
+
+                    <div class="bgrid step" data-item="3">
+                        <h3>Build</h3>
+                        <p>Fiber uses <a href="https://www.docker.com/">Docker</a> to encapsulate your code together with all the dependencies so that you can run your code anywhere without worrying about mismatching dependencies.
+                        </p>
+                    </div>
+
+                    <div class="bgrid step" data-item="4">
+                        <h3>Run</h3>
+                        <p>To run on a computer cluster (Kubernetes) is also easy, simple do <code>fiber run python code_with_fiber.py</code> to launch your code on a computer cluster, and fiber will handle the rest.
+                        </p>
+                    </div>
+
+                </div>
+           </div> <!-- end about-how-content -->
+
+        <div class="row">
+        <h1 class="intro-header" data-aos="fade-up">Code example: Estimating Pi with Fiber</h1>
+        <div class="col-twelve", data-aos="fade-up">
+        <code class="code-block">
+            from fiber import Pool
+            import random
+
+            NUM_SAMPLES = int(1e6)
+
+            def is_inside(p):
+                x, y = random.random(), random.random()
+                return x * x + y * y < 1
+
+            def main():
+                pool = Pool(processes=4)
+                pi = 4.0 * sum(pool.map(is_inside, range(0, NUM_SAMPLES))) / NUM_SAMPLES
+                print("Pi is roughly {}".format(pi))
+
+            if __name__ == '__main__':
+                main()
+        </code>
+        </div>
+        </div>
+
+        <!--div class="row" id="performance">
+            <div class="col-twelve">
+                <h1 class="intro-header" data-aos="fade-up">Performance</h1>
+            </div>
+            <div class="row about-bottom-image">
+
+            <img src="images/app-screens-1200.png"
+                    srcset="images/app-screens-600.png 600w,
+                            images/app-screens-1200.png 1200w,
+                            images/app-screens-2800.png 2800w"
+                    sizes="(max-width: 2800px) 100vw, 2800px"
+                    alt="App Screenshots" data-aos="fade-up">
+
+            </div>
+        </div-->
+
+        </div> <!-- end about-how -->
+
+    </section> <!-- end about -->
+
+
+
+    <!-- footer
+    ================================================== -->
+    <footer class="md-footer">
+
+
+    <!-- Link to previous and/or next page -->
+
+
+    <div class="md-footer-nav md-footer-nav-wrapper">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to next page -->
+
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--next md-footer-nav__link-wrapper" href="getting-started/" rel="next"
+               title="Examples">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title md-flex__cell-wrapper">
+              <span class="md-flex__ellipsis md-flex__ellipsis-wrapper">
+                <span class="md-footer-nav__direction md-footer-nav-item md-footer-nav-item-wrapper">
+                  Next
+                </span>
+                <span class="md-footer-nav-item-wrapper md-footer-nav-item-title-wrapper">Getting Started</span>
+              </span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink md-flex__cell-arrow">
+                    <i class="fa fa-arrow-right arrow-wrapper"></i>
+                </div>
+            </a>
+
+        </nav>
+    </div>
+
+
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright md-footer-copyright-wrapper">
+                <div class="footer-logo-smallpad"></div>
+
+                <div class="md-footer-copyright__highlight md-footer-copyright__highlight-wrapper">
+                    Copyright © 2020 Uber Technologies Inc.
+                </div>
+
+                Website by <a href="https://twitter.com/_calio">calio</a> powered by
+                <a href="https://www.mkdocs.org">MkDocs</a>,
+                <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>,
+                <a href="http://www.styleshout.com/">styleshout</a> and
+                <a href="https://codepen.io/LeonGr/pen/yginI">Connecting Dots</a>.
+            </div>
+
+            <!-- Social links -->
+
+
+
+        </div>
+    </div>
+    </footer>
+
+    <div id="preloader">
+    	<div id="loader"></div>
+    </div>
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

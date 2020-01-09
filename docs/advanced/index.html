@@ -1,0 +1,1062 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Distributed Computing for AI Made Simple">
+      
+      
+      
+        <meta name="author" content="Jiale Zhi">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>More about Fiber - Fiber</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="white" data-md-color-accent="">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#using-fiber-with-gpus" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a class="md-header-nav__button md-logo"
+                   href=".." title="Fiber">
+                    <img src="../img/fiber_logo.png" style="height:1.4rem;">
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                    <span class="md-header-nav__topic">
+                    More about Fiber
+                    </span>
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                
+                <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+                
+                
+            </div>
+            
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <div class="md-header-nav__source">
+                    
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+    <label class="md-nav__title md-nav__title--site" for="__drawer">
+        <a class="md-nav__button md-logo" href=".."
+           title="Fiber">
+            <img src="../img/fiber_logo.png" style="width: 10rem">
+        </a>
+    </label>
+    
+    <div class="md-nav__source">
+        
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+    </div>
+    
+    <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../why/" title="Why Use Fiber" class="md-nav__link">
+      Why Use Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../introduction/" title="Introduction to Fiber" class="md-nav__link">
+      Introduction to Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../getting-started/" title="Getting Started" class="md-nav__link">
+      Getting Started
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        More about Fiber
+      </label>
+    
+    <a href="./" title="More about Fiber" class="md-nav__link md-nav__link--active">
+      More about Fiber
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-fiber-with-gpus" class="md-nav__link">
+    Using Fiber with GPUs
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-gpu-with-fiber-master-process" class="md-nav__link">
+    Using GPU with Fiber master process
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-gpu-with-fiber-child-process" class="md-nav__link">
+    Using GPU with Fiber child process
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-persistent-storage" class="md-nav__link">
+    Working with persistent storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error handling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensions-to-standard-multiprocessing-api" class="md-nav__link">
+    Extensions to standard multiprocessing API
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ring" class="md-nav__link">
+    Ring
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ring-demo" class="md-nav__link">
+    Ring demo
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asyncmanager" class="md-nav__link">
+    AsyncManager
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asyncmanager-demo" class="md-nav__link">
+    AsyncManager demo
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../examples/" title="Examples" class="md-nav__link">
+      Examples
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../platforms/" title="Platforms and Backends" class="md-nav__link">
+      Platforms and Backends
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9">
+    
+    <label class="md-nav__link" for="nav-9">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-9">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../process/" title="Process" class="md-nav__link">
+      Process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../queues/" title="Queues" class="md-nav__link">
+      Queues
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pool/" title="Pool" class="md-nav__link">
+      Pool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../managers/" title="Managers" class="md-nav__link">
+      Managers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../experimental/ring/" title="Ring" class="md-nav__link">
+      Ring
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Config" class="md-nav__link">
+      Config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../meta/" title="Metadata" class="md-nav__link">
+      Metadata
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../cli/" title="Command Line Tool" class="md-nav__link">
+      Command Line Tool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+    </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-fiber-with-gpus" class="md-nav__link">
+    Using Fiber with GPUs
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-gpu-with-fiber-master-process" class="md-nav__link">
+    Using GPU with Fiber master process
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-gpu-with-fiber-child-process" class="md-nav__link">
+    Using GPU with Fiber child process
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-persistent-storage" class="md-nav__link">
+    Working with persistent storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error handling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensions-to-standard-multiprocessing-api" class="md-nav__link">
+    Extensions to standard multiprocessing API
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ring" class="md-nav__link">
+    Ring
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ring-demo" class="md-nav__link">
+    Ring demo
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asyncmanager" class="md-nav__link">
+    AsyncManager
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asyncmanager-demo" class="md-nav__link">
+    AsyncManager demo
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/uber/fiber/edit/master/mkdocs/advanced.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>More about Fiber</h1>
+                
+                <p><a href="#using-fiber-with-gpus"></a></p>
+<h3 id="using-fiber-with-gpus">Using Fiber with GPUs<a class="headerlink" href="#using-fiber-with-gpus" title="Permanent link">&para;</a></h3>
+<p>Fiber supports running workload with GPUs on Kubernetes. First, you need to configure your Kubernetes cluster for GPU support. Check out <a href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/">this guide</a> for details. Currently, we support Nvidia GPU with <a href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/#nvidia-gpu-device-plugin-used-by-gce">NVIDIA GPU device plugin used by GCE</a>. Other types of device and device plugin will be supported in the future.</p>
+<p>Once GPU is set up on your cluster. We can run some tests to see if GPU is ready for use. Let's create a new docker file called <code>fiber-gpu.docker</code> with the following content:</p>
+<div class="codehilite"><pre><span></span><span class="k">FROM</span> <span class="s">nvidia/cuda:10.0-runtime-ubuntu18.04</span>
+<span class="k">RUN</span> apt-get update <span class="o">&amp;&amp;</span> apt-get install -y python3-pip
+<span class="k">RUN</span> pip3 install fiber
+</pre></div>
+
+
+<p>This time, we use <code>nvidia/cuda:10.0-runtime-ubuntu18.04</code> as our base image. This is because it already have CUDA libraries properly configured. You can also use other base images, but you may need to configure CUDA path by yourself. Check out <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/gpus">this guide</a> for details.</p>
+<h4 id="using-gpu-with-fiber-master-process">Using GPU with Fiber master process<a class="headerlink" href="#using-gpu-with-fiber-master-process" title="Permanent link">&para;</a></h4>
+<p>If the master process needs GPU, then it can be done by providing <code>--gpu</code> argument to <code>fiber</code> command when running your program. Alternatively, you can also specify <code>nvidia.com/gpu</code> limits when you launch fiber master process with <code>kubectl</code>.  Checkout <a href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/#using-device-plugins">here</a> for details. Here, we show how this can be done with <code>fiber</code> command.</p>
+<p>Let's test if GPU is available by running this test command and it should print out the pod name created:</p>
+<div class="codehilite"><pre><span></span>$ fiber run --gpu <span class="m">1</span> nvidia-smi
+...
+Created pod: fiber-e3ae700b
+</pre></div>
+
+
+<p>If everything is configured properly, you should see something similar to this when you get logs for that pod:</p>
+<div class="codehilite"><pre><span></span>$ kubectl logs fiber-e3ae700b
+Wed Feb  5 20:33:04 2020
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 418.67       Driver Version: 418.67       CUDA Version: 10.1     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  Tesla T4            Off  | 00000000:00:05.0 Off |                    0 |
+| N/A   35C    P8     9W /  70W |      0MiB / 15079MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+</pre></div>
+
+
+<p>When we pass <code>--gpu 1</code> to <code>fiber</code> command, it created a new pod with 1 GPU allocated to that pod. And we can see in our example, one Nvidia Tesla T4 GPU has been allocated to our pod.</p>
+<h4 id="using-gpu-with-fiber-child-process">Using GPU with Fiber child process<a class="headerlink" href="#using-gpu-with-fiber-child-process" title="Permanent link">&para;</a></h4>
+<p>If the child process needs GPU, it can be done with Fiber's <a href="getting-started/#resource-limits">resource limits</a>. Simply add <code>@fiber.meta(gpu=x)</code> to your child process function that needs GPU, and Fiber will allocate GPU for your function when it runs.</p>
+<p>Let's create an simple program with runs a child process with PyTorch and GPU. Create a file called <code>fiber_process_gpu.py</code>.</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">fiber</span>
+<span class="kn">from</span> <span class="nn">fiber</span> <span class="kn">import</span> <span class="n">SimpleQueue</span><span class="p">,</span> <span class="n">Process</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="nd">@fiber</span><span class="o">.</span><span class="n">meta</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">process_using_gpu</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">input_a</span><span class="p">,</span> <span class="n">input_b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">input_a</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">input_b</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">SimpleQueue</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">process_using_gpu</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result is&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>In this example, we have a child process which accepts 2 tensors from the master process, calculate their product with GPU and then return the result to the master process. Because this example needs PyTorch and NumPy, we added a few lines to <code>fiber-gpu.docker</code>. The new docker file looks like this:</p>
+<div class="codehilite"><pre><span></span><span class="k">FROM</span> <span class="s">nvidia/cuda:10.0-runtime-ubuntu18.04</span>
+<span class="k">RUN</span> apt-get update <span class="o">&amp;&amp;</span> apt-get install -y python3-pip
+<span class="k">RUN</span> pip3 install --no-cache-dir <span class="nv">torch</span><span class="o">==</span><span class="m">1</span>.2.0 <span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.4.0 <span class="nv">pillow</span><span class="o">==</span><span class="m">6</span>.1
+<span class="k">RUN</span> pip3 install fiber
+<span class="k">ADD</span> fiber_process_gpu.py /root/fiber_process_gpu.py
+</pre></div>
+
+
+<p>Run this program with the following command:</p>
+<div class="codehilite"><pre><span></span>$ fiber run python3 /root/fiber_process_gpu.py
+...
+Created pod: fiber-384369de
+</pre></div>
+
+
+<p>Get logs of pod <code>fiber-384369de</code>.</p>
+<div class="codehilite"><pre><span></span>$ kubectl logs fiber-384369de
+Result is <span class="o">(</span>array<span class="o">([[</span><span class="m">0</span>.10797104, <span class="m">0</span>.65835916, <span class="m">0</span>.95002519, <span class="m">0</span>.83939533<span class="o">]</span>,
+       <span class="o">[</span><span class="m">0</span>.06103808, <span class="m">0</span>.39594844, <span class="m">0</span>.56635164, <span class="m">0</span>.61488279<span class="o">]</span>,
+       <span class="o">[</span><span class="m">0</span>.26484163, <span class="m">0</span>.75913394, <span class="m">0</span>.45325563, <span class="m">0</span>.62634138<span class="o">]])</span>, array<span class="o">([[</span><span class="m">0</span>.52567844, <span class="m">0</span>.47349188<span class="o">]</span>,
+       <span class="o">[</span><span class="m">0</span>.58966787, <span class="m">0</span>.05199646<span class="o">]</span>,
+       <span class="o">[</span><span class="m">0</span>.10254589, <span class="m">0</span>.37998549<span class="o">]</span>,
+       <span class="o">[</span><span class="m">0</span>.5943244 , <span class="m">0</span>.02409804<span class="o">]]))</span>
+</pre></div>
+
+
+<p>We see that the master process has successfully printed out the product of 2 tensors calculated on GPU from its child process.</p>
+<p><a href="#working-with-persistent-storage"></a></p>
+<h3 id="working-with-persistent-storage">Working with persistent storage<a class="headerlink" href="#working-with-persistent-storage" title="Permanent link">&para;</a></h3>
+<p>It is also very important to get your training logs after your training jobs is done. Because the disk space inside running container is not persistent, we need to store logs and outputs of our program on persistent storage.</p>
+<p><code>fiber</code> command line tool provided a way to use Kubernetes' <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PersistentVolumeClaim</a> to storage program output data. Here, we create an NFS Persistent Volume claim following <a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs">instructions here</a>.</p>
+<div class="codehilite"><pre><span></span><span class="c1"># create persistent volume claim on GCP</span>
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/staging/volumes/nfs/provisioner/nfs-server-gce-pv.yaml
+
+<span class="c1"># create nfs server</span>
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/staging/volumes/nfs/nfs-server-rc.yaml
+
+<span class="c1"># create nfs server service</span>
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/staging/volumes/nfs/nfs-server-service.yaml
+
+<span class="c1"># create persistent volume</span>
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/staging/volumes/nfs/nfs-pv.yaml
+
+<span class="c1"># create nfs persistent volume claim</span>
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/staging/volumes/nfs/nfs-pvc.yaml
+</pre></div>
+
+
+<p>This will create an NFS persistent volume claim called "nfs" with size 1M. Once we have it done, we can try out this feature by:</p>
+<div class="codehilite"><pre><span></span>fiber run -v nfs bash -c <span class="s1">&#39;echo &quot;This file is persisted across runs&quot; &gt; /persistent/foo.txt&#39;</span>
+</pre></div>
+
+
+<p>What this command does is in addition to create a new job, it mounted the persistent volume claim <code>nfs</code> to path <code>/persistant</code> inside the container. Then we create a file called <code>/persistent/foo.txt</code> with some content.</p>
+<p>Then we can retrieve the content of this file from a different job:</p>
+<div class="codehilite"><pre><span></span>$ fiber run -v nfs cat /persistent/foo.txt
+...
+Created pod: fiber-88e2197a
+
+$ kubectl logs fiber-88e2197a
+This file is persisted across runs
+</pre></div>
+
+
+<h3 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<p>Fiber's <a href="/pool"><code>Pool</code></a> supports error handling by default. This means when a <code>Pool</code> is created and all the Pool workers are up, if one of the worker crashes in the middle of the computation, then the tasks that was working on by that worker will be retried. Those tasks will be sent to other healthy workers and the master process will not be interrupted by this crash. At the same time, the crashed worker will be cleaned up and a new worker will be started to replace that crashed Pool worker.</p>
+<p>A Pool with a list of tasks can be viewed as a contract between the process that created the Pool and all worker processes. We define some concepts as below:</p>
+<p><strong>Task function</strong> is a function that is passed to Pool.apply() or other similar functions like Pool.map() as func argument.
+<strong>Task arguments</strong> are Python objects that are passed to task functions when they run.
+<strong>Task</strong> is a task function combined with task arguments.
+<strong>Task result</strong> is the result returned by a task function.
+<strong>Task queue</strong> is a queue used internally by a Process Pool to store all tasks.</p>
+<p>All tasks are distributed to worker processes through task queue. When a user creates a new Pool, a Pool and associated task queue, result queue and pending table are created. All worker processes are also created.</p>
+<p><img alt="error handling 1" src="../img/error_handling.png" /></p>
+<p>First, the Pool will put all tasks into the task queue, which is shared between the master process and worker processes. Each of the workers will fetch a single task (or a batch of tasks) from the task queue as task arguments, then run task function with task arguments. Each time a task is removed from the task queue, an entry in the pending table is added. The entry will have the worker process’ id as its key and the task as its value. Once the worker finished that task, it will put the result in the result queue. And Pool will remove the entry associated with that task from the pending table.</p>
+<p><img alt="error handling 2" src="../img/error_handling2.png" /></p>
+<p>If a worker process fails in the middle of processing (Worker 3 in the above diagram). Then its failure will be detected by the Pool which serves as a process manager of all worker processes and constantly checks with Peloton to get all its workers’ states. Then the Pool will put the pending task from the pending table back to the task queue if the previously failed process has a pending task. Then it will start a new worker process (Worker 5) to replace the previously failed process and connect the newly created worker process to a task queue and result queue.</p>
+<p>In this way, we can make sure that all the tasks that are put into the task queue get process by one of the worker processes.</p>
+<p><strong>Note that the automatic retry should be only turned on if the task function is <a href="https://en.wikipedia.org/wiki/Idempotence">idempotent</a>.</strong></p>
+<h3 id="extensions-to-standard-multiprocessing-api">Extensions to standard multiprocessing API<a class="headerlink" href="#extensions-to-standard-multiprocessing-api" title="Permanent link">&para;</a></h3>
+<h4 id="ring">Ring<a class="headerlink" href="#ring" title="Permanent link">&para;</a></h4>
+<p>A <a href="/experimental/ring/"><code>Ring</code></a> in fiber stands for a list of processes who work collectively together. Unlike <code>Pool</code>, <code>Ring</code> doesn't have the concept of master process and worker process. All the members inside the <code>Ring</code> shared basically the same responsibility. Each node in the ring usually only talk to it's left and right neighbors. Each member in the Ring has a rank which range from <code>0</code> to the number of nodes - 1. Usually ring node 0 has some specially responsibility to gather additional information and usually also serves as a control node.</p>
+<p>The ring topology is very common in machine learning when doing distributed <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">SGD</a>. Examples include <a href="https://pytorch.org/docs/stable/distributed.html"><code>torch.distributed</code></a>, <a href="http://horovod.ai/"><code>Horovod</code></a>, etc. But generally it's really hard to start this kind of workload on a computer cluster, especially when setting up the communication between different nodes are needed.</p>
+<p>Fiber provides the <code>Ring</code> class to simplify this process. Fiber handles the starting of all the processes and provides network information to the ring-forming framework. The end user only needs to provide an initialization function and the target function that each node runs, and Fiber will handle the rest for the user.</p>
+<p>An example of using <code>Ring</code> with <code>torch.distributed</code> can be found in <a href="https://github.com/uber/fiber/blob/master/examples/ring.py"><code>examples/ring.py</code></a> in Fiber's source code repo.</p>
+<p>As mentioned above, Ring needs a initialization function and a target function. In this example, <code>pytorch_ring_init</code> is the initialization function. In it, we initialize PyTorch and set environment variables to tell PyTorch where is the master node so that all the nodes can be discovered by PyTorch. And <code>pytorch_run_sgd</code> is the target function that does distributed SGD on each of the Ring node. Fiber will first call <code>pytorch_ring_init</code> on each of the node to set up the ring and then call <code>pytorch_run_sgd</code> to do the actual distributed SGD.</p>
+<p><img src="/img/ring.png" alt="ring" width="500" align=middle /></p>
+<p><sup><sup>
+<strong>Fiber Ring</strong>. A Fiber Ring with 4 nodes is depicted. Ring node 0 and ring node 3 run on the same machine but in two different containers. Ring nodes 1 and 2 both run on a separate machine. All these processes collectively run a copy of the same function and communicate with each other during the run.
+</sub></sup></p>
+<h5 id="ring-demo">Ring demo<a class="headerlink" href="#ring-demo" title="Permanent link">&para;</a></h5>
+<p>To run everything, we can re-use the docker file from the <a href="#using-fiber-with-gpus">previous section</a> and download <a href="https://github.com/uber/fiber/blob/master/examples/ring.py"><code>examples/ring.py</code></a> and put it into the same directory as your docker file. This demo shows how to run a Ring on Kubernetes with GPU.</p>
+<p>Add a new line to the docker file <code>ADD ring.py /root/ring.py</code> and the new docker file looks like this:</p>
+<div class="codehilite"><pre><span></span><span class="k">FROM</span> <span class="s">nvidia/cuda:10.0-runtime-ubuntu18.04</span>
+<span class="k">RUN</span> apt-get update <span class="o">&amp;&amp;</span> apt-get install -y python3-pip
+<span class="k">RUN</span> pip3 install --no-cache-dir <span class="nv">torch</span><span class="o">==</span><span class="m">1</span>.2.0 <span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.4.0 <span class="nv">pillow</span><span class="o">==</span><span class="m">6</span>.1
+<span class="k">RUN</span> pip3 install fiber
+<span class="k">ADD</span> fiber_process_gpu.py /root/fiber_process_gpu.py
+<span class="k">ADD</span> ring.py /root/ring.py
+</pre></div>
+
+
+<p>Now we run everything with this command:</p>
+<div class="codehilite"><pre><span></span>$ fiber run --gpu <span class="m">1</span> python3 /root/ring.py
+...
+Created pod: fiber-dbb2d4d9
+</pre></div>
+
+
+<p>Check the logs our the job:</p>
+<div class="codehilite"><pre><span></span>$ kubectl logs fiber-dbb2d4d9
+pytorch ring init, rank <span class="m">0</span>
+<span class="m">2</span> <span class="m">0</span> eth0 <span class="m">10</span>.12.0.116 <span class="m">48707</span>
+Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz to ./data/MNIST/raw/train-images-idx3-ubyte.gz
+<span class="m">100</span>.1%Extracting ./data/MNIST/raw/train-images-idx3-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz to ./data/MNIST/raw/train-labels-idx1-ubyte.gz
+<span class="m">113</span>.5%Extracting ./data/MNIST/raw/train-labels-idx1-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw/t10k-images-idx3-ubyte.gz
+<span class="m">100</span>.4%Extracting ./data/MNIST/raw/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz
+<span class="m">180</span>.4%Extracting ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw
+Processing...
+Done!
+Rank  <span class="m">0</span> , epoch  <span class="m">0</span> :  <span class="m">0</span>.5177083023861527
+Rank  <span class="m">0</span> , epoch  <span class="m">1</span> :  <span class="m">0</span>.12978197557569693
+...
+</pre></div>
+
+
+<p>This means ring node 0 has been started and running!</p>
+<p>What about the other nodes in the ring? We can first get the pods that other process are running by:</p>
+<div class="codehilite"><pre><span></span>$ kubectl get po<span class="p">|</span>grep process
+process-3-03e3a1b6          <span class="m">1</span>/1     Running              <span class="m">0</span>          3m12s
+</pre></div>
+
+
+<p>In this example, we only have one addition node in the ring and the pod name is <code>process-3-03e3a1b6</code>. Then we can get it's logs by:</p>
+<div class="codehilite"><pre><span></span>$ kubectl logs process-3-03e3a1b6
+pytorch ring init, rank <span class="m">1</span>
+<span class="m">2</span> <span class="m">1</span> eth0 <span class="m">10</span>.12.0.116 <span class="m">48707</span>
+Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz to ./data/MNIST/raw/train-images-idx3-ubyte.gz
+<span class="m">100</span>.1%Extracting ./data/MNIST/raw/train-images-idx3-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz to ./data/MNIST/raw/train-labels-idx1-ubyte.gz
+<span class="m">113</span>.5%Extracting ./data/MNIST/raw/train-labels-idx1-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw/t10k-images-idx3-ubyte.gz
+<span class="m">100</span>.4%Extracting ./data/MNIST/raw/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw
+Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz
+<span class="m">180</span>.4%Extracting ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw
+Processing...
+Done!
+Rank  <span class="m">1</span> , epoch  <span class="m">0</span> :  <span class="m">0</span>.5106956963933734
+Rank  <span class="m">1</span> , epoch  <span class="m">1</span> :  <span class="m">0</span>.12546868318084206
+...
+</pre></div>
+
+
+<p>It showed we have successfully set up our distributed SGD application with Fiber and PyTorch and GPU!</p>
+<h4 id="asyncmanager">AsyncManager<a class="headerlink" href="#asyncmanager" title="Permanent link">&para;</a></h4>
+<p>Python's multiprocessing provides a <code>Manager</code> type to share data between different processes.  A manager manages a Python object and it accepts method calls from remote so that the state of the managed object can be changed.</p>
+<p>The stateful storage nature of <code>Manager</code> make it suitable to be use in <a href="https://en.wikipedia.org/wiki/Reinforcement_learning">reinforcement learning</a> to hold simulator states. But multiprocessing only provided an implementation of manager called <code>SyncManager</code> who can only do synchronized method calls. This make it not easy to create many managers and make them work in parallel.</p>
+<p>Fiber implemented an asynchronous version of manager called <code>AsyncManager</code> which allows asynchronous method calls. Users can create many <code>AsyncManager</code> and they can work in parallel.</p>
+<h5 id="asyncmanager-demo">AsyncManager demo<a class="headerlink" href="#asyncmanager-demo" title="Permanent link">&para;</a></h5>
+<p>We use the example from <a href="https://github.com/uber/fiber/blob/master/examples/async_manager.py"><code>examples/async_manager.py</code></a>. In this example, we compare the performance of synchronous  and asynchronous managers. We create 4 asynchronous managers and each one of them manages a <code>CartPole-v1</code> environment. The 4 managers runs in parallel. Each of method call to <code>env</code> is an asynchronous method call. For example, <code>env.step(action)</code> returns a handle object immediately. When you call <code>handle.get()</code>, you will get the actual result from that method call.</p>
+<p>Download <code>async_manager.py</code> file. This example needs <code>gym</code> and you may install it with:</p>
+<div class="codehilite"><pre><span></span>pip install gym
+</pre></div>
+
+
+<p>Run async manager example with Python:</p>
+<div class="codehilite"><pre><span></span>$ python async_manager.py
+Sync manager took 3.7199201583862305s
+Async manager took 1.6843571662902832s
+</pre></div>
+
+
+<p>We should see that asynchronous manager runs much faster than synchronous managers.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page -->
+    
+    <div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               href="../getting-started/"
+               rel="prev"
+               title="Getting Started">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Getting Started
+              </span>
+                </div>
+            </a>
+            
+
+            <!-- Link to next page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               href="../examples/"
+               rel="next"
+               title="Examples">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Examples
+              </span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a>
+            
+        </nav>
+    </div>
+    
+
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <div class="footer-logo-smallpad"></div>
+                
+                <div class="md-footer-copyright__highlight">
+                    Copyright &copy; 2020 Uber Technologies Inc.
+                </div>
+                
+                Website by <a href="https://twitter.com/_calio">calio</a> powered by
+                <a href="https://www.mkdocs.org">MkDocs</a>,
+                <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>,
+                <a href="http://www.styleshout.com/">styleshout</a>.
+            </div>
+
+            <!-- Social links -->
+            
+            
+            
+        </div>
+    </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../js/canvas.js"></script>
+      
+    
+  </body>
+</html>

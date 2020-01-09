@@ -1,0 +1,100 @@
+site_name: 'Fiber'
+site_description: 'Distributed Computing for AI Made Simple'
+site_author: 'Jiale Zhi'
+
+repo_name: 'uber/fiber'
+repo_url: 'https://github.com/uber/fiber'
+edit_uri: edit/master/mkdocs/
+
+copyright: 'Copyright &copy; 2020 Uber Technologies Inc.'
+
+generate:
+- cli.md:
+  - fiber.cli
+- config.md:
+  - fiber.config:
+    - fiber.config.Config+
+- context.md:
+  - fiber.context++
+- core.md:
+  - fiber.core+
+- managers.md:
+  - fiber.managers:
+    - fiber.managers.BaseManager
+    - fiber.managers.SyncManager
+    - fiber.managers.AsyncManager
+- meta.md:
+  - fiber.meta+
+- pool.md:
+  - fiber.pool:
+    - fiber.pool.ApplyResult+
+    - fiber.pool.MapResult+
+    - fiber.pool.ZPool+
+    - fiber.pool.ResilientZPool+
+- process.md:
+  - fiber.process:
+    - fiber.Process+
+    - fiber.process.active_children
+    - fiber.process.current_process
+- queues.md:
+  - fiber.queues:
+    - fiber.queues.SimpleQueuePush+
+    # SimpleQueuePull is temporarily disabled
+    #- fiber.queues.SimpleQueuePull+
+    - fiber.queues.Pipe+
+    - fiber.queues.ZConnection
+- experimental/ring.md:
+  - fiber.experimental.ring++
+- misc.md:
+  - fiber.init
+pages:
+- Home: index.md << index.md
+- Why Use Fiber: why.md << why.md
+- Introduction to Fiber: introduction.md << introduction.md
+- Getting Started: getting-started.md << getting-started.md
+- More about Fiber: advanced.md << advanced.md
+- Examples: examples.md << examples.md
+- Installation: installation.md << installation.md
+- Platforms and Backends: platforms.md << platforms.md
+- API Documentation:
+  - Process: process.md
+  - Queues: queues.md
+  - Pool: pool.md
+  - Managers: managers.md
+  - Ring: experimental/ring.md
+  - Config: config.md
+  - Metadata: meta.md
+  - Command Line Tool: cli.md
+  - Misc: misc.md
+#- Performance: performance.md << performance.md
+#- FAQ: faq.md << faq.md
+
+  #theme: material
+#theme: readthedocs
+theme:
+  #name: readthedocs
+  name: material
+  #name: alabaster
+  language: en
+  logo: 'img/fiber_logo.png'
+  favicon: 'img/favicon.ico'
+  custom_dir: 'custom/'
+  palette:
+    primary: 'white'
+    #accent: 'white'
+
+#extra_css:
+  #- 'stylesheets/extra.css'
+  #- 'stylesheets/monokai.css'
+extra_javascript:
+  - 'js/canvas.js'
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      baselevel: 2
+  - codehilite:
+      guess_lang: false
+
+  #preprocessor: pydocmd.preprocessors.rst.Preprocessor
+preprocessor: pydocmd.preprocessors.rst.Preprocessor

@@ -1,0 +1,933 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Distributed Computing for AI Made Simple">
+      
+      
+      
+        <meta name="author" content="Jiale Zhi">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Getting Started - Fiber</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="white" data-md-color-accent="">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#a-minimal-example" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a class="md-header-nav__button md-logo"
+                   href=".." title="Fiber">
+                    <img src="../img/fiber_logo.png" style="height:1.4rem;">
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                    <span class="md-header-nav__topic">
+                    Getting Started
+                    </span>
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                
+                <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+                
+                
+            </div>
+            
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <div class="md-header-nav__source">
+                    
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+    <label class="md-nav__title md-nav__title--site" for="__drawer">
+        <a class="md-nav__button md-logo" href=".."
+           title="Fiber">
+            <img src="../img/fiber_logo.png" style="width: 10rem">
+        </a>
+    </label>
+    
+    <div class="md-nav__source">
+        
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+    </div>
+    
+    <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../why/" title="Why Use Fiber" class="md-nav__link">
+      Why Use Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../introduction/" title="Introduction to Fiber" class="md-nav__link">
+      Introduction to Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Getting Started
+      </label>
+    
+    <a href="./" title="Getting Started" class="md-nav__link md-nav__link--active">
+      Getting Started
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-minimal-example" class="md-nav__link">
+    A minimal example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-more-complex-example" class="md-nav__link">
+    A more complex example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerize-your-program" class="md-nav__link">
+    Containerize your program
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-your-container" class="md-nav__link">
+    Test your container
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fiber-config" class="md-nav__link">
+    Fiber config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-on-a-computer-cluster" class="md-nav__link">
+    Running on a computer cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-with-fiber-command" class="md-nav__link">
+    Running with fiber command
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-limits" class="md-nav__link">
+    Resource Limits
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../advanced/" title="More about Fiber" class="md-nav__link">
+      More about Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../examples/" title="Examples" class="md-nav__link">
+      Examples
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../platforms/" title="Platforms and Backends" class="md-nav__link">
+      Platforms and Backends
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9">
+    
+    <label class="md-nav__link" for="nav-9">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-9">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../process/" title="Process" class="md-nav__link">
+      Process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../queues/" title="Queues" class="md-nav__link">
+      Queues
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pool/" title="Pool" class="md-nav__link">
+      Pool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../managers/" title="Managers" class="md-nav__link">
+      Managers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../experimental/ring/" title="Ring" class="md-nav__link">
+      Ring
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Config" class="md-nav__link">
+      Config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../meta/" title="Metadata" class="md-nav__link">
+      Metadata
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../cli/" title="Command Line Tool" class="md-nav__link">
+      Command Line Tool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+    </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-minimal-example" class="md-nav__link">
+    A minimal example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-more-complex-example" class="md-nav__link">
+    A more complex example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#containerize-your-program" class="md-nav__link">
+    Containerize your program
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-your-container" class="md-nav__link">
+    Test your container
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fiber-config" class="md-nav__link">
+    Fiber config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-on-a-computer-cluster" class="md-nav__link">
+    Running on a computer cluster
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-with-fiber-command" class="md-nav__link">
+    Running with fiber command
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-limits" class="md-nav__link">
+    Resource Limits
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/uber/fiber/edit/master/mkdocs/getting-started.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Getting Started</h1>
+                
+                <p>In this guide, we will walk through the basic features of Fiber. By the end of this guide, you should be able to launch your own Fiber application on a Kubernetes cluster!</p>
+<h3 id="a-minimal-example">A minimal example<a class="headerlink" href="#a-minimal-example" title="Permanent link">&para;</a></h3>
+<p>If you have already <a href="/installation">installed</a> Fiber on your computer and your environment is <a href="/platform">supported by Fiber</a>, then we can get things started.</p>
+<p>Open your favorite editor and create a Python file called <code>hello_fiber.py</code> with the following content:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">fiber</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">fiber</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="nb">print</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Hello, Fiber!&#39;</span><span class="p">,))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
+<p>You may find that the API is the same as Python's <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a> library. In fact, most of multiprocessing's API is supported by Fiber. You can take an program that is written with multiprocessing and changes a few lines to make it work with Fiber. We will see <a href="/examples/">some examples</a> later.</p>
+<p>Run it with the following command:</p>
+<div class="codehilite"><pre><span></span>python hello_fiber.py
+</pre></div>
+
+
+<p>You should see the following output:</p>
+<div class="codehilite"><pre><span></span>Hello, Fiber!
+</pre></div>
+
+
+<p>Under the hood, what Fiber does is that it launches a new process locally on your computer, and then run <code>print</code> function with arguments <code>'Hello, Fiber!'</code>.</p>
+<p>"Isn't this just multiprocessing?", you may ask. Indeed, Fiber works the same as multiprocessing when running locally on a single computer. But we will show how this simple design can be powerful when you run things on a computer cluster.</p>
+<h3 id="a-more-complex-example">A more complex example<a class="headerlink" href="#a-more-complex-example" title="Permanent link">&para;</a></h3>
+<p>The previous example is too easy, isn't it? Let's do something more complex. In this example, we will 
+create a simple program that estimates Pi with Monte Carlo Method.</p>
+<p>Create a new file called <code>pi_estimation.py</code> with the following content:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">fiber</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">NUM_SAMPLES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">is_inside</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">is_inside</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NUM_SAMPLES</span><span class="p">)))</span> <span class="o">/</span> <span class="n">NUM_SAMPLES</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pi is roughly </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>In this example, we use <a href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Monte Carlo method</a> to <a href="https://academo.org/demos/estimating-pi-monte-carlo/">estimate</a> the value of Pi.</p>
+<p>Run it with the following command:</p>
+<div class="codehilite"><pre><span></span>python pi_estimation.py
+</pre></div>
+
+
+<p>You should see something like this:</p>
+<div class="codehilite"><pre><span></span>Pi is roughly 3.140636
+</pre></div>
+
+
+<p>What Fiber does is it created a pool of 4 workers, pass all the workload to them and collect results from them. In this example, each worker calculates whether a single random point is inside a circle or not. And we can increase the degree of degree of parallelism by increasing the number of Pool workers.</p>
+<h3 id="containerize-your-program">Containerize your program<a class="headerlink" href="#containerize-your-program" title="Permanent link">&para;</a></h3>
+<p>Before we can run our program on a computer cluster, we need to first encapsulate our computation environment in a <a href="https://www.docker.com/resources/what-container">container</a>. It is a method of virtualization that package an application's code and dependencies into a single object. The aim is to allow application to run reliably and consistently from one environment to another environment.</p>
+<p>For Fiber, the benefits of using a container includes:</p>
+<ul>
+<li>container is portable and we can run it locally and on a remote cluster</li>
+<li>container encapsulates the running environment of the program, and this makes sure that if something works locally, it most likely will also work on a computer cluster.</li>
+</ul>
+<p>This step requires <a href="https://www.docker.com/">docker</a>, check out <a href="https://docs.docker.com/install/">here</a> to see how it can be installed on your system. To encapsulate our Pi estimation program, we create a file called <code>Dockerfile</code> for it.</p>
+<div class="codehilite"><pre><span></span><span class="c"># Dockerfile</span>
+<span class="k">FROM</span> <span class="s">python:3.6-buster</span>
+<span class="k">ADD</span> pi_estimation.py /root/pi_estimation.py
+<span class="k">RUN</span> pip install fiber
+</pre></div>
+
+
+<p>Make sure your current directory doesn't include anything irreverent or you can ignore them from the build by putting them in a <a href="https://docs.docker.com/engine/reference/builder/#dockerignore-file"><code>.dockerignore</code></a> file.</p>
+<p>Build an image by running the following command:</p>
+<div class="codehilite"><pre><span></span>docker build -t fiber-pi-estimation .
+</pre></div>
+
+
+<p>After the image is built, you will get an docker image called <code>fiber-pi-estimation:latest</code>.</p>
+<h3 id="test-your-container">Test your container<a class="headerlink" href="#test-your-container" title="Permanent link">&para;</a></h3>
+<p>With this image built, you can test if your program works inside the docker by running it with Fiber's docker backend. Fiber provides many different backends for different running environment. Checkout <a href="/platoforms">here</a> for details.</p>
+<p>You can run the following command to test if your recently build container works or not by running the following command:</p>
+<div class="codehilite"><pre><span></span><span class="nv">FIBER_BACKEND</span><span class="o">=</span>docker <span class="nv">FIBER_IMAGE</span><span class="o">=</span>fiber-pi-estimation:latest python pi_estimation.py
+</pre></div>
+
+
+<p>You should see the familiar output and it looks like:</p>
+<div class="codehilite"><pre><span></span>Pi is roughly 3.142324
+</pre></div>
+
+
+<h3 id="fiber-config">Fiber config<a class="headerlink" href="#fiber-config" title="Permanent link">&para;</a></h3>
+<p>So what's the difference between this one and the previous run? In this run, we use special environment variables to tell Fiber what backend to use and what docker image to use. These environment variables are a part of Fiber's configuration system.</p>
+<p><code>FIBER_BACKEND</code> tells Fiber what backend to use. Currently, Fiber supports these backends: <code>local</code>, <code>docker</code> and <code>kubernetes</code>. When <code>FIBER_BACKEND</code> is set to <code>docker</code>, all new processes will be launched through <code>docker</code> backend which means all of them will be running inside their own docker container.</p>
+<p><code>FIBER_IMAGE</code> tells Fiber what docker image to use when launching new containers. This container provides the running environment for your child processes, so it needs to have Fiber installed in it. And we already did that in the previous step when building the docker container.</p>
+<p>Note that in this example, the master process (the one you started with <code>python pi_estimation.py</code>) still runs on local machine instead of inside a docker container. All the processes started by Fiber are inside containers.</p>
+<p>You can checkout the containers launched by Fiber by running:</p>
+<div class="codehilite"><pre><span></span>docker ps -a|grep fiber-pi-estimation
+</pre></div>
+
+
+<p>Alternatively, you can also create a <code>.fiberconfig</code> file to pass the <a href="/config/">configurations</a> to Fiber. The equivalent config file is:</p>
+<div class="codehilite"><pre><span></span>#.fiberconfig
+backend=docker
+image=fiber-pi-estimation
+</pre></div>
+
+
+<p>To learn more about Fiber's configuration system, check out <a href="/config">here</a>.</p>
+<h3 id="running-on-a-computer-cluster">Running on a computer cluster<a class="headerlink" href="#running-on-a-computer-cluster" title="Permanent link">&para;</a></h3>
+<p>With all the previous steps finished, now it's time to try some distributed computing on a real computer cluster. The good thing is that most of the work has already been done by now.</p>
+<p>Here we use <a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine</a> on <a href="https://cloud.google.com/">Google Cloud</a> as an example. You'll need to install <a href="https://cloud.google.com/sdk/docs">Google Cloud SDK</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#download-as-part-of-the-google-cloud-sdk">kubectl</a> on your machine. Also, you need to authenticate docker to access Google Container Registry (GCR) following this <a href="https://cloud.google.com/container-registry/docs/pushing-and-pulling">guide</a>.</p>
+<p>We first tag our image and push it to a container registry that is accessible by your Kubernetes cluster.</p>
+<div class="codehilite"><pre><span></span>docker tag fiber-pi-estimation:latest gcr.io/<span class="o">[</span>your-project-name<span class="o">]</span>/fiber-pi-estimation:latest
+docker push gcr.io/<span class="o">[</span>your-project-name<span class="o">]</span>/fiber-pi-estimation:latest
+</pre></div>
+
+
+<p>Now that the docker image is available, we can launch our job by:</p>
+<div class="codehilite"><pre><span></span>kubectl create job fiber-pi-estimation --image<span class="o">=</span>gcr.io/<span class="o">[</span>your-project-name<span class="o">]</span>/fiber-pi-estimation:latest -- python3 /root/pi_estimation.py
+</pre></div>
+
+
+<p>We should see something like this in the output:</p>
+<div class="codehilite"><pre><span></span>job.batch/fiber-pi-estimation created
+</pre></div>
+
+
+<p>The job has been submitted to Kubernetes cluster, and now we can get its logs. It may take some time before the job is scheduled.</p>
+<div class="codehilite"><pre><span></span>kubectl logs <span class="k">$(</span>kubectl get po<span class="p">|</span>grep fiber-pi-estimation<span class="p">|</span>awk <span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span>
+</pre></div>
+
+
+<p>And you should see this familiar output from the above command:</p>
+<div class="codehilite"><pre><span></span>Pi is roughly 3.139972
+</pre></div>
+
+
+<p>Congratulations! You have successfully run your first Fiber program on Kubernetes.</p>
+<p>On Kubernetes, Fiber behaves similarly to when running locally with Docker. Each process becomes a Kubernetes pod and all the pods work collectively to compute our estimation of Pi!</p>
+<h3 id="running-with-fiber-command">Running with <code>fiber</code> command<a class="headerlink" href="#running-with-fiber-command" title="Permanent link">&para;</a></h3>
+<p>If the above process looks too complex for you, we have a better solution. To simplify the workflow of running jobs on Kubernetes, we create a command-line tool named <code>fiber</code> to help to manage the job running process. Specifically, <code>fiber run</code> command can help you build docker images, push images to your GCR and run jobs for you. It currently only works for Google Cloud but we plan to extend it to work with other platforms.</p>
+<p>With <code>fiber</code> command, running a fiber program on Kubernetes is very simple. <code>fiber run</code> looks for a valid docker file on the current directory, builds a docker image with that, tag it and push it to GCR with your default google cloud project name, and then run the command that you passed to <code>fiber run</code>.</p>
+<p>We will re-use our previously written <code>Dockerfile</code>. Instead of building, pushing images and launch jobs by our own, now everything can be simplified to one command:</p>
+<div class="codehilite"><pre><span></span>fiber run python3 /root/pi_estimation.py
+</pre></div>
+
+
+<p>Note that we use <code>/root/pi_estimation.py</code> is the path of the source file inside docker image. We should see something like this in the last line of the output:</p>
+<div class="codehilite"><pre><span></span>Created pod: fiber-16fb282d
+</pre></div>
+
+
+<p>And <code>fiber-16fb282d</code> is the Kubernetes pod that we created for our main process. To get the output of our job, simply run:</p>
+<div class="codehilite"><pre><span></span>kubectl logs fiber-16fb282d
+</pre></div>
+
+
+<p>And we should see the familiar output:</p>
+<div class="codehilite"><pre><span></span>Pi is roughly 3.141044
+</pre></div>
+
+
+<p>For detailed docs on <code>fiber</code> command, check out <a href="/cli">here</a>.</p>
+<h3 id="resource-limits">Resource Limits<a class="headerlink" href="#resource-limits" title="Permanent link">&para;</a></h3>
+<p>Now that we can run our program on a computer cluster, it's important to think about how much resources each of the processes is going to use so that all the jobs can be properly scheduled. We can specify how many CPU cores, how much memory and how many GPU one process needs by using <code>fiber.meta</code> API.</p>
+<p>Take our Pi estimation program as an example. Because our <code>is_inside</code> can only use one CPU and doesn't need much memory, we can specify these resource limits by using <code>@fiber.meta</code> decorator. A modified version of <code>pi_estimation.py</code> looks like this:</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">fiber</span>
+<span class="kn">from</span> <span class="nn">fiber</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">NUM_SAMPLES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+
+<span class="c1"># 1 CPU core and 1000M of memory</span>
+<span class="nd">@fiber</span><span class="o">.</span><span class="n">meta</span><span class="p">(</span><span class="n">cpu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_inside</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">is_inside</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NUM_SAMPLES</span><span class="p">)))</span> <span class="o">/</span> <span class="n">NUM_SAMPLES</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pi is roughly </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>We now run this new version with <code>fiber run</code> command:</p>
+<div class="codehilite"><pre><span></span>$ fiber run python3  /root/pi_estimation.py
+...
+Created pod: fiber-36c2da03
+</pre></div>
+
+
+<p>And then we get the logs:</p>
+<div class="codehilite"><pre><span></span>$ kubectl logs fiber-36c2da03
+Pi is roughly 3.141004
+</pre></div>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page -->
+    
+    <div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               href="../introduction/"
+               rel="prev"
+               title="Introduction to Fiber">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Introduction to Fiber
+              </span>
+                </div>
+            </a>
+            
+
+            <!-- Link to next page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               href="../advanced/"
+               rel="next"
+               title="More about Fiber">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                More about Fiber
+              </span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a>
+            
+        </nav>
+    </div>
+    
+
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <div class="footer-logo-smallpad"></div>
+                
+                <div class="md-footer-copyright__highlight">
+                    Copyright &copy; 2020 Uber Technologies Inc.
+                </div>
+                
+                Website by <a href="https://twitter.com/_calio">calio</a> powered by
+                <a href="https://www.mkdocs.org">MkDocs</a>,
+                <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>,
+                <a href="http://www.styleshout.com/">styleshout</a>.
+            </div>
+
+            <!-- Social links -->
+            
+            
+            
+        </div>
+    </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../js/canvas.js"></script>
+      
+    
+  </body>
+</html>

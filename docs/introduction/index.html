@@ -1,0 +1,1255 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Distributed Computing for AI Made Simple">
+      
+      
+      
+        <meta name="author" content="Jiale Zhi">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Introduction to Fiber - Fiber</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="white" data-md-color-accent="">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#the-challenge-of-large-scale-distributed-computation" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+    <nav class="md-header-nav md-grid">
+        <div class="md-flex">
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <a class="md-header-nav__button md-logo"
+                   href=".." title="Fiber">
+                    <img src="../img/fiber_logo.png" style="height:1.4rem;">
+                </a>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch">
+                <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+                    
+                    <span class="md-header-nav__topic">
+                    Introduction to Fiber
+                    </span>
+                    
+                </div>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+                
+                
+                <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+                
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+                
+                
+            </div>
+            
+            <div class="md-flex__cell md-flex__cell--shrink">
+                <div class="md-header-nav__source">
+                    
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+                </div>
+            </div>
+            
+        </div>
+    </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+    <label class="md-nav__title md-nav__title--site" for="__drawer">
+        <a class="md-nav__button md-logo" href=".."
+           title="Fiber">
+            <img src="../img/fiber_logo.png" style="width: 10rem">
+        </a>
+    </label>
+    
+    <div class="md-nav__source">
+        
+
+
+  
+
+<a href="https://github.com/uber/fiber/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    uber/fiber
+  </div>
+</a>
+    </div>
+    
+    <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../why/" title="Why Use Fiber" class="md-nav__link">
+      Why Use Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Introduction to Fiber
+      </label>
+    
+    <a href="./" title="Introduction to Fiber" class="md-nav__link md-nav__link--active">
+      Introduction to Fiber
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-challenge-of-large-scale-distributed-computation" class="md-nav__link">
+    The challenge of large-scale distributed computation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introducing-fiber" class="md-nav__link">
+    Introducing Fiber
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#job-backed-process" class="md-nav__link">
+    Job-Backed Process
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    Components
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applications" class="md-nav__link">
+    Applications
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#powering-new-applications" class="md-nav__link">
+    Powering new applications
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-existing-multiprocessing-applications" class="md-nav__link">
+    Enabling existing multiprocessing applications
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error Handling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    Performance
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#framework-overhead" class="md-nav__link">
+    Framework overhead
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distributed-task-test" class="md-nav__link">
+    Distributed task test
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../getting-started/" title="Getting Started" class="md-nav__link">
+      Getting Started
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../advanced/" title="More about Fiber" class="md-nav__link">
+      More about Fiber
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../examples/" title="Examples" class="md-nav__link">
+      Examples
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item">
+    <a href="../platforms/" title="Platforms and Backends" class="md-nav__link">
+      Platforms and Backends
+    </a>
+  </li>
+
+        
+        
+        
+        
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-9" type="checkbox" id="nav-9">
+    
+    <label class="md-nav__link" for="nav-9">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-9">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../process/" title="Process" class="md-nav__link">
+      Process
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../queues/" title="Queues" class="md-nav__link">
+      Queues
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../pool/" title="Pool" class="md-nav__link">
+      Pool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../managers/" title="Managers" class="md-nav__link">
+      Managers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../experimental/ring/" title="Ring" class="md-nav__link">
+      Ring
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Config" class="md-nav__link">
+      Config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../meta/" title="Metadata" class="md-nav__link">
+      Metadata
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../cli/" title="Command Line Tool" class="md-nav__link">
+      Command Line Tool
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../misc/" title="Misc" class="md-nav__link">
+      Misc
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+    </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-challenge-of-large-scale-distributed-computation" class="md-nav__link">
+    The challenge of large-scale distributed computation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introducing-fiber" class="md-nav__link">
+    Introducing Fiber
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    Architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#job-backed-process" class="md-nav__link">
+    Job-Backed Process
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components" class="md-nav__link">
+    Components
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applications" class="md-nav__link">
+    Applications
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#powering-new-applications" class="md-nav__link">
+    Powering new applications
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-existing-multiprocessing-applications" class="md-nav__link">
+    Enabling existing multiprocessing applications
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    Error Handling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    Performance
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#framework-overhead" class="md-nav__link">
+    Framework overhead
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distributed-task-test" class="md-nav__link">
+    Distributed task test
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/uber/fiber/edit/master/mkdocs/introduction.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Introduction to Fiber</h1>
+                
+                <h3 style="margin-top:-36px;">Distributed Computing for AI Made Simple</h3>
+
+<p>Jiale Zhi, Rui Wang, Jeff Clune and Kenneth O. Stanley</p>
+<p><img alt="fiber illustration" src="../img/fiber_illustration.png" /></p>
+<p><sup>Fiber - Distributed Computing for AI Made Simple. Icon by <a href="https://designmodo.com/">Flat UI
+Kit</a>.</sub></p>
+<p><em>Project Homepage:</em>
+<a href="https://github.com/uber/fiber">GitHub</a></p>
+<p>Recent advances in machine learning are consistently enabled by
+<a href="https://openai.com/blog/ai-and-compute/">increasing amounts of
+computation</a>. More
+and more algorithms exploit parallelism and rely on distributed training
+for processing an enormous amount of data. Both the need for more data
+and more training impose great challenges on the software that manages
+and utilizes the large scale computational resource.</p>
+<p>Within Uber, we've developed algorithms like
+<a href="https://eng.uber.com/poet-open-ended-deep-learning/">POET</a>,
+<a href="https://eng.uber.com/go-explore/">Go-Explore</a>,
+<a href="https://eng.uber.com/generative-teaching-networks/">GTN</a>,
+etc., that leverage a large amount of computation. To enable future
+generations of large-scale computation for algorithms like these, we
+have developed a new system called <strong>Fiber</strong> that helps users scale what
+might otherwise be only local computation to hundreds or even thousands
+of machines with ease.</p>
+<h3 id="the-challenge-of-large-scale-distributed-computation">The challenge of large-scale distributed computation<a class="headerlink" href="#the-challenge-of-large-scale-distributed-computation" title="Permanent link">&para;</a></h3>
+<p>In an ideal world, scaling an application that runs on one machine to an
+application that runs on a cluster of machines should be as easy as
+changing a command-line argument. However, that is not an easy task in
+the real world.</p>
+<p>While working with many people who run large scale distributed computing
+jobs on a daily basis, we found that there are several reasons why it is
+so hard to harness distributed computing nowadays:</p>
+<ul>
+<li>
+<p><strong>There is a huge gap between making code work locally on laptops or
+    desktops and running code on a production cluster.</strong> You can make
+    MPI work locally but it's a completely different process to run
+    it on a computer cluster.</p>
+</li>
+<li>
+<p><strong>No dynamic scaling is available.</strong> If you launch a job that
+    requires a large amount of resources, then most likely you'll
+    need to wait until everything is allocated before you can run your
+    job. This waiting to scale up makes it less efficient.</p>
+</li>
+<li>
+<p><strong>Error handling is missing.</strong> While running, some jobs may fail.
+    And you may be put into a very nasty situation where you have to
+    recover part of the result or discard the whole run.</p>
+</li>
+<li>
+<p><strong>High learning cost.</strong> Each system has different APIs and
+    conventions for programming. To launch jobs with a new system, a
+    user has to learn a set of completely new conventions before jobs
+    can be launched.</p>
+</li>
+</ul>
+<p>The new Fiber platform addresses each of these issues explicitly,
+potentially opening up seamless large-scale distributed computing to a
+much wider population of users.</p>
+<h3 id="introducing-fiber">Introducing Fiber<a class="headerlink" href="#introducing-fiber" title="Permanent link">&para;</a></h3>
+<p><a href="https://github.com/uber/fiber">Fiber</a> is a Python-based
+distributed computing library for modern computer clusters. Instead of
+programming your desktop or laptop, now you can program the whole
+computer cluster. Originally, it was developed to power large scale
+parallel scientific computation projects like
+<a href="https://eng.uber.com/poet-open-ended-deep-learning/">POET</a>
+and it has been used to power similar projects within Uber. The key
+features of Fiber include:</p>
+<ul>
+<li>
+<p><strong>Easy to use.</strong> Fiber allows you to write programs that run on a
+    computer cluster without the need to dive into the details of the
+    computer cluster.</p>
+</li>
+<li>
+<p><strong>Easy to learn.</strong> Fiber provides the same API as Python's standard
+    <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a>
+    library that people are familiar with. If you know how to use
+    multiprocessing, you can program a computer cluster with Fiber.</p>
+</li>
+<li>
+<p><strong>Fast performance.</strong> Fiber's communication backbone is built on
+    top of <a href="https://nanomsg.org/">Nanomsg</a>, which is a
+    high-performance asynchronous messaging library to allow fast and
+    reliable communication.</p>
+</li>
+<li>
+<p><strong>No need for deployment.</strong> You run Fiber application the same way
+    as running a normal application on a computer cluster and Fiber
+    handles the rest for you.</p>
+</li>
+<li>
+<p><strong>Reliable computation.</strong> Fiber has built-in error handling when you
+    are running a pool of workers. Users can focus on writing the
+    actual application code instead of dealing with crashed workers.</p>
+</li>
+</ul>
+<p>In addition, Fiber can be used together with other specialized
+frameworks in areas where performance is critical. Examples include
+distributed SGD where many existing frameworks like
+<a href="https://github.com/horovod/horovod">Horovod</a> or
+<a href="https://pytorch.org/docs/stable/distributed.html">torch.distributed</a>
+have already provided very good solutions. Fiber can be used together
+with such platforms by using Fiber's <a href="https://uber.github.io/fiber/experimental/ring/">Ring
+feature</a>
+to help to set up a distributed training job on computer clusters.</p>
+<p><img alt="fiber_overview" src="../img/fiber_overview.png" /></p>
+<p><strong>Figure 1: Fiber overview.</strong> The diagram shows how Fiber works on a
+computer cluster. It starts many different job-backed-processes and runs
+different Fiber components and user processes inside them. Fiber Master
+is the main process that manages all the other processes. Some processes
+like Ring Node maintain communications between each member.</p>
+<p>Fiber can (1) help users who are working on large-scale distributed
+computing to reduce the time to go from ideas to actually running
+distributed jobs on computation clusters, (2) shield users from details
+of configuration and resource allocation tasks, (3) enable faster debug
+cycles, and (4) simplify the transition from local to cluster
+development.</p>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<p>Fiber bridges the classical multiprocessing API with a flexible
+selection of backends that can run on different cluster management
+systems. To achieve this integration, Fiber is split into three
+different layers: the <strong>API layer</strong>, <strong>backend layer</strong> and <strong>cluster
+layer</strong>. The <strong>API layer</strong> provides basic building blocks for Fiber like
+processes, queues, pools and managers. They have the same semantics as
+in multiprocessing, but are extended to work in distributed
+environments. The <strong>backend layer</strong> handles tasks like creating or
+terminating jobs on different cluster managers. When a new backend is
+added, all the other Fiber components (queues, pools, etc.) do not need
+to be changed. Finally, the <strong>cluster layer</strong> consists of different
+cluster managers. Although they are not a part of Fiber itself, they
+help Fiber to manage resources and keep track of different jobs, thereby
+reducing the number of items that Fiber needs to track. This overall
+architecture is summarized in figure 2.</p>
+<p><img alt="fiber_architecture" src="../img/fiber_architecture.png" /></p>
+<p><strong>Figure 2: Fiber architecture.</strong></p>
+<h3 id="job-backed-process">Job-Backed Process<a class="headerlink" href="#job-backed-process" title="Permanent link">&para;</a></h3>
+<p>Fiber introduces a new concept called <em>job-backed processes</em> (also
+called a <em>Fiber process</em>). It is similar to the <em>process</em> in Python's
+multiprocessing library, but more flexible: while a process in
+multiprocessing only runs on a local machine, a Fiber process can run
+remotely on a different machine or locally on the same machine. When
+starting a new Fiber process, Fiber creates a new job with the proper
+Fiber backend on the current computer cluster.</p>
+<p><img alt="fiber_process" src="../img/fiber_process.png" /></p>
+<p><strong>Figure 3: Job-backed processes.</strong> Each job-backed process is a
+containerized job running on the computer cluster. Each job-backed
+process will also have its own allocation of CPU, GPU and other types of
+resources. The code that runs inside the container is self-contained.</p>
+<p>Fiber uses containers to encapsulate the running environment of current
+processes, including all the required files, input data, other dependent
+program packages, etc., to ensure everything is self-contained. All the
+child processes are started with the same container image as the parent
+process to guarantee a consistent running environment. Because each
+process is a cluster job, its life cycle is the same as any job on the
+cluster. To make it easy for users, Fiber is designed to directly
+interact with computer cluster managers. Because of this, Fiber doesn't
+need to be set up on multiple machines or bootstrapped by any other
+mechanisms, unlike Spark or IPyParallel. It only needs to be installed
+on a single machine as a normal Python pip package.</p>
+<h3 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h3>
+<p>Fiber implements most multiprocessing APIs on top of Fiber processes
+including pipes, queues, pools, and managers.</p>
+<p><em>Queues and pipes</em> in Fiber behave the same as in multiprocessing. The
+difference is that queues and pipes are now shared by multiple processes
+running on different machines. Two processes can read from and write to
+the same pipe. Furthermore, queues can be shared among many processes on
+different machines and each process can send to or receive from the same
+queue at the same time. Fiber's queue is implemented with Nanomsg, a
+high-performance asynchronous message queue system.</p>
+<p><img alt="fiber_queue" src="../img/fiber_queue.png" /></p>
+<p><strong>Figure 4: Fiber Queue.</strong> This diagram shows a Fiber queue shared
+across three different Fiber processes. One Fiber process is located on
+the same machine as the queue and the other two processes are located on
+another machine. One process is writing to the queue and the other two
+are reading from the queue.</p>
+<p><em>Pools</em> are also supported by Fiber. They allow the user to manage a
+pool of worker processes. Fiber extends pools with <em>job-backed
+processes</em> so that it can manage thousands of (remote) workers per pool.
+Users can also create multiple pools at the same time.</p>
+<p><img alt="fiber_pool" src="../img/fiber_pool.png" /></p>
+<p><strong>Figure 5: Fiber Pool.</strong> A pool with 3 workers is shown. Two of them
+are located on one machine and the other is located on a different
+machine. They collectively work on tasks that are submitted to the task
+queue in the master process and send results to the result queue.</p>
+<p><em>Managers and proxy objects</em> enable Fiber to support shared storage,
+which is critical to distributed systems. Usually, this function is
+handled by external storage like Cassandra, Redis, etc. on a computer
+cluster. Fiber instead provides built-in in-memory storage for
+applications to use. The interface is the same as multiprocessing's
+Manager type.</p>
+<p><em>Rings</em> are an extension to the multiprocessing API that can be helpful
+in distributed computing settings. A ring in Fiber stands for a group of
+processes who work collectively together as relative equals. Unlike
+<code>Pool</code>, <code>Ring</code> does not have the concept of a master process and
+worker processes. All the members inside the <code>Ring</code> share about the
+same responsibility. Fiber's Ring models a topology that is very common
+in machine learning when doing <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">distributed
+SGD</a>.
+Examples include
+<a href="https://pytorch.org/docs/stable/distributed.html">torch.distributed</a>,
+<a href="http://horovod.ai/">Horovod</a>, etc. Generally it is very
+challenging to start this kind of workload on a computer cluster; Fiber
+provides the Ring feature to help setting up such a topology.</p>
+<p><img alt="ring" src="../img/ring.png" /></p>
+<p><strong>Figure 6: Fiber Ring.</strong> A Fiber Ring with 4 nodes is depicted. Ring
+node 0 and ring node 3 run on the same machine but in two different
+containers. Ring nodes 1 and 2 both run on a separate machine. All these
+processes collectively run a copy of the same function and communicate
+with each other during the run.</p>
+<h3 id="applications">Applications<a class="headerlink" href="#applications" title="Permanent link">&para;</a></h3>
+<h4 id="powering-new-applications">Powering new applications<a class="headerlink" href="#powering-new-applications" title="Permanent link">&para;</a></h4>
+<p>Here, we show an example of how Fiber can be applied to enable
+large-scale distributed computation. This example is a demo of a
+<a href="http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html">reinforcement
+learning</a>
+(RL) algorithm. The communication pattern for distributed RL usually
+involves sending different types of data between machines: actions,
+neural network parameters, gradients, per-step/episode observations,
+rewards, etc.</p>
+<p>Fiber implements pipes and pools to transmit this data. Under the hood,
+pools are normal Unix sockets, providing near line-speed communication
+for the applications using Fiber. Modern computer networking usually has
+bandwidth as high as hundreds of gigabits per second. Transmitting
+smaller amounts of data over a network is <a href="https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-295-talk.pdf">generally
+fast</a>.</p>
+<p>Additionally, the inter-process communication latency does not increase
+much if there are many different processes sending data to one process
+because data transfer can happen in parallel. This fact makes Fiber's
+pools suitable for providing the foundation of many RL algorithms
+because simulators can run in each pool worker process and the results
+can be transmitted back in parallel.</p>
+<div class="codehilite"><pre><span></span><span class="c1"># fiber.BaseManager is a manager that runs remotely</span>
+<span class="k">class</span> <span class="nc">RemoteEnvManager</span><span class="p">(</span><span class="n">fiber</span><span class="o">.</span><span class="n">managers</span><span class="o">.</span><span class="n">AsyncManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">env</span><span class="p">):</span>
+    <span class="c1"># gym env</span>
+    <span class="k">pass</span>
+
+<span class="n">RemoteEnvManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;Env&#39;</span><span class="p">,</span> <span class="n">Env</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">build_model</span><span class="p">():</span>
+    <span class="c1"># create a new policy model</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="k">def</span> <span class="nf">update_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">observations</span><span class="p">):</span>
+    <span class="c1"># update model with observed data</span>
+    <span class="k">return</span> <span class="n">new_model</span>
+
+<span class="k">def</span> <span class="nf">train</span><span class="p">():</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">()</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">RemoteEnvManager</span><span class="p">()</span>
+    <span class="n">num_envs</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">manager</span><span class="o">.</span><span class="n">Env</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)]</span>
+
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">num_envs</span><span class="p">]</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">]</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">handles</span><span class="p">]</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">update_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">obs</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Code Example 1:</strong> Simplified RL code implemented with Fiber</p>
+<h4 id="enabling-existing-multiprocessing-applications">Enabling existing multiprocessing applications<a class="headerlink" href="#enabling-existing-multiprocessing-applications" title="Permanent link">&para;</a></h4>
+<p>Because multiprocessing is widely used in the Python world, Fiber opens
+up broad opportunities for such applications because now they can run in
+a distributed setup on a computer cluster like Kubernetes only by
+changing a few lines of code!</p>
+<p>Here is an example: <a href="https://github.com/openai/baselines">OpenAI
+Baselines</a> is a very
+popular library for people doing RL and it has many reference algorithms
+like
+<a href="https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf">DQN</a>,
+<a href="https://arxiv.org/abs/1707.06347">PPO</a>, etc. Its downside
+is that it only works on a single machine. If you want to train PPO on a
+large scale, you have to create your own MPI-based setup and manually
+set up the cluster to hook everything up.</p>
+<p>In contrast, with Fiber things are much easier. It can seamlessly expand
+RL algorithms like PPO to leverage hundreds of distributed environment
+workers. Fiber provides the same API as multiprocessing, which is what
+OpenAI Baselines uses to harvest multicore CPU processing power locally.
+So the change needed to make OpenAI Baselines to work with Fiber is just
+<a href="https://gist.github.com/calio/b12c9093e6dc8db5736f0094dd79b8de">one
+line</a>:</p>
+<p><img src="../img/baselines_code_change.png" width="400px" alt="baselines" /></p>
+<p>And then you can run OpenAI Baselines on Kubernetes! We have provided a
+full guide for how to make the change and run Baselines on Kubernetes
+<a href="https://uber.github.io/fiber/examples/#run-openai-baselines-on-kubernetes-with-fiber">here</a>.</p>
+<h3 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<p>Fiber implements pool-based error handling. When a new pool is created,
+an associated task queue, result queue, and pending table are also
+created. Newly-created tasks are then added to the task queue, which is
+shared between the master process and worker processes. Each of the
+workers fetches a single task from the task queue, and then runs task
+functions within that task. Each time a task is removed from the task
+queue, an entry in the pending table is added. Once the worker finishes
+that task, it puts its results in the result queue. The entry associated
+with that task is then removed from the pending table.</p>
+<p><img src="../img/error_handling.png" width="300px" alt="eh1" />
+<img src="../img/error_handling2.png" width="300px" alt="eh2" /></p>
+<p><strong>Figure 7: Fiber Error Handling.</strong> On the left is a normal Fiber Pool
+with 4 workers. On the right, worker 3 fails and a new worker process
+(worker 5) is consequently started and ready to be added to the pool.</p>
+<p>If a pool worker process fails in the middle of processing, that failure
+is detected by the parent pool that serves as the process manager of all
+the worker processes. Then the parent pool puts the pending task from
+the pending table back into the task queue if the previously failed
+process has a pending task. Next, it starts a new worker process to
+replace the previously failed process and binds the newly-created worker
+process to the task queue and the result queue.</p>
+<h3 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h3>
+<p>One of the most important applications of Fiber is to scale the
+computation of algorithms like RL and population-based methods like ES.
+In these applications, latency is critical. RL and population-based
+methods are typically applied in a setup that requires frequent
+interaction with simulators to evaluate policies and collect
+experiences, such as
+<a href="https://arxiv.org/abs/1207.4708">ALE</a>,
+<a href="https://gym.openai.com/">Gym</a>, and
+<a href="http://www.mujoco.org/">Mujoco</a>. The latency introduced
+from getting the results from the simulators critically impacts the
+overall training performance. In these tests, we evaluate the
+performance of Fiber and compare it with other frameworks. We also add
+<a href="https://github.com/ray-project/ray">Ray</a> in our framework
+overhead test to provide some preliminary results, detailed results are
+expected to be added in the future.</p>
+<p>There are generally two ways to reduce such latency. Either we can
+reduce the amount of data that needs to be transferred or make the
+communication channel between different processes faster. For the
+purpose of fast communication, Fiber implements pipes and pools with
+Nanomsg, providing fast communication for the applications using Fiber.
+In addition, people can choose even higher performance with libraries
+like <a href="http://speedus.torusware.com/docs/">speedus</a>.</p>
+<h4 id="framework-overhead">Framework overhead<a class="headerlink" href="#framework-overhead" title="Permanent link">&para;</a></h4>
+<p>The test in this section probes how much overhead the framework adds to
+the workload. We compare Fiber, Python multiprocessing library, Spark,
+and IPyParallel. The testing procedure is to create a batch of workloads
+that takes a fixed amount of time in total to finish. The duration of
+each single task ranges from 1 second to 1 millisecond. We run five
+workers for each framework locally and adjust the batch size to make
+sure the total finish time for each framework is roughly 1 second (i.e.
+for 1 millisecond duration, we run 5,000 tasks). The hypothesis is that
+Fiber should have similar performance to multiprocessing because both of
+them don't reply on complex scheduling mechanisms. However, Spark and
+IPyParallel should be slower than Fiber because they rely on schedulers
+in the middle.</p>
+<p><img alt="sleep_test" src="../img/sleep_test.png" /></p>
+<p><strong>Figure 8: Test Framework Overhead</strong>.</p>
+<p>Fiber shows almost no difference when task durations are 100ms or
+greater, and is much closer to multiplrocessing than the other
+frameworks as the task duration drops to 10 or 1ms.</p>
+<p>We use multiprocessing as a reference because it is very lightweight and
+does not implement any additional features beyond creating new processes
+and running tasks in parallel. Additionally, it exploits communication
+mechanisms only available locally (e.g. shared memory, Unix domain
+sockets, etc.), making it difficult to be surpassed by other frameworks
+that support distributed resource management across multiple machines
+and which cannot exploit similar mechanisms. It thus serves as a good
+reference on the performance that can be expected.</p>
+<p><img alt="performance1" src="../img/performance1.png" /></p>
+<p><strong>Figure 9: Different frameworks compared on mean time to finish a
+batch of tasks with different task durations (linear scale).</strong> The
+optimal finishing time is 1 second.</p>
+<p>Compared to Fiber, IPyParallel and Spark fall well behind at each task
+duration. When the task duration is 1 millisecond, IPyParallel takes
+almost 24 times longer than Fiber, and Spark takes 38 times longer. This
+result highlights that both IPyParallel and Spark introduce considerable
+overhead when the task duration is short, and are not as suitable as
+Fiber for RL and population-based methods, where a simulator is used and
+the response time is a couple of milliseconds. We also show that Ray
+takes about 2.5x times longer than Fiber when running 1ms tasks.</p>
+<h4 id="distributed-task-test">Distributed task test<a class="headerlink" href="#distributed-task-test" title="Permanent link">&para;</a></h4>
+<p>To probe the scalability and efficiency of Fiber, we compare it here
+exclusively with IPyParallel because Spark is slower than IPyParallel as
+shown above, and multiprocessing does not scale beyond one machine. We
+evaluate both frameworks on the time it takes to run 50 iterations of ES
+(evolution strategies) to test the scalability and efficiency of both
+frameworks.</p>
+<p>With the same workload, we expect Fiber to finish faster because it has
+much less overhead than IPyParallel as shown in the previous test. For
+both Fiber and IPyParallel, the population size of 2,048, so that the
+total computation is fixed regardless of the number of workers. The same
+<a href="https://arxiv.org/abs/1703.03864">shared noise table
+trick</a> is also
+implemented in both. Every 8 workers share one noise table.The
+experimental domain in this work is a modified version of the "Bipedal
+Walker Hardcore" environment of the <a href="https://gym.openai.com/">OpenAI
+Gym</a> with modifications described
+in <a href="https://github.com/uber-research/poet">here</a>.</p>
+<p><img alt="performance2" src="../img/performance2.png" /></p>
+<p>Figure 10: 50 Iterations of ES. Fiber scales better than IPyParallel
+when running ES with different number of workers. Each worker runs on a
+single CPU.</p>
+<p>The main result is that Fiber scales much better than IPyParallel and
+finishes each test significantly faster. The length of time it takes for
+Fiber to run gradually decreases with the increase of the number of
+workers from 32 to 1,024. In contrast, the time for IPyParallel to
+finish <strong>increases</strong> from 256 to 512 workers. IPyParallel does not
+finish the run with 1,024 workers due to communication errors between
+its processes. This failure undermines the ability for IPyParallel to
+run large-scale parallel computation. After 512, we saw diminishing
+returns for Fiber when the number of workers increased. This is because
+of <a href="https://en.wikipedia.org/wiki/Amdahl%27s_law">Amdahl's
+law</a>. In that
+case, how fast the master process can process data becomes the
+bottleneck.</p>
+<p>Overall, Fiber's performance exceeds IPyParallel for all numbers of
+workers tested. Additionally, unlike IPyParallel, Fiber also finishes
+the run with 1,024 workers. This result highlights Fiber's better
+scalability compared to IPyParallel even while it is at the same time
+very easy to use and set up.</p>
+<h3 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h3>
+<p>Fiber is a new Python distributed library that is now
+<a href="https://github.com/uber/fiber">open-sourced</a><strong>.</strong> It is
+designed to enable users to implement large scale computation easily on
+a computer cluster. The experiments here highlight that Fiber achieves
+many goals, including efficiently leveraging a large amount of
+heterogeneous computing hardware, dynamically scaling algorithms to
+improve resource usage efficiency, and reducing the engineering burden
+required to make complex algorithms work on computer clusters.</p>
+<p>We hope that Fiber will further enable progress in solving hard problems
+by making it easier to develop methods and run them at the scale
+necessary to truly see them shine. For more details, please see the
+<a href="https://github.com/uber/fiber">Fiber GitHub</a> repository.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+    <!-- Link to previous and/or next page -->
+    
+    <div class="md-footer-nav">
+        <nav class="md-footer-nav__inner md-grid">
+
+            <!-- Link to previous page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               href="../why/"
+               rel="prev"
+               title="Why Use Fiber">
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-back
+                    md-footer-nav__button"></i>
+                </div>
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Why Use Fiber
+              </span>
+                </div>
+            </a>
+            
+
+            <!-- Link to next page -->
+            
+            <a class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               href="../getting-started/"
+               rel="next"
+               title="Getting Started">
+                <div class="md-flex__cell md-flex__cell--stretch
+                  md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Getting Started
+              </span>
+                </div>
+                <div class="md-flex__cell md-flex__cell--shrink">
+                    <i class="md-icon md-icon--arrow-forward
+                    md-footer-nav__button"></i>
+                </div>
+            </a>
+            
+        </nav>
+    </div>
+    
+
+    <!-- Further information -->
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+
+            <!-- Copyright and theme information -->
+            <div class="md-footer-copyright">
+                <div class="footer-logo-smallpad"></div>
+                
+                <div class="md-footer-copyright__highlight">
+                    Copyright &copy; 2020 Uber Technologies Inc.
+                </div>
+                
+                Website by <a href="https://twitter.com/_calio">calio</a> powered by
+                <a href="https://www.mkdocs.org">MkDocs</a>,
+                <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a>,
+                <a href="http://www.styleshout.com/">styleshout</a>.
+            </div>
+
+            <!-- Social links -->
+            
+            
+            
+        </div>
+    </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+        <script src="../js/canvas.js"></script>
+      
+    
+  </body>
+</html>

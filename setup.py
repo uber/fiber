@@ -68,6 +68,7 @@ setup(
     cmdclass={"test": PyTest},
     license="Apache 2.0",
     long_description=read_long_description(),
+    long_description_content_type="text/markdown",
     name="fiber",
     packages=find_packages(),
     entry_points={

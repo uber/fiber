@@ -1,8 +1,8 @@
 copyright: Copyright &copy; 2020 Uber Technologies Inc.
 docs_dir: _build/pydocmd
 edit_uri: edit/master/mkdocs/
-extra_javascript:
-- js/canvas.js
+#extra_javascript:
+#- js/canvas.js
 markdown_extensions:
 - toc:
     baselevel: 2

@@ -26,6 +26,7 @@ style:
 
 docs:
 	cd mkdocs && pydocmd build -d ../docs
+	cp docs/img/favicon.ico docs/favicon.ico
 
 serve:
 	cd mkdocs && pydocmd serve --livereload

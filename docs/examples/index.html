@@ -592,7 +592,7 @@
                 
                 <h3 id="run-openai-baselines-on-kubernetes-with-fiber">Run OpenAI Baselines on Kubernetes with Fiber<a class="headerlink" href="#run-openai-baselines-on-kubernetes-with-fiber" title="Permanent link">&para;</a></h3>
 <p>In this example, we'll show you how to integrate fiber with OpenAI baselines with just <strong>one line</strong> of code change.</p>
-<p>If your project is already using Python's multiprocessing, then integrate it with Fiber is very easy. Here, we are going to use <a href="https://github.com/openai/baselines&gt;">OpenAI Baselines</a> as an example to show how to easily run code written with multiprocessing on Kubernetes easily.</p>
+<p>If your project is already using Python's multiprocessing, then integrate it with Fiber is very easy. Here, we are going to use <a href="https://github.com/openai/baselines">OpenAI Baselines</a> as an example to show how to easily run code written with multiprocessing on Kubernetes easily.</p>
 <h4 id="prepare-the-code">Prepare the code<a class="headerlink" href="#prepare-the-code" title="Permanent link">&para;</a></h4>
 <p>First, we clone baselines from Github, create a new branch and setup our local environment:</p>
 <div class="codehilite"><pre><span></span>git clone https://github.com/openai/baselines
@@ -684,15 +684,13 @@ pip install fiber
 
 
 <h4 id="running-on-kubernetes">Running on Kubernetes<a class="headerlink" href="#running-on-kubernetes" title="Permanent link">&para;</a></h4>
-<p>Now let's run our fiberized OpenAI baselines on Kubernetes. This time we run <code>1e7</code> time steps. Also, we want to store the output of the run on persistent storage. We can do this with <code>fiber</code> command's <a href="/advanced/#working-with-persistent-storage">mounting persistent volumes</a> feature.</p>
+<p>Now let's run our fiberized OpenAI baselines on Kubernetes. This time we run <code>1e7</code> time steps. Also, we want to store the output of the run on persistent storage. We can do this with <code>fiber</code> command's <a href="../advanced/#working-with-persistent-storage">mounting persistent volumes</a> feature.</p>
 <div class="codehilite"><pre><span></span>$ fiber run -v fiber-pv-claim python -m baselines.run --alg<span class="o">=</span>ppo2 --env<span class="o">=</span>CartPole-v0 --network<span class="o">=</span>mlp --num_timesteps<span class="o">=</span>1e7 --num_env <span class="m">2</span> --log_path<span class="o">=</span>/persistent/baselines/logs/
-...
-Created pod: baselines-d00eb2ef
 </pre></div>
 
 
-<p>To copy the output file from the running job:</p>
-<div class="codehilite"><pre><span></span>kubectl cp baselines-d00eb2ef:/persistent/baselines/logs baselines-logs
+<p>It should output something like this:</p>
+<div class="codehilite"><pre><span></span>Created pod: baselines-d00eb2ef
 </pre></div>
 
 

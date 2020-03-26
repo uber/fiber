@@ -499,5 +499,5 @@ required to make complex algorithms work on computer clusters.
 
 We hope that Fiber will further enable progress in solving hard problems
 by making it easier to develop methods and run them at the scale
-necessary to truly see them shine. For more details, please see the
-[Fiber GitHub](https://github.com/uber/fiber) repository.
+necessary to truly see them shine. For more details, please checkout out our
+[Fiber GitHub](https://github.com/uber/fiber) repository and [Fiber paper](https://arxiv.org/abs/2003.11164).

@@ -622,7 +622,7 @@
                 
                 <p>In this guide, we will walk through the basic features of Fiber. By the end of this guide, you should be able to launch your own Fiber application on a Kubernetes cluster!</p>
 <h3 id="a-minimal-example">A minimal example<a class="headerlink" href="#a-minimal-example" title="Permanent link">&para;</a></h3>
-<p>If you have already <a href="/installation">installed</a> Fiber on your computer and your environment is <a href="/platform">supported by Fiber</a>, then we can get things started.</p>
+<p>If you have already <a href="../installation/">installed</a> Fiber on your computer and your environment is <a href="../platforms/">supported by Fiber</a>, then we can get things started.</p>
 <p>Open your favorite editor and create a Python file called <code>hello_fiber.py</code> with the following content:</p>
 <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">fiber</span>
 
@@ -631,7 +631,7 @@
 </pre></div>
 
 
-<p>You may find that the API is the same as Python's <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a> library. In fact, most of multiprocessing's API is supported by Fiber. You can take an program that is written with multiprocessing and changes a few lines to make it work with Fiber. We will see <a href="/examples/">some examples</a> later.</p>
+<p>You may find that the API is the same as Python's <a href="https://docs.python.org/3.6/library/multiprocessing.html">multiprocessing</a> library. In fact, most of multiprocessing's API is supported by Fiber. You can take an program that is written with multiprocessing and changes a few lines to make it work with Fiber. We will see <a href="../examples/">some examples</a> later.</p>
 <p>Run it with the following command:</p>
 <div class="codehilite"><pre><span></span>python hello_fiber.py
 </pre></div>
@@ -702,7 +702,7 @@ create a simple program that estimates Pi with Monte Carlo Method.</p>
 
 <p>After the image is built, you will get an docker image called <code>fiber-pi-estimation:latest</code>.</p>
 <h3 id="test-your-container">Test your container<a class="headerlink" href="#test-your-container" title="Permanent link">&para;</a></h3>
-<p>With this image built, you can test if your program works inside the docker by running it with Fiber's docker backend. Fiber provides many different backends for different running environment. Checkout <a href="/platoforms">here</a> for details.</p>
+<p>With this image built, you can test if your program works inside the docker by running it with Fiber's docker backend. Fiber provides many different backends for different running environment. Checkout <a href="../platforms/">here</a> for details.</p>
 <p>You can run the following command to test if your recently build container works or not by running the following command:</p>
 <div class="codehilite"><pre><span></span><span class="nv">FIBER_BACKEND</span><span class="o">=</span>docker <span class="nv">FIBER_IMAGE</span><span class="o">=</span>fiber-pi-estimation:latest python pi_estimation.py
 </pre></div>
@@ -723,14 +723,14 @@ create a simple program that estimates Pi with Monte Carlo Method.</p>
 </pre></div>
 
 
-<p>Alternatively, you can also create a <code>.fiberconfig</code> file to pass the <a href="/config/">configurations</a> to Fiber. The equivalent config file is:</p>
+<p>Alternatively, you can also create a <code>.fiberconfig</code> file to pass the <a href="../config/">configurations</a> to Fiber. The equivalent config file is:</p>
 <div class="codehilite"><pre><span></span>#.fiberconfig
 backend=docker
 image=fiber-pi-estimation
 </pre></div>
 
 
-<p>To learn more about Fiber's configuration system, check out <a href="/config">here</a>.</p>
+<p>To learn more about Fiber's configuration system, check out <a href="../config/">here</a>.</p>
 <h3 id="running-on-a-computer-cluster">Running on a computer cluster<a class="headerlink" href="#running-on-a-computer-cluster" title="Permanent link">&para;</a></h3>
 <p>With all the previous steps finished, now it's time to try some distributed computing on a real computer cluster. The good thing is that most of the work has already been done by now.</p>
 <p>Here we use <a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine</a> on <a href="https://cloud.google.com/">Google Cloud</a> as an example. You'll need to install <a href="https://cloud.google.com/sdk/docs">Google Cloud SDK</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#download-as-part-of-the-google-cloud-sdk">kubectl</a> on your machine. Also, you need to authenticate docker to access Google Container Registry (GCR) following this <a href="https://cloud.google.com/container-registry/docs/pushing-and-pulling">guide</a>.</p>
@@ -785,7 +785,7 @@ docker push gcr.io/<span class="o">[</span>your-project-name<span class="o">]</s
 </pre></div>
 
 
-<p>For detailed docs on <code>fiber</code> command, check out <a href="/cli">here</a>.</p>
+<p>For detailed docs on <code>fiber</code> command, check out <a href="../cli/">here</a>.</p>
 <h3 id="resource-limits">Resource Limits<a class="headerlink" href="#resource-limits" title="Permanent link">&para;</a></h3>
 <p>Now that we can run our program on a computer cluster, it's important to think about how much resources each of the processes is going to use so that all the jobs can be properly scheduled. We can specify how many CPU cores, how much memory and how many GPU one process needs by using <code>fiber.meta</code> API.</p>
 <p>Take our Pi estimation program as an example. Because our <code>is_inside</code> can only use one CPU and doesn't need much memory, we can specify these resource limits by using <code>@fiber.meta</code> decorator. A modified version of <code>pi_estimation.py</code> looks like this:</p>

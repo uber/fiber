@@ -2,7 +2,7 @@ In this guide, we will walk through the basic features of Fiber. By the end of t
 
 ## A minimal example
 
-If you have already [installed](/installation) Fiber on your computer and your environment is [supported by Fiber](/platform), then we can get things started.
+If you have already [installed](installation.md) Fiber on your computer and your environment is [supported by Fiber](platforms.md), then we can get things started.
 
 Open your favorite editor and create a Python file called `hello_fiber.py` with the following content:
 
@@ -13,7 +13,7 @@ if __name__ == '__main__':
     fiber.Process(target=print, args=('Hello, Fiber!',)).start()
 ```
 
-You may find that the API is the same as Python's [multiprocessing](https://docs.python.org/3.6/library/multiprocessing.html) library. In fact, most of multiprocessing's API is supported by Fiber. You can take an program that is written with multiprocessing and changes a few lines to make it work with Fiber. We will see [some examples](/examples/) later.
+You may find that the API is the same as Python's [multiprocessing](https://docs.python.org/3.6/library/multiprocessing.html) library. In fact, most of multiprocessing's API is supported by Fiber. You can take an program that is written with multiprocessing and changes a few lines to make it work with Fiber. We will see [some examples](examples.md) later.
 
 Run it with the following command:
 
@@ -105,7 +105,7 @@ After the image is built, you will get an docker image called `fiber-pi-estimati
 
 ## Test your container
 
-With this image built, you can test if your program works inside the docker by running it with Fiber's docker backend. Fiber provides many different backends for different running environment. Checkout [here](/platoforms) for details.
+With this image built, you can test if your program works inside the docker by running it with Fiber's docker backend. Fiber provides many different backends for different running environment. Checkout [here](platforms.md) for details.
 
 You can run the following command to test if your recently build container works or not by running the following command:
 
@@ -134,7 +134,7 @@ You can checkout the containers launched by Fiber by running:
 ```
 docker ps -a|grep fiber-pi-estimation
 ```
-Alternatively, you can also create a `.fiberconfig` file to pass the [configurations](/config/) to Fiber. The equivalent config file is:
+Alternatively, you can also create a `.fiberconfig` file to pass the [configurations](config.md) to Fiber. The equivalent config file is:
 
 ```
 #.fiberconfig
@@ -142,7 +142,7 @@ backend=docker
 image=fiber-pi-estimation
 ```
 
-To learn more about Fiber's configuration system, check out [here](/config).
+To learn more about Fiber's configuration system, check out [here](config.md).
 
 ## Running on a computer cluster
 
@@ -215,7 +215,7 @@ And we should see the familiar output:
 Pi is roughly 3.141044
 ```
 
-For detailed docs on `fiber` command, check out [here](/cli).
+For detailed docs on `fiber` command, check out [here](cli.md).
 
 ## Resource Limits
 

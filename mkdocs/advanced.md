@@ -54,7 +54,7 @@ When we pass `--gpu 1` to `fiber` command, it created a new pod with 1 GPU alloc
 
 ### Using GPU with Fiber child process
 
-If the child process needs GPU, it can be done with Fiber's [resource limits](getting-started/#resource-limits). Simply add `@fiber.meta(gpu=x)` to your child process function that needs GPU, and Fiber will allocate GPU for your function when it runs.
+If the child process needs GPU, it can be done with Fiber's [resource limits](getting-started.md#resource-limits). Simply add `@fiber.meta(gpu=x)` to your child process function that needs GPU, and Fiber will allocate GPU for your function when it runs.
 
 Let's create an simple program with runs a child process with PyTorch and GPU. Create a file called `fiber_process_gpu.py`.
 
@@ -169,7 +169,7 @@ This file is persisted across runs
 
 ## Error handling
 
-Fiber's [`Pool`](/pool) supports error handling by default. This means when a `Pool` is created and all the Pool workers are up, if one of the worker crashes in the middle of the computation, then the tasks that was working on by that worker will be retried. Those tasks will be sent to other healthy workers and the master process will not be interrupted by this crash. At the same time, the crashed worker will be cleaned up and a new worker will be started to replace that crashed Pool worker.
+Fiber's [`Pool`](pool.md) supports error handling by default. This means when a `Pool` is created and all the Pool workers are up, if one of the worker crashes in the middle of the computation, then the tasks that was working on by that worker will be retried. Those tasks will be sent to other healthy workers and the master process will not be interrupted by this crash. At the same time, the crashed worker will be cleaned up and a new worker will be started to replace that crashed Pool worker.
 
 A Pool with a list of tasks can be viewed as a contract between the process that created the Pool and all worker processes. We define some concepts as below:
 
@@ -197,7 +197,7 @@ In this way, we can make sure that all the tasks that are put into the task queu
 
 ### Ring
 
-A [`Ring`](/experimental/ring/) in fiber stands for a list of processes who work collectively together. Unlike `Pool`, `Ring` doesn't have the concept of master process and worker process. All the members inside the `Ring` shared basically the same responsibility. Each node in the ring usually only talk to it's left and right neighbors. Each member in the Ring has a rank which range from `0` to the number of nodes - 1. Usually ring node 0 has some specially responsibility to gather additional information and usually also serves as a control node.
+A [`Ring`](experimental/ring.md) in fiber stands for a list of processes who work collectively together. Unlike `Pool`, `Ring` doesn't have the concept of master process and worker process. All the members inside the `Ring` shared basically the same responsibility. Each node in the ring usually only talk to it's left and right neighbors. Each member in the Ring has a rank which range from `0` to the number of nodes - 1. Usually ring node 0 has some specially responsibility to gather additional information and usually also serves as a control node.
 
 The ring topology is very common in machine learning when doing distributed [SGD](https://en.wikipedia.org/wiki/Stochastic_gradient_descent). Examples include [`torch.distributed`](https://pytorch.org/docs/stable/distributed.html), [`Horovod`](http://horovod.ai/), etc. But generally it's really hard to start this kind of workload on a computer cluster, especially when setting up the communication between different nodes are needed.
 

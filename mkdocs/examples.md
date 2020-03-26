@@ -2,7 +2,7 @@
 
 In this example, we'll show you how to integrate fiber with OpenAI baselines with just **one line** of code change.
 
-If your project is already using Python's multiprocessing, then integrate it with Fiber is very easy. Here, we are going to use [OpenAI Baselines](https://github.com/openai/baselines>) as an example to show how to easily run code written with multiprocessing on Kubernetes easily.
+If your project is already using Python's multiprocessing, then integrate it with Fiber is very easy. Here, we are going to use [OpenAI Baselines](https://github.com/openai/baselines) as an example to show how to easily run code written with multiprocessing on Kubernetes easily.
 
 ### Prepare the code
 
@@ -110,7 +110,7 @@ FIBER_BACKEND=docker FIBER_IMAGE=fiber-openai-baselines:latest python -m baselin
 
 ### Running on Kubernetes
 
-Now let's run our fiberized OpenAI baselines on Kubernetes. This time we run `1e7` time steps. Also, we want to store the output of the run on persistent storage. We can do this with `fiber` command's [mounting persistent volumes](/advanced/#working-with-persistent-storage) feature.
+Now let's run our fiberized OpenAI baselines on Kubernetes. This time we run `1e7` time steps. Also, we want to store the output of the run on persistent storage. We can do this with `fiber` command's [mounting persistent volumes](advanced.md#working-with-persistent-storage) feature.
 
 
 ```bash

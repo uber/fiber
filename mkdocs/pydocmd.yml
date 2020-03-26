@@ -86,8 +86,8 @@ theme:
 #extra_css:
   #- 'stylesheets/extra.css'
   #- 'stylesheets/monokai.css'
-extra_javascript:
-  - 'js/canvas.js'
+#extra_javascript:
+  #- 'js/canvas.js'
 
 markdown_extensions:
   - toc:

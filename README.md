@@ -28,7 +28,7 @@ Originally, it was developed to power large scale parallel scientific computatio
 pip install fiber
 ```
 
-Check [here](/installation) for details.
+Check [here](https://uber.github.io/fiber/installation/) for details.
 
 ## Quick Start
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 ```
 
 
-Fiber implements most of multiprocessing's API including `Process`, `SimpleQueue`, `Pool`, `Pipe`, `Manager` and it has its own extension to the multiprocessing's API to make it easy to compose large scale distributed applications. For the detailed API guild, check out [here](docs/api).
+Fiber implements most of multiprocessing's API including `Process`, `SimpleQueue`, `Pool`, `Pipe`, `Manager` and it has its own extension to the multiprocessing's API to make it easy to compose large scale distributed applications. For the detailed API guild, check out [here](https://uber.github.io/fiber/process/).
 
 ### Running on a Kubernetes cluster
 
@@ -103,10 +103,11 @@ This command will look for local Dockerfile and build a docker image and push it
 We are interested in supporting other luster management systems like [Slurm](https://slurm.schedmd.com/), if you want to contribute to it please let us know.
 
 
-Check [here](/platforms) for details.
+Check [here](https://uber.github.io/fiber/platforms/) for details.
 
 ## Documentation
-The documentation, including method/API references, can be found [here](docs/README.md).
+
+The documentation, including method/API references, can be found [here](https://uber.github.io/fiber/getting-started/).
 
 
 ## Testing

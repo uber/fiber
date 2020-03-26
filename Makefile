@@ -29,4 +29,4 @@ docs:
 	cp docs/img/favicon.ico docs/favicon.ico
 
 serve:
-	cd mkdocs && pydocmd serve --livereload
+	cd mkdocs && pydocmd serve -a 0.0.0.0:8000 --livereload

@@ -1159,10 +1159,10 @@ h1.intro-header::before {
   padding: 0;
   outline: 0;
   border: none;
-  width: 144px;
+  width: 140px;
   height: 48px;
   background: url("../images/logo.png") no-repeat center;
-  background-size: 144px 48px;
+  background-size: 140px 48px;
   font: 0/0 a;
   text-shadow: none;
   color: transparent;
@@ -1330,9 +1330,9 @@ h1.intro-header::before {
 
 @media only screen and (max-width: 768px) {
   .header-logo a {
-    width: 88px;
+    width: 58px;
     height: 20px;
-    background-size: 88px 20px;
+    background-size: 58px 20px;
   }
   #header-nav-wrap {
     display: none;
@@ -1511,7 +1511,7 @@ h1.intro-header::before {
 
 .home-image-right img {
   vertical-align: bottom;
-  width: 90%;
+  width: 80%;
 }
 
 
@@ -1762,7 +1762,7 @@ html[data-useragent*='MSIE 10.0'] .home-scrolldown,
     -ms-transform: translateX(-50%);
     transform: translateX(-50%);
     padding: 0;
-    margin-bottom: -378px;
+    margin-bottom: -150px;
   }
 }
 

@@ -115,14 +115,12 @@ Now let's run our fiberized OpenAI baselines on Kubernetes. This time we run `1e
 
 ```bash
 $ fiber run -v fiber-pv-claim python -m baselines.run --alg=ppo2 --env=CartPole-v0 --network=mlp --num_timesteps=1e7 --num_env 2 --log_path=/persistent/baselines/logs/
-...
-Created pod: baselines-d00eb2ef
 ```
 
-To copy the output file from the running job:
+It should output something like this:
 
-```bash
-kubectl cp baselines-d00eb2ef:/persistent/baselines/logs baselines-logs
+```
+Created pod: baselines-d00eb2ef
 ```
 
 After the job is done, you can copy the logs with these commands:

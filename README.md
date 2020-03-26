@@ -133,6 +133,18 @@ We document versions and changes in our changelog - see the [CHANGELOG.md](CHANG
 ## License
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
+## Cite Fiber
+
+```
+@misc{zhi2020fiber,
+    title={Fiber: A Platform for Efficient Development and Distributed Training for Reinforcement Learning and Population-Based Methods},
+    author={Jiale Zhi and Rui Wang and Jeff Clune and Kenneth O. Stanley},
+    year={2020},
+    eprint={2003.11164},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG}
+}
+```
+
 ## Acknowledgments
 * Special thanks to Piero Molino for designing the logo for Fiber
-

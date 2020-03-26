@@ -26,6 +26,12 @@
     white-space: pre-wrap;
     text-align: left;
     display: block;
+    /*
+    margin-left: 12em;
+    margin-right: 12em;
+    padding-left: 2em;
+    padding-right: 2em;
+    */
 }
 
 #performance {

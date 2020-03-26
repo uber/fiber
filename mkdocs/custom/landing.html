@@ -291,24 +291,26 @@
         <div class="row">
         <h1 class="intro-header" data-aos="fade-up">Code example: Estimating Pi with Fiber</h1>
         <div class="col-twelve", data-aos="fade-up">
+            <div class="col-full">
         <code class="code-block">
-            from fiber import Pool
-            import random
+from fiber import Pool
+import random
 
-            NUM_SAMPLES = int(1e6)
+NUM_SAMPLES = int(1e6)
 
-            def is_inside(p):
-                x, y = random.random(), random.random()
-                return x * x + y * y < 1
+def is_inside(p):
+    x, y = random.random(), random.random()
+    return x * x + y * y < 1
 
-            def main():
-                pool = Pool(processes=4)
-                pi = 4.0 * sum(pool.map(is_inside, range(0, NUM_SAMPLES))) / NUM_SAMPLES
-                print("Pi is roughly {}".format(pi))
+def main():
+    pool = Pool(processes=4)
+    pi = 4.0 * sum(pool.map(is_inside, range(0, NUM_SAMPLES))) / NUM_SAMPLES
+    print("Pi is roughly {}".format(pi))
 
-            if __name__ == '__main__':
-                main()
+if __name__ == '__main__':
+    main()
         </code>
+        </div>
         </div>
         </div>
 

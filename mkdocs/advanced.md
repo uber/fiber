@@ -207,7 +207,7 @@ An example of using `Ring` with `torch.distributed` can be found in [`examples/r
 
 As mentioned above, Ring needs a initialization function and a target function. In this example, `pytorch_ring_init` is the initialization function. In it, we initialize PyTorch and set environment variables to tell PyTorch where is the master node so that all the nodes can be discovered by PyTorch. And `pytorch_run_sgd` is the target function that does distributed SGD on each of the Ring node. Fiber will first call `pytorch_ring_init` on each of the node to set up the ring and then call `pytorch_run_sgd` to do the actual distributed SGD.
 
-<img src="/img/ring.png" alt="ring" width="500" align=middle />
+<img src="../img/ring.png" alt="ring" width="500" align=middle />
 
 <sup><sup>
 **Fiber Ring**. A Fiber Ring with 4 nodes is depicted. Ring node 0 and ring node 3 run on the same machine but in two different containers. Ring nodes 1 and 2 both run on a separate machine. All these processes collectively run a copy of the same function and communicate with each other during the run.

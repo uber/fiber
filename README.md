@@ -9,7 +9,8 @@
 [**Project Home**](https://uber.github.io/fiber/) &nbsp;
 [**Blog**](https://uber.github.io/fiber/introduction/) &nbsp;
 [**Documents**](https://uber.github.io/fiber/getting-started/) &nbsp;
-[**Paper**](https://arxiv.org/abs/2003.11164)
+[**Paper**](https://arxiv.org/abs/2003.11164) &nbsp;
+[**Media Coverage**](https://venturebeat.com/2020/03/26/uber-details-fiber-a-framework-for-distributed-ai-model-training/)
 
 # Fiber
 

@@ -6,6 +6,11 @@
 
 <img src="docs/img/fiber_logo.png" alt="drawing" width="550"/>
 
+[**Project Home**](https://uber.github.io/fiber/) &nbsp;
+[**Blog**](https://uber.github.io/fiber/introduction/) &nbsp;
+[**Documents**](https://uber.github.io/fiber/getting-started/) &nbsp;
+[**Paper**](https://arxiv.org/abs/2003.11164)
+
 # Fiber
 
 ### Distributed Computing for AI Made Simple
@@ -21,6 +26,7 @@ Fiber is a Python distributed computing library for modern computer clusters.
 * It it reliable. Fiber has built-in error handling when you are running a pool of workers. Users can focus on writing the actual application code instead of dealing with crashed workers.
 
 Originally, it was developed to power large scale parallel scientific computation projects like [POET](https://eng.uber.com/poet-open-ended-deep-learning/) and it has been used to power similar projects within Uber.
+
 
 ## Installation
 

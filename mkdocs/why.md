@@ -4,7 +4,7 @@ It is well known that doing distributed computing is hard. After talking to many
 
 * There is a huge gap between making code work locally on laptops or desktops and running code on a production cluster. You can make MPI work locally but it's a completely different story for running it on a computer cluster.
 * No dynamic scaling is available. If you launch a job that requires a large amount of resources, then most likely you'll need to wait until everything is allocated before you can run your job. This makes it less efficient.
-* Error handling is missing. While running, some jobs may fail. And you may be put into a very nasty situation where you have to recover part of the result or discuss the whole run.
+* Error handling is missing. While running, some jobs may fail. And you may be put into a very nasty situation where you have to recover part of the result or discard the whole run.
 * High learning cost. Each system has different APIs and ways of programming. In order to launch jobs with a new system, a user has to learn a set of completely different knowledge before jobs can be launched.
 * Limitation in the programming model. Sometimes it's hard to make framework A work on framework B because the programming model of framework B is not compatible with framework A.
 

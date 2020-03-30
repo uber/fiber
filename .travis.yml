@@ -12,6 +12,4 @@ services:
   - docker
 # command to run tests
 script:
-  - fossa init
-  - fossa analyze
   - make test

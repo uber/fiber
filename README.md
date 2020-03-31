@@ -107,7 +107,7 @@ This command will look for local Dockerfile and build a docker image and push it
 * Supported cluster management systems:
 	* Kubernetes (Tested with Google Kubernetes Engine on Google cloud)
 
-We are interested in supporting other luster management systems like [Slurm](https://slurm.schedmd.com/), if you want to contribute to it please let us know.
+We are interested in supporting other cluster management systems like [Slurm](https://slurm.schedmd.com/), if you want to contribute to it please let us know.
 
 
 Check [here](https://uber.github.io/fiber/platforms/) for details.

@@ -150,7 +150,13 @@ With all the previous steps finished, now it's time to try some distributed comp
 
 Here we use [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com/) as an example. You'll need to install [Google Cloud SDK](https://cloud.google.com/sdk/docs) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#download-as-part-of-the-google-cloud-sdk) on your machine. Also, you need to authenticate docker to access Google Container Registry (GCR) following this [guide](https://cloud.google.com/container-registry/docs/pushing-and-pulling).
 
-We first tag our image and push it to a container registry that is accessible by your Kubernetes cluster.
+We first config the cluster to grant permission to the default service account so that Fiber can access Kubernetes API from within the cluster.
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/uber/fiber/master/configs/rbac.yaml
+```
+
+Then we tag our image and push it to a container registry that is accessible by your Kubernetes cluster.
 ```bash
 docker tag fiber-pi-estimation:latest gcr.io/[your-project-name]/fiber-pi-estimation:latest
 docker push gcr.io/[your-project-name]/fiber-pi-estimation:latest

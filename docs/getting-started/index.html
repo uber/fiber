@@ -735,7 +735,12 @@ image=fiber-pi-estimation
 <h3 id="running-on-a-computer-cluster">Running on a computer cluster<a class="headerlink" href="#running-on-a-computer-cluster" title="Permanent link">&para;</a></h3>
 <p>With all the previous steps finished, now it's time to try some distributed computing on a real computer cluster. The good thing is that most of the work has already been done by now.</p>
 <p>Here we use <a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine</a> on <a href="https://cloud.google.com/">Google Cloud</a> as an example. You'll need to install <a href="https://cloud.google.com/sdk/docs">Google Cloud SDK</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#download-as-part-of-the-google-cloud-sdk">kubectl</a> on your machine. Also, you need to authenticate docker to access Google Container Registry (GCR) following this <a href="https://cloud.google.com/container-registry/docs/pushing-and-pulling">guide</a>.</p>
-<p>We first tag our image and push it to a container registry that is accessible by your Kubernetes cluster.</p>
+<p>We first config the cluster to grant permission to the default service account so that Fiber can access Kubernetes API from within the cluster.</p>
+<div class="codehilite"><pre><span></span>kubectl apply -f https://raw.githubusercontent.com/uber/fiber/master/configs/rbac.yaml
+</pre></div>
+
+
+<p>Then we tag our image and push it to a container registry that is accessible by your Kubernetes cluster.</p>
 <div class="codehilite"><pre><span></span>docker tag fiber-pi-estimation:latest gcr.io/<span class="o">[</span>your-project-name<span class="o">]</span>/fiber-pi-estimation:latest
 docker push gcr.io/<span class="o">[</span>your-project-name<span class="o">]</span>/fiber-pi-estimation:latest
 </pre></div>

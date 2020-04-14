@@ -25,9 +25,7 @@ how to use this command.
 """
 
 import os
-import time
-import sys
-import subprocess
+import subprocess as sp
 from pathlib import Path
 
 import click
@@ -86,71 +84,11 @@ def select_docker_file(files):
 
 def get_default_project_gcp():
     """Get default GCP project name."""
-    name = subprocess.check_output(
+    name = sp.check_output(
         "gcloud config list --format 'value(core.project)' 2>/dev/null",
         shell=True,
     )
     return name.decode("utf-8").strip()
-
-
-def get_docker_registry_image_name(image, info):
-    """Generate a full docker image name with registry information and tags."""
-    if "aws" in info:
-        # AWS registry
-        region = info["aws"]["region"]
-        registry = info["aws"]["registry"]
-        os.system(
-            "aws ecr create-repository --region {} --repository-name {}".format(
-                region, image
-            )
-        )
-        image_name = "{}/{}:latest".format(registry, image)
-        return image_name
-
-    elif "gcp" in info:
-        # GCP registry
-        proj = info["gcp"]["project"]
-        registry = info["gcp"]["registry"]
-        return "{}/{}/{}:latest".format(registry, proj, image)
-
-    raise RuntimeError(
-        "Bad info dict: {}. None of the supported keys ({}) are found.",
-        info,
-        ["aws", "gcp"],
-    )
-
-
-def build_docker_image(dockerfile, image_base_name, full_image_name, info):
-
-    exitcode = os.system(
-        "docker build -f {} . -t {}".format(dockerfile, image_base_name)
-    )
-    if exitcode != 0:
-        sys.exit(exitcode)
-
-    image_name = "{}:latest".format(image_base_name)
-    exitcode = os.system("docker tag {} {}".format(image_name, full_image_name))
-    if exitcode != 0:
-        return exitcode
-
-    exitcode = os.system("docker push {}".format(full_image_name))
-    if exitcode != 0:
-        if "aws" in info:
-            region = info["aws"]["region"]
-            registry = info["aws"]["registry"]
-            raise RuntimeError(
-                "Failed to push images {}."
-                "If your authorization token has expired. \nPlease run "
-                '"aws ecr get-login-password --region {} | docker login --username AWS --password-stdin {}" to authenticate'.format(
-                    full_image_name, region, registry
-                )
-            )
-        else:
-            raise RuntimeError(
-                "Failed to push images {}.".format(full_image_name)
-            )
-
-    return 0
 
 
 def parse_file_path(path):
@@ -229,8 +167,8 @@ def detect_platforms():
 
     for i, cmd in enumerate(commands):
         try:
-            subprocess.check_call(["which", cmd], stdout=subprocess.DEVNULL)
-        except subprocess.CalledProcessError as e:
+            sp.check_call(["which", cmd], stdout=sp.DEVNULL)
+        except sp.CalledProcessError:
             continue
 
         found_platforms.append(platforms[i])
@@ -267,6 +205,78 @@ def prompt_choices(choices, prompt):
     return choices[num]
 
 
+class DockerImageBuilder:
+    def __init__(self, registry=""):
+        self.registry = registry
+
+    def get_docker_registry_image_name(image_base_name):
+        return image_base_name
+
+    def build(self):
+        files = find_docker_files()
+        n = len(files)
+        if n == 0:
+            raise RuntimeError("No docker files found in current directory")
+
+        dockerfile = select_docker_file(files)
+
+        cwd = os.path.basename(os.getcwd())
+        image_base_name = cwd
+
+        sp.check_call(
+            "docker build -f {} . -t {}".format(dockerfile, image_base_name),
+            shell=True,
+        )
+
+        self.image_name = "{}:latest".format(image_base_name)
+
+        self.tag()
+        self.push()
+
+        return self.full_image_name
+
+    def tag(self):
+        self.full_image_name = self.image_name
+
+    def push(self):
+        sp.check_call(
+            "docker push {}".format(self.full_image_name), shell=True,
+        )
+
+    def docker_tag(self, in_name, out_name):
+        sp.check_call("docker tag {} {}".format(in_name, out_name), shell=True)
+
+
+class AWSImageBuilder(DockerImageBuilder):
+    def __init__(self, registry):
+        self.registry = registry
+
+    def tag(self):
+        image_name = self.image_name
+        full_image_name = "{}/{}".format(self.registry, self.image_name)
+
+        self.docker_tag(image_name, full_image_name)
+
+        self.full_image_name = full_image_name
+        return full_image_name
+
+
+class GCPImageBuilder(DockerImageBuilder):
+    def __init__(self, registry="gcr.io"):
+        self.registry = registry
+
+    def tag(self):
+        image_name = self.image_name
+        proj = get_default_project_gcp()
+
+        full_image_name = "{}/{}/{}".format(self.registry, proj, image_name)
+        self.docker_tag(image_name, full_image_name)
+
+        self.full_image_name = full_image_name
+
+        return full_image_name
+
+
 @click.command(context_settings=dict(ignore_unknown_options=True,))
 @click.option("-a", "--attach", is_flag=True)
 @click.option("--build/--no-build", default=True)
@@ -277,77 +287,42 @@ def prompt_choices(choices, prompt):
 @click.argument("args", nargs=-1)
 def run(attach, build, gpu, cpu, memory, volume, args):
     """Run a command on a kubernetes cluster with fiber."""
-    print('Running "{}" on Kubernetes cluster'.format(" ".join(args)))
+    platform = CONFIG["platform"]
+    print(
+        'Running "{}" on Kubernetes cluster ({}) '.format(
+            " ".join(args), platform
+        )
+    )
 
-    files = find_docker_files()
-
-    n = len(files)
-    if n == 0:
-        print("No docker files found")
-        return 1
-
-    cwd = os.path.basename(os.getcwd())
-    image_base_name = cwd
-
-    registry = CONFIG["docker_registry"]
-    info = {}
-
-    if registry is None:
-        platforms = detect_platforms()
-        if len(platforms) > 1:
-            choice = prompt_choices(
-                platforms,
-                "Found many providers, which provider do you want to use",
-                "providers",
-            )
-        elif len(platforms) == 1:
-            choice = platforms[0]
-        else:
-            choice = prompt_choices(
-                ["gcp", "aws"], "Which provider do you want to use", "providers"
-            )
-
-        if choice == "gcp":
-            registry = "gcr.io"
-        elif choice == "aws":
+    if platform == "gcp":
+        builder = GCPImageBuilder()
+    elif platform == "aws":
+        registry = CONFIG["docker_registry"]
+        if not registry:
             registry = input(
-                "What docker registry do you plan to use?\nFor AWS: [aws_account_id].dkr.ecr.[region].amazonaws.com\nFor GCP: gcr.io\n> "
+                "What docker registry do you plan to use? "
+                "AWS registry format: "
+                "\"[aws_account_id].dkr.ecr.[region].amazonaws.com\"\n> "
             )
-        else:
-            # Should never go here
-            raise ValueError("bad choice")
-
-    if registry.endswith(".amazonaws.com"):
-        parts = registry.split(".")
-        region = parts[-3]
-
-        info["aws"] = {
-            "region": region,
-            "registry": registry,
-        }
-
-    elif registry.endswith("gcr.io"):
-        project = get_default_project_gcp()
-        info["gcp"] = {
-            "project": project,
-            "registry": registry,
-        }
+        builder = AWSImageBuilder(registry)
     else:
-        raise ValueError("Unrecognized docker registry: {}".format(registry))
+        raise ValueError('Unknow platform "{}"'.format(platform))
 
-    full_image_name = get_docker_registry_image_name(image_base_name, info)
+    full_image_name = builder.build()
 
+    """
     if build:
         dockerfile = select_docker_file(files)
         build_docker_image(dockerfile, image_base_name, full_image_name, info)
+    """
 
     # run this to refresh access tokens
     exitcode = os.system("kubectl get po > /dev/null")
 
+    job_name = os.path.basename(os.getcwd())
+
     k8s_backend = Backend(incluster=False)
-    job_spec = core.JobSpec(
-        image=full_image_name, name=image_base_name, command=args,
-    )
+    job_spec = core.JobSpec(image=full_image_name, name=job_name, command=args,)
     if gpu:
         job_spec.gpu = gpu
 
@@ -383,9 +358,31 @@ def run(attach, build, gpu, cpu, memory, volume, args):
     return 0
 
 
+def auto_select_platform():
+    platforms = detect_platforms()
+    if len(platforms) > 1:
+        choice = prompt_choices(
+            platforms,
+            "Found many providers, which provider do you want to use",
+            "providers",
+        )
+    elif len(platforms) == 1:
+        choice = platforms[0]
+    else:
+        choice = prompt_choices(
+            ["gcp", "aws"], "Which provider do you want to use", "providers"
+        )
+
+    return choice
+
+
 @click.group()
 @click.option("-d", "--docker-registry")
-def main(docker_registry):
+@click.option("--aws", is_flag=True, help="Run commands on Amazon AWS")
+@click.option(
+    "--gcp", is_flag=True, help="Run commands on Google Cloud Platform"
+)
+def main(docker_registry, aws, gcp):
     """fiber command line tool that helps to manage workflow of distributed
     fiber applications.
     """
@@ -393,6 +390,23 @@ def main(docker_registry):
         CONFIG["docker_registry"] = docker_registry
     else:
         CONFIG["docker_registry"] = None
+
+    platforms = [aws, gcp]
+    platform_names = ["aws", "gcp"]
+    n = sum(platforms)
+    if n > 1:
+        raise ValueError(
+            'Only one of "{}" can be set'.format(
+                ", ".join(["--" + p for p in platform_names])
+            )
+        )
+
+    if aws:
+        CONFIG["platform"] = "aws"
+    elif gcp:
+        CONFIG["platform"] = "gcp"
+    else:
+        CONFIG["platform"] = auto_select_platform()
 
 
 main.add_command(run)

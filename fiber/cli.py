@@ -25,6 +25,7 @@ how to use this command.
 """
 
 import os
+import json
 import subprocess as sp
 from pathlib import Path
 
@@ -221,7 +222,10 @@ class DockerImageBuilder:
         dockerfile = select_docker_file(files)
 
         cwd = os.path.basename(os.getcwd())
+
+        # Use current dir as image base name
         image_base_name = cwd
+        self.image_base_name = image_base_name
 
         sp.check_call(
             "docker build -f {} . -t {}".format(dockerfile, image_base_name),
@@ -250,6 +254,8 @@ class DockerImageBuilder:
 class AWSImageBuilder(DockerImageBuilder):
     def __init__(self, registry):
         self.registry = registry
+        parts = registry.split(".")
+        self.region = parts[-3]
 
     def tag(self):
         image_name = self.image_name
@@ -259,6 +265,49 @@ class AWSImageBuilder(DockerImageBuilder):
 
         self.full_image_name = full_image_name
         return full_image_name
+
+    def need_new_repo(self):
+        output = sp.check_output(
+            "aws ecr describe-repositories --region {}".format(self.region),
+            shell=True,
+        )
+        res = json.loads(output)
+
+        if "repositories" not in res:
+            return True
+
+        repos = res["repositories"]
+        for repo in repos:
+            # use self.image_base_name as repo name
+            if repo["repositoryName"] == self.image_base_name:
+                return False
+
+        return True
+
+    def create_repo_if_needed(self):
+        if self.need_new_repo():
+            sp.check_call(
+                "aws ecr create-repository --region {} --repository-name {}".format(
+                    self.region, self.image_base_name
+                ),
+                shell=True,
+            )
+
+        return
+
+    def push(self):
+        self.create_repo_if_needed()
+
+        try:
+            super().push()
+        except sp.CalledProcessError:
+            raise RuntimeError(
+                "Failed to push images {}. "
+                "Most likely your authorization token has expired. \nPlease run "
+                '"aws ecr get-login-password --region {} | docker login --username AWS --password-stdin {}" to authenticate'.format(
+                    self.full_image_name, self.region, self.registry
+                )
+            )
 
 
 class GCPImageBuilder(DockerImageBuilder):
@@ -302,7 +351,7 @@ def run(attach, build, gpu, cpu, memory, volume, args):
             registry = input(
                 "What docker registry do you plan to use? "
                 "AWS registry format: "
-                "\"[aws_account_id].dkr.ecr.[region].amazonaws.com\"\n> "
+                '"[aws_account_id].dkr.ecr.[region].amazonaws.com"\n> '
             )
         builder = AWSImageBuilder(registry)
     else:

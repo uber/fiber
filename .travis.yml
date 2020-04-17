@@ -1,9 +1,6 @@
 language: python
 python:
   - "3.6"      # current default Python on Travis CI
-# command to install dependencies
-before_script:
-  - "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
 install:
   - pip3 install -e .[test]
   - pip3 install -e .

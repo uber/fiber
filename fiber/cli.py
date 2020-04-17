@@ -31,6 +31,7 @@ from pathlib import Path
 
 import click
 
+import fiber
 import fiber.core as core
 from fiber.kubernetes_backend import Backend
 from fiber.core import ProcessStatus
@@ -431,6 +432,7 @@ def auto_select_platform():
 @click.option(
     "--gcp", is_flag=True, help="Run commands on Google Cloud Platform"
 )
+@click.version_option(version=fiber.__version__)
 def main(docker_registry, aws, gcp):
     """fiber command line tool that helps to manage workflow of distributed
     fiber applications.

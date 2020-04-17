@@ -33,11 +33,16 @@ import click
 
 import fiber
 import fiber.core as core
-from fiber.kubernetes_backend import Backend
 from fiber.core import ProcessStatus
 
 
 CONFIG = {}
+
+
+def get_backend(platform):
+    from fiber.kubernetes_backend import Backend as K8sBackend
+    backend = K8sBackend(incluster=False)
+    return backend
 
 
 def find_docker_files():
@@ -109,6 +114,8 @@ def parse_file_path(path):
 @click.argument("dst")
 def cp(src, dst):
     """Copy file from a persistent storage"""
+    platform = CONFIG["platform"]
+
     parts_src = parse_file_path(src)
     parts_dst = parse_file_path(dst)
 
@@ -124,7 +131,8 @@ def cp(src, dst):
     else:
         raise ValueError("Must copy/to from a persistent volume")
 
-    k8s_backend = Backend(incluster=False)
+    k8s_backend = get_backend(platform)
+
     job_spec = core.JobSpec(
         image="alpine:3.10",
         name="fiber-cp",
@@ -371,7 +379,8 @@ def run(attach, build, gpu, cpu, memory, volume, args):
 
     job_name = os.path.basename(os.getcwd())
 
-    k8s_backend = Backend(incluster=False)
+    k8s_backend = get_backend(platform)
+
     job_spec = core.JobSpec(image=full_image_name, name=job_name, command=args,)
     if gpu:
         job_spec.gpu = gpu
@@ -432,7 +441,7 @@ def auto_select_platform():
 @click.option(
     "--gcp", is_flag=True, help="Run commands on Google Cloud Platform"
 )
-@click.version_option(version=fiber.__version__)
+@click.version_option(version=fiber.__version__, prog_name="fiber")
 def main(docker_registry, aws, gcp):
     """fiber command line tool that helps to manage workflow of distributed
     fiber applications.

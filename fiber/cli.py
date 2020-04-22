@@ -420,13 +420,12 @@ def auto_select_platform():
         choice = prompt_choices(
             platforms,
             "Found many providers, which provider do you want to use",
-            "providers",
         )
     elif len(platforms) == 1:
         choice = platforms[0]
     else:
         choice = prompt_choices(
-            ["gcp", "aws"], "Which provider do you want to use", "providers"
+            ["gcp", "aws"], "Which provider do you want to use"
         )
 
     return choice

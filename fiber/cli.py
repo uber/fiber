@@ -337,13 +337,13 @@ class GCPImageBuilder(DockerImageBuilder):
 
 @click.command(context_settings=dict(ignore_unknown_options=True,))
 @click.option("-a", "--attach", is_flag=True)
-@click.option("--build/--no-build", default=True)
+@click.option("--image")
 @click.option("--gpu")
 @click.option("--cpu")
 @click.option("--memory")
 @click.option("-v", "--volume")
 @click.argument("args", nargs=-1)
-def run(attach, build, gpu, cpu, memory, volume, args):
+def run(attach, image, gpu, cpu, memory, volume, args):
     """Run a command on a kubernetes cluster with fiber."""
     platform = CONFIG["platform"]
     print(
@@ -352,27 +352,24 @@ def run(attach, build, gpu, cpu, memory, volume, args):
         )
     )
 
-    if platform == "gcp":
-        builder = GCPImageBuilder()
-    elif platform == "aws":
-        registry = CONFIG["docker_registry"]
-        if not registry:
-            registry = input(
-                "What docker registry do you plan to use? "
-                "AWS registry format: "
-                '"[aws_account_id].dkr.ecr.[region].amazonaws.com"\n> '
-            )
-        builder = AWSImageBuilder(registry)
+    if image:
+        full_image_name = image
     else:
-        raise ValueError('Unknow platform "{}"'.format(platform))
+        if platform == "gcp":
+            builder = GCPImageBuilder()
+        elif platform == "aws":
+            registry = CONFIG["docker_registry"]
+            if not registry:
+                registry = input(
+                    "What docker registry do you plan to use? "
+                    "AWS registry format: "
+                    '"[aws_account_id].dkr.ecr.[region].amazonaws.com"\n> '
+                )
+            builder = AWSImageBuilder(registry)
+        else:
+            raise ValueError('Unknow platform "{}"'.format(platform))
 
-    full_image_name = builder.build()
-
-    """
-    if build:
-        dockerfile = select_docker_file(files)
-        build_docker_image(dockerfile, image_base_name, full_image_name, info)
-    """
+        full_image_name = builder.build()
 
     # run this to refresh access tokens
     exitcode = os.system("kubectl get po > /dev/null")

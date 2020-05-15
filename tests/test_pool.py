@@ -90,6 +90,9 @@ class TestPool():
 
     def test_pool_more(self):
         pool = Pool(4)
+
+        # explicitly start workers instead of lazy start
+        pool.start_workers()
         res = pool.map(f, [i for i in range(1000)])
 
         pool.wait_until_workers_up()
@@ -145,6 +148,8 @@ class TestPool():
         try:
             fiber_config.cpu_per_job = 2
             pool = Pool(4)
+            # explicitly start workers instead of lazy start
+            pool.start_workers()
             # wait for all the workers to start
             pool.wait_until_workers_up()
 
@@ -170,6 +175,8 @@ class TestPool():
             queues = [(SimpleQueue(), SimpleQueue()) for _ in range(n_envs)]
             pool = Pool(n_envs)
 
+            # explicitly start workers instead of lazy start
+            pool.start_workers()
             print("waiting for all workers to be up")
             # wait some time for workers to start
             pool.wait_until_workers_up()
@@ -232,6 +239,9 @@ class TestPool():
         tasks = 5000
         duration = 0.001
 
+        # explicitly start workers instead of lazy start
+        pool.start_workers()
+
         pool.wait_until_workers_up()
 
         res = [None] * workers
@@ -258,6 +268,8 @@ class TestPool():
     def test_error_handling(self):
         try:
             pool = fiber.Pool(3, error_handling=True)
+            # explicitly start workers instead of lazy start
+            pool.start_workers()
             pool.wait_until_workers_up()
             res = pool.map(
                 random_error_worker, [i for i in range(300)], chunksize=1
@@ -272,6 +284,8 @@ class TestPool():
     def test_error_handling_unordered(self):
         try:
             pool = fiber.Pool(3, error_handling=True)
+            # explicitly start workers instead of lazy start
+            pool.start_workers()
             pool.wait_until_workers_up()
             res_iter = pool.imap_unordered(
                 random_error_worker, [i for i in range(300)], chunksize=1

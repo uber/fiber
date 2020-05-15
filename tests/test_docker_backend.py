@@ -89,9 +89,12 @@ class TestDockerBackend():
         fiber.backend._backends["docker"] = DelayedBackend()
 
         p = fiber.Pool(4)
+        # explicitly start workers instead of lazy start
+        p.start_workers()
+        p.wait_until_workers_up()
+
         res = p.map(square_worker, [1, 2, 3, 4])
 
-        p.wait_until_workers_up()
         p.terminate()
         fiber.backend._backends["docker"] = old_backend
 

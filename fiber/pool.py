@@ -923,8 +923,9 @@ class ZPool():
         )
         td.daemon = True
         td._state = RUN
-        td.start()
+        # `td` will be started later by `lazy_start_workers` later
         self._worker_handler = td
+        self._worker_handler_started = False
 
         # launch task handler
         td = threading.Thread(
@@ -1100,12 +1101,34 @@ class ZPool():
         if self._state != RUN:
             raise ValueError("Pool is not running")
         # assert kwds == {}, 'kwds not supported yet'
+        self.lazy_start_workers(func)
 
         seq = self._inventory.add(1)
         self._task_put((seq, 0, func, [(args, kwds)], True))
         res = ApplyResult(seq, self._inventory)
 
         return res
+
+    def start_workers(self):
+        self._worker_handler.start()
+        self._worker_handler_started = True
+
+    def lazy_start_workers(self, func):
+        if hasattr(func, "__fiber_meta__"):
+            if (
+                not hasattr(zpool_worker, "__fiber_meta__")
+                or zpool_worker.__fiber_meta__ != func.__fiber_meta__
+            ):
+                if self._worker_handler_started:
+                    raise RuntimeError(
+                        "Cannot run function that has different resource "
+                        "requirements acceptable by this pool. Try creating a "
+                        "different pool for it."
+                    )
+                zpool_worker.__fiber_meta__ = func.__fiber_meta__
+
+        if not self._worker_handler_started:
+            self.start_workers()
 
     def map_async(self, func, iterable, chunksize=None, callback=None,
                   error_callback=None):
@@ -1142,6 +1165,8 @@ class ZPool():
 
         if not hasattr(iterable, '__len__'):
             iterable = list(iterable)
+
+        self.lazy_start_workers(func)
 
         seq = self._inventory.add(len(iterable))
 
@@ -1258,6 +1283,8 @@ class ZPool():
 
         if not hasattr(iterable, '__len__'):
             iterable = list(iterable)
+
+        self.lazy_start_workers(func)
 
         seq = self._inventory.add(len(iterable))
 

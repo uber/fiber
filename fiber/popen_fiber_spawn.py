@@ -163,7 +163,7 @@ class Popen(object):
         if getattr(self, "ident", None):
             # clean up entry in event_dict
             global _event_dict
-            logger.debug("cleanup entry _event_dict[%s]", self.ident)
+            #logger.debug("cleanup entry _event_dict[%s]", self.ident)
             _event_dict.pop(self.ident, None)
 
     def __repr__(self):

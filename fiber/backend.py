@@ -53,7 +53,7 @@ def auto_select_backend():
     return name
 
 
-def get_backend(name=None):
+def get_backend(name=None, **kwargs):
     """
     Returns a working Fiber backend. If `name` is specified, returns a
     backend specified by `name`.
@@ -71,6 +71,6 @@ def get_backend(name=None):
     _backend = _backends.get(name, None)
     if _backend is None:
         _backend = importlib.import_module("fiber.{}_backend".format(
-            name)).Backend()
+            name)).Backend(**kwargs)
         _backends[name] = _backend
     return _backend

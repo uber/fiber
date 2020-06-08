@@ -29,6 +29,7 @@ class Backend(core.Backend):
     has already provided us all the necessary APIs to control subprocess, we
     just need to call them here.
     """
+    name = "local"
 
     def __init__(self):
         pass

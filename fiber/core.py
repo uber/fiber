@@ -77,6 +77,10 @@ class Job(object):
 
 
 class Backend(object):
+    @property
+    def name(self):
+        raise NotImplementedError
+
     def create_job(self, job_spec):
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError

@@ -53,6 +53,8 @@ class DockerJob(core.Job):
 
 
 class Backend(core.Backend):
+    name = "docker"
+
     def __init__(self):
         # Based on this link, no lock is needed accessing self.client
         # https://github.com/docker/docker-py/issues/619

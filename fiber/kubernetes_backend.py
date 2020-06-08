@@ -46,6 +46,8 @@ PHASE_STATUS_MAP = {
 
 
 class Backend(core.Backend):
+    name = "kubernetes"
+
     def __init__(self, incluster=True):
         if incluster:
             config.load_incluster_config()

@@ -141,9 +141,13 @@ def fiber_background(listen_addr, event_dict):
 def get_python_exe(backend_name):
     if backend_name == "docker":
         # TODO(jiale) fix python path
-        return "/usr/local/bin/python"
+        python_exe = "/usr/local/bin/python"
+    else:
+        python_exe = sys.executable
 
-    return sys.executable
+    logger.debug("backend is \"%s\", use python exe \"%s\"",
+                 backend_name, python_exe)
+    return python_exe
 
 
 def get_pid_from_jid(jid):
@@ -169,8 +173,7 @@ class Popen(object):
 
     def __init__(self, process_obj, backend=None, launch=False):
         self.returncode = None
-        self.backend_name = config.backend if backend is None else backend
-        self.backend = get_backend(self.backend_name)
+        self.backend = get_backend()
 
         ip, _, _ = self.backend.get_listen_addr()
 
@@ -234,13 +237,13 @@ class Popen(object):
         opts = util._args_from_interpreter_flags()
         if config.debug:
             return (
-                [get_python_exe(self.backend_name)]
+                [get_python_exe(self.backend.name)]
                 + opts
                 + ["-u", "-c", prog, "--multiprocessing-fork"]
             )
 
         return (
-            [get_python_exe(self.backend_name)]
+            [get_python_exe(self.backend.name)]
             + opts
             + ["-c", prog, "--multiprocessing-fork"]
         )

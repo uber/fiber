@@ -22,7 +22,7 @@ from fiber.init import init_fiber
 from fiber.meta import meta
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1.dev0"
 
 logger = logging.getLogger('fiber')
 

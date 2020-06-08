@@ -91,6 +91,11 @@ class Backend(core.Backend):
                 "Docker image \"{}\" not found or cannot be pulled from "
                 "docker registry.".format(job_spec.image))
 
+        except docker.errors.APIError as e:
+            raise mp.ProcessError(
+                    "Failed to start docker container: {}".format(e)
+            )
+
         job = DockerJob(container, container.id)
         # delayed
         container._fiber_backend_reloading = False

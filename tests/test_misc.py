@@ -140,12 +140,24 @@ class TestMisc():
         if fiber.config.default_backend != "docker":
             pytest.skip("skipped because current backend is not docker")
 
+        '''
         fp = io.StringIO()
         handler = logging.StreamHandler(fp)
         logger = logging.getLogger("fiber")
         logger.setLevel(level=logging.DEBUG)
         logger.addHandler(handler)
+        '''
 
+        with pytest.raises(multiprocessing.ProcessError):
+            try:
+                fiber.init(image='ubuntu:18.04')
+                p = fiber.Process(name="test_no_python3_inside_image")
+                p.start()
+            finally:
+                fiber.reset()
+                #logger.removeHandler(handler)
+
+        '''
         try:
             fiber.init(image='ubuntu:18.04')
             p = fiber.Process(name="test_no_python3_inside_image")
@@ -158,6 +170,7 @@ class TestMisc():
         finally:
             fiber.reset()
             logger.removeHandler(handler)
+        '''
 
     """
     def test_missing_module_inside_image(self):

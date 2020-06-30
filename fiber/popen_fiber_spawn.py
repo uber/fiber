@@ -45,7 +45,7 @@ import sys;
 import os;
 import socket;
 import struct;
-os.environ["FIBER_WORRKER"]="1";
+os.environ["FIBER_WORKER"]="1";
 os.chdir("{cwd}");
 import fiber;
 import fiber.spawn;

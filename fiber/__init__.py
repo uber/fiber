@@ -33,7 +33,7 @@ if sys.platform == 'win32':
 
 init_fiber()
 
-if os.environ.get("FIBER_WORRKER", None) is None:
+if os.environ.get("FIBER_WORKER", None) is None:
     # Only initialize logger when fiber is imported in master process. Worker
     # process will get their logger initialized later.
     # A file based logger could be created, no logging lines after

@@ -35,7 +35,6 @@ import logging
 import multiprocessing as mp
 import multiprocessing.pool as mp_pool
 import multiprocessing.util as mp_util
-import pickle
 import math
 import queue
 import random
@@ -56,6 +55,12 @@ from fiber.queues import LazyZConnection
 from fiber.socket import Socket
 from fiber.process import current_process
 import signal
+
+
+if fiber.util.is_in_interactive_console():
+    import cloudpickle as pickle
+else:
+    import pickle
 
 logger = logging.getLogger('fiber')
 

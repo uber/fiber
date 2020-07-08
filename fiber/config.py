@@ -57,7 +57,7 @@ import fiber.config as fiber_config
 def main():
     fiber_config.log_level = "debug"
     fiber_config.log_file = "stdout"
-    fiber_cofnig.backend = "local"
+    fiber_config.backend = "local"
 ```
 
 Note that almost all of the configurations needs to be set before you launch

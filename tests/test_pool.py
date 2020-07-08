@@ -18,6 +18,8 @@ def client():
 def f(x):
     return x * x
 
+def f2(x, y):
+    return x * y
 
 def fy(x, y=1):
     return x * x * y
@@ -137,6 +139,18 @@ class TestPool():
         assert res == [x * x for x in range(100)]
 
         async_res = pool.starmap_async(f, [(x,) for x in range(100)], 1)
+        res = async_res.get()
+        assert res == [x * x for x in range(100)]
+
+        pool.terminate()
+        pool.join()
+
+    def test_pool_starmap2(self):
+        pool = Pool(4)
+        res = pool.starmap(f2, [(x, x) for x in range(100)], 10)
+        assert res == [x * x for x in range(100)]
+
+        async_res = pool.starmap_async(f, [(x,) for x in range(100)], 10)
         res = async_res.get()
         assert res == [x * x for x in range(100)]
 

@@ -1293,9 +1293,11 @@ class ZPool():
 
         seq = self._inventory.add(len(iterable))
 
+        iterable = [(item,) for item in iterable]
+
         chunks = self.__class__._chunks(iterable, chunksize)
         for batch, chunk in enumerate(chunks):
-            self._task_put((seq, batch * chunksize, func, (chunk, ), True))
+            self._task_put((seq, batch * chunksize, func, chunk, True))
 
         res = MapResult(seq, self._inventory)
 

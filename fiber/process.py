@@ -297,7 +297,7 @@ class Process(BaseProcess):
         except SystemExit as e:
             err = None
             if not e.args:
-                exitcode = 1
+                exitcode = 0
             elif isinstance(e.args[0], int):
                 exitcode = e.args[0]
             else:

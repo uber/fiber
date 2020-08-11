@@ -29,6 +29,7 @@ from kubernetes.client.rest import ApiException
 
 import fiber
 import fiber.core as core
+import fiber.config as fiber_config
 from fiber.core import ProcessStatus
 from fiber.util import find_ip_by_net_interface, find_listen_address
 
@@ -56,7 +57,7 @@ class Backend(core.Backend):
         self.config = client.Configuration()
         self.batch_api = client.BatchV1Api(client.ApiClient(self.config))
         self.core_api = client.CoreV1Api(client.ApiClient(self.config))
-        self.default_namespace = "default"
+        self.default_namespace = fiber_config.kubernetes_namespace
 
         if incluster:
             podname = socket.gethostname()

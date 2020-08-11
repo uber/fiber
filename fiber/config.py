@@ -102,6 +102,7 @@ class Config(object):
     | log_level             | str/int | `logging.INFO` | Fiber log level. This config accepts either a int value (log levels from `logging` module like `logging.INFO`) or strings: `debug`, `info`, `warning`, `error`, `critical` |
     | log_file              | str   | `/tmp/fiber.log` | Default fiber log file path. Fiber will append the process name to this value and create one log file for each process. A special value `stdout` means to print the logs to standard output |
     | ipc_admin_master_port | int   | `0`   | The port that master process uses to communicate with child processes. Default value is `0` which means the master process will choose a random port |
+    | kubernetes_namespace | str   | `default` | The namespace that Fiber `kubernetes` backend will use to create pods and do other work on Kubernetes |
 
 
     """
@@ -132,6 +133,7 @@ class Config(object):
         # Not documented, need to fine tune this
         self.mem_per_job = None
         self.use_push_queue = True
+        self.kubernetes_namespace = "default"
 
         if conf_file is None:
             conf_file = ".fiberconfig"

@@ -11,5 +11,5 @@ services:
 script:
   - dpkg -l|grep docker
   - docker version
-  - export DOCKER_API_VERSION=1.39 # otherwise we will see errors like https://github.com/kubernetes-sigs/kubespray/issues/6160
+  - export DOCKER_API_VERSION=1.38 # otherwise we will see errors like https://github.com/kubernetes-sigs/kubespray/issues/6160
   - make test

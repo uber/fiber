@@ -12,6 +12,8 @@
 [**Paper**](https://arxiv.org/abs/2003.11164) &nbsp;
 [**Media Coverage**](https://venturebeat.com/2020/03/26/uber-details-fiber-a-framework-for-distributed-ai-model-training/)
 
+<img src="https://github.com/uber/fiber/raw/docs/email-list/docs/img/new-icon.png"/> Join Fiber users email list [fiber-users@googlegroups.com](https://groups.google.com/forum/#!forum/fiber-users)
+
 # Fiber
 
 ### Distributed Computing for AI Made Simple

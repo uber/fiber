@@ -829,7 +829,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/examples/master/
 </pre></div>
 
 
-<p>What this command does is in addition to create a new job, it mounted the persistent volume claim <code>nfs</code> to path <code>/persistant</code> inside the container. Then we create a file called <code>/persistent/foo.txt</code> with some content.</p>
+<p>What this command does is in addition to create a new job, it mounted the persistent volume claim <code>nfs</code> to path <code>/persistent</code> inside the container. Then we create a file called <code>/persistent/foo.txt</code> with some content.</p>
 <p>Then we can retrieve the content of this file from a different job:</p>
 <div class="codehilite"><pre><span></span>$ fiber run -v nfs cat /persistent/foo.txt
 ...

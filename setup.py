@@ -8,7 +8,7 @@ from subprocess import check_call
 install_requires = [
     "nnpy-bundle",
     "psutil",
-    "docker",
+    "docker <= 4.2.2",
     "cloudpickle",
     "kubernetes",
     "requests",
@@ -17,7 +17,7 @@ install_requires = [
 
 tests_require = [
     "pytest",
-    "docker",
+    "docker <= 4.2.2",
     "flake8",
 ]
 

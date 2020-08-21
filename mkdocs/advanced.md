@@ -153,7 +153,7 @@ This will create an NFS persistent volume claim called "nfs" with size 1M. Once 
 fiber run -v nfs bash -c 'echo "This file is persisted across runs" > /persistent/foo.txt'
 ```
 
-What this command does is in addition to create a new job, it mounted the persistent volume claim `nfs` to path `/persistant` inside the container. Then we create a file called `/persistent/foo.txt` with some content.
+What this command does is in addition to create a new job, it mounted the persistent volume claim `nfs` to path `/persistent` inside the container. Then we create a file called `/persistent/foo.txt` with some content.
 
 Then we can retrieve the content of this file from a different job:
 

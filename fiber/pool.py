@@ -890,7 +890,8 @@ class ZPool():
                  master_sock_type="w"):
 
         self._pool = []
-        self._processes = processes
+        # Set default processes to 1
+        self._processes = processes if processes is not None else 1
         self._initializer = initializer
         self._initargs = initargs
         self._maxtasksperchild = maxtasksperchild
@@ -1430,7 +1431,8 @@ class ResilientZPool(ZPool):
     * When an died worker is detected, it's jobs are resubmitted to work Q
       in addition to restarting that worker.
 
-    The API of `ResilientZPool` is the same as `ZPool`.
+    The API of `ResilientZPool` is the same as `ZPool`. One difference is that
+    if `processes` argument is not set, its default value is 1.
     """
     def __init__(self, processes=None, initializer=None, initargs=(),
                  maxtasksperchild=None, cluster=None):

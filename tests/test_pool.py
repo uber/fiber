@@ -313,3 +313,12 @@ class TestPool():
         finally:
             pool.terminate()
             pool.join()
+
+    def test_pool_with_no_argument(self):
+        # Make sure no exception is raised
+        p = fiber.Pool()
+        p.map(print, [1, 2, 3, 4])
+        p.terminate()
+        p.join()
+
+        assert 1 == 1

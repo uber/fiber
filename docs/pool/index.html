@@ -718,7 +718,8 @@ used after <code>terminate()</code> or <code>close()</code> are called on this p
 <li>When an died worker is detected, it's jobs are resubmitted to work Q
   in addition to restarting that worker.</li>
 </ul>
-<p>The API of <code>ResilientZPool</code> is the same as <code>ZPool</code>.</p>
+<p>The API of <code>ResilientZPool</code> is the same as <code>ZPool</code>. One difference is that
+if <code>processes</code> argument is not set, its default value is 1.</p>
                 
                   
                 

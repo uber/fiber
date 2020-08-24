@@ -62,9 +62,7 @@ class Backend(core.Backend):
 
         if incluster:
             podname = socket.gethostname()
-            pod = self.core_api.read_namespaced_pod(
-                podname, self.default_namespace
-            )
+            pod = self.core_api.read_namespaced_pod(podname, self.default_namespace)
             # Current model assume that Fiber only lauches 1 container per pod
             self.current_image = pod.spec.containers[0].image
             self.volumes = pod.spec.volumes
@@ -79,7 +77,7 @@ class Backend(core.Backend):
             self.mounts = None
             self.volumes = None
 
-    def _get_resource_requirements(self, job_spec: fiber.core.JobSpec) -> Any:
+    def _get_resource_requirements(self, job_spec: core.JobSpec) -> Any:
         # requests = {}
         limits = {}
 
@@ -102,15 +100,13 @@ class Backend(core.Backend):
 
         return None
 
-    def create_job(self, job_spec: fiber.core.JobSpec) -> fiber.core.Job:
+    def create_job(self, job_spec: core.JobSpec) -> core.Job:
         logger.debug("[k8s]create_job: %s", job_spec)
         body = client.V1Pod()
         name = "{}-{}".format(
             job_spec.name.replace("_", "-").lower(), str(uuid.uuid4())[:8]
         )
-        body.metadata = client.V1ObjectMeta(
-            namespace=self.default_namespace, name=name
-        )
+        body.metadata = client.V1ObjectMeta(namespace=self.default_namespace, name=name)
 
         # set environment varialbes
         # TODO(jiale) add environment variables
@@ -133,9 +129,7 @@ class Backend(core.Backend):
             )
             container.resources = rr
 
-        body.spec = client.V1PodSpec(
-            containers=[container], restart_policy="Never"
-        )
+        body.spec = client.V1PodSpec(containers=[container], restart_policy="Never")
 
         # propagate mount points to new containers if necesary
         if job_spec.volumes:
@@ -144,9 +138,7 @@ class Backend(core.Backend):
 
             for pd_name, mount_info in job_spec.volumes.items():
                 # volume_name = job_spec.volume if job_spec.volume else self.current_mount
-                pvc = client.V1PersistentVolumeClaimVolumeSource(
-                    claim_name=pd_name
-                )
+                pvc = client.V1PersistentVolumeClaimVolumeSource(claim_name=pd_name)
                 volume = client.V1Volume(
                     persistent_volume_claim=pvc, name="volume-" + pd_name,
                 )
@@ -163,19 +155,15 @@ class Backend(core.Backend):
             body.spec.volumes = self.volumes
             container.volume_mounts = self.mounts
 
-        logger.debug(
-            "[k8s]calling create_namespaced_pod: %s", body.metadata.name
-        )
+        logger.debug("[k8s]calling create_namespaced_pod: %s", body.metadata.name)
         try:
-            v1pod = self.core_api.create_namespaced_pod(
-                self.default_namespace, body
-            )
+            v1pod = self.core_api.create_namespaced_pod(self.default_namespace, body)
         except ApiException as e:
             raise e
 
         return core.Job(v1pod, v1pod.metadata.uid)
 
-    def get_job_status(self, job: fiber.core.Job) -> ProcessStatus:
+    def get_job_status(self, job: core.Job) -> ProcessStatus:
         v1pod = job.data
         name = v1pod.metadata.name
         namespace = v1pod.metadata.namespace
@@ -199,7 +187,7 @@ class Backend(core.Backend):
         pod_status = v1pod.status
         return PHASE_STATUS_MAP[pod_status.phase]
 
-    def get_job_logs(self, job: fiber.core.Job) -> str:
+    def get_job_logs(self, job: core.Job) -> str:
         v1job = job.data
         name = v1job.metadata.name
         namespace = v1job.metadata.namespace
@@ -216,9 +204,7 @@ class Backend(core.Backend):
 
         return logs
 
-    def wait_for_job(
-        self, job: fiber.core.Job, timeout: float
-    ) -> Optional[int]:
+    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         logger.debug("[k8s]wait_for_job timeout=%s", timeout)
 
         total = 0
@@ -259,7 +245,7 @@ class Backend(core.Backend):
         )
         return terminated.exit_code
 
-    def terminate_job(self, job: fiber.core.JobSpec) -> None:
+    def terminate_job(self, job: core.JobSpec) -> None:
         v1job = job.data
         name = v1job.metadata.name
         namespace = v1job.metadata.namespace
@@ -274,15 +260,11 @@ class Backend(core.Backend):
                 grace_period_seconds,
             )
             self.core_api.delete_namespaced_pod(
-                name,
-                namespace,
-                grace_period_seconds=grace_period_seconds,
-                body=body,
+                name, namespace, grace_period_seconds=grace_period_seconds, body=body,
             )
         except ApiException as e:
             logger.debug(
-                "[k8s] Exception when calling " "delete_namespaced_pod: %s",
-                str(e),
+                "[k8s] Exception when calling " "delete_namespaced_pod: %s", str(e),
             )
             raise e
 

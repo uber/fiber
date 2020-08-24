@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import enum
+from typing import Dict, List, NoReturn
 
 
 MEM_CPU_RATIO = 2  # 2G per cpu
@@ -26,8 +27,16 @@ class ProcessStatus(enum.Enum):
 
 
 class JobSpec(object):
-    def __init__(self, image=None, command=None, name=None, cpu=None, mem=None,
-                 volumes=None, gpu=None):
+    def __init__(
+        self,
+        image: str = None,
+        command: List[str] = None,
+        name: str = None,
+        cpu: int = None,
+        mem: int = None,
+        volumes: Dict[str, Dict] = None,
+        gpu: int = None,
+    ) -> None:
         # Docker image used to launch this job
         self.image = image
         # Command to run in this job container, this should be a sequence
@@ -40,7 +49,7 @@ class JobSpec(object):
         # Maximum number of cpu cores this job can use
         self.gpu = gpu
         # Maximum memory size in MB that this job can use
-        #if mem is None:
+        # if mem is None:
         #    mem = cpu * MEM_CPU_RATIO
         self.mem = mem
         # volume name to be mounted, currently only used by k8s backend
@@ -50,11 +59,11 @@ class JobSpec(object):
         #     }
         self.volumes = volumes
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.__dict__ == other.__dict__
 
-    def __repr__(self):
-        return '<JobSpec: {}>'.format(vars(self))
+    def __repr__(self) -> str:
+        return "<JobSpec: {}>".format(vars(self))
 
 
 class Job(object):
@@ -67,11 +76,11 @@ class Job(object):
     # `ipc_admin_passive` is enabled.
     host = None
 
-    def __init__(self, data, jid):
+    def __init__(self, data, jid) -> None:
         self.data = data
         self.jid = jid
 
-    def update(self):
+    def update(self) -> NoReturn:
         # update/refresh job attributes
         raise NotImplementedError
 
@@ -81,32 +90,32 @@ class Backend(object):
     def name(self):
         raise NotImplementedError
 
-    def create_job(self, job_spec):
+    def create_job(self, job_spec) -> NoReturn:
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError
 
-    def get_job_status(self, job):
+    def get_job_status(self, job) -> NoReturn:
         """This function is called when Fiber wants to to get job status."""
         raise NotImplementedError
 
-    def get_job_logs(self, job):
+    def get_job_logs(self, job) -> str:
         """
         This function is called when Fiber wants to to get logs of this job
         """
         return ""
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job, timeout) -> NoReturn:
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
         raise NotImplementedError
 
-    def terminate_job(self, job):
+    def terminate_job(self, job) -> NoReturn:
         """Terminate a job described by `job`."""
         raise NotImplementedError
 
-    def get_listen_addr(self):
+    def get_listen_addr(self) -> NoReturn:
         """This function is called when Fiber wants to listen on a local
         address for incoming connection. It is currently used by Popen
         and Queue."""

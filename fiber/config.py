@@ -67,6 +67,10 @@ any Fiber processes.
 import os
 import logging
 import configparser
+from typing import Any, Dict, List, Type, TypeVar
+
+_current_config: None
+_TConfig = TypeVar('_TConfig', bound="Config")
 
 
 _current_config = None
@@ -84,7 +88,7 @@ LOG_LEVELS = {
 DEFAULT_IMAGE = "fiber-test:latest"
 
 
-def str2bool(text):
+def str2bool(text: str) -> bool:
     """Simple function to convert a range of values to True/False."""
     return text.lower() in ["true", "yes", "1"]
 
@@ -106,7 +110,7 @@ class Config(object):
 
 
     """
-    def __init__(self, conf_file=None):
+    def __init__(self, conf_file: str=None) -> None:
         # Not documented, people should not use this
         self.merge_output = False
         self.debug = False
@@ -185,7 +189,7 @@ class Config(object):
         return repr(self.__dict__)
 
     @classmethod
-    def from_dict(cls, kv):
+    def from_dict(cls: Type[_TConfig], kv: Dict[str, Any]) -> _TConfig:
         obj = cls()
         for k in kv:
             setattr(obj, k, kv[k])
@@ -193,7 +197,7 @@ class Config(object):
         return obj
 
 
-def get_object():
+def get_object() -> Config:
     """
     Get a Config object representing current Fiber config
 
@@ -207,7 +211,7 @@ def get_object():
     return Config.from_dict(get_dict())
 
 
-def get_dict():
+def get_dict() -> Dict[str, Any]:
     """
     Get current Fiber config in a dictionary
 
@@ -218,7 +222,7 @@ def get_dict():
     return {k: global_vars[k] for k in vars(_current_config)}
 
 
-def init(**kwargs):
+def init(**kwargs) -> List[str]:
     """
     Init Fiber system and set config values.
 

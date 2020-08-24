@@ -36,7 +36,16 @@ import fiber.config as config
 from fiber.backend import get_backend
 from fiber.core import JobSpec
 from fiber.core import ProcessStatus
-from typing import Any, Dict, List, Iterator, NoReturn, Optional, BinaryIO, Tuple
+from typing import (
+    Any,
+    Dict,
+    List,
+    Iterator,
+    NoReturn,
+    Optional,
+    BinaryIO,
+    Tuple,
+)
 
 _event_counter: Iterator[int]
 _event_dict: Dict[int, threading.Event]
@@ -100,7 +109,9 @@ def get_fiber_init() -> str:
     return fiber_init
 
 
-def fiber_background(listen_addr: Tuple(str, int), event_dict: Dict[int, threading.Event]) -> None:
+def fiber_background(
+    listen_addr: Tuple(str, int), event_dict: Dict[int, threading.Event]
+) -> None:
     global admin_host, admin_port
 
     # Background thread for handling inter fiber process admin traffic
@@ -151,8 +162,9 @@ def get_python_exe(backend_name: str) -> str:
     else:
         python_exe = sys.executable
 
-    logger.debug("backend is \"%s\", use python exe \"%s\"",
-                 backend_name, python_exe)
+    logger.debug(
+        'backend is "%s", use python exe "%s"', backend_name, python_exe
+    )
     return python_exe
 
 
@@ -169,7 +181,7 @@ class Popen(object):
         if getattr(self, "ident", None):
             # clean up entry in event_dict
             global _event_dict
-            #logger.debug("cleanup entry _event_dict[%s]", self.ident)
+            # logger.debug("cleanup entry _event_dict[%s]", self.ident)
             _event_dict.pop(self.ident, None)
 
     def __repr__(self) -> str:
@@ -177,7 +189,12 @@ class Popen(object):
             type(self).__name__, getattr(self, "process_obj", None)
         )
 
-    def __init__(self, process_obj: fiber.process.Process, backend=None, launch:bool =False) -> NoReturn:
+    def __init__(
+        self,
+        process_obj: fiber.process.Process,
+        backend=None,
+        launch: bool = False,
+    ) -> NoReturn:
         self.returncode = None
         self.backend = get_backend()
 
@@ -289,7 +306,7 @@ class Popen(object):
 
         return job
 
-    def _sentinel_readable(self, timeout: int =0) -> int:
+    def _sentinel_readable(self, timeout: int = 0) -> int:
         # Use fcntl(fd, F_GETFD) instead of select.* becuase:
         # * select.select() can't work with fd > 1024
         # * select.poll() is not thread safe
@@ -297,7 +314,7 @@ class Popen(object):
         # Also, fcntl(fd, F_GETFD) is cheaper than the above calls.
         return fcntl.fcntl(self.sentinel, fcntl.F_GETFD)
 
-    def poll(self, flag: int =os.WNOHANG) -> Optional[int]:
+    def poll(self, flag: int = os.WNOHANG) -> Optional[int]:
 
         # returns None if the process is not stopped yet. Otherwise, returns
         # process exit code.
@@ -333,7 +350,7 @@ class Popen(object):
                 return None
         return self.wait(timeout=0)
 
-    def wait(self, timeout:int =None) -> Optional[int]:
+    def wait(self, timeout: int = None) -> Optional[int]:
         if self.job is None:
             # self.job is None meaning this process hasn't been fully started
             # yet.

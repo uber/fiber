@@ -31,6 +31,7 @@ import fiber.core as core
 import fiber.config as config
 from fiber.core import ProcessStatus
 from fiber.util import find_ip_by_net_interface, find_listen_address
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 logger = logging.getLogger('fiber')
 
@@ -47,7 +48,7 @@ HOME_DIR = expanduser("~")
 
 
 class DockerJob(core.Job):
-    def update(self):
+    def update(self) -> None:
         container = self.data
         self.host = container.attrs['NetworkSettings']['IPAddress']
 
@@ -55,12 +56,12 @@ class DockerJob(core.Job):
 class Backend(core.Backend):
     name = "docker"
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Based on this link, no lock is needed accessing self.client
         # https://github.com/docker/docker-py/issues/619
         self.client = docker.from_env()
 
-    def create_job(self, job_spec):
+    def create_job(self, job_spec: core.JobSpec) -> DockerJob:
         logger.debug("[docker]create_job: %s", job_spec)
         cwd = os.getcwd()
         volumes = {cwd: {'bind': cwd, 'mode': 'rw'},
@@ -101,7 +102,7 @@ class Backend(core.Backend):
         container._fiber_backend_reloading = False
         return job
 
-    def _reload(self, container):
+    def _reload(self, container) -> None:
         container._fiber_backend_reloading = True
         logger.debug("container reloading %s", container.name)
         container.reload()
@@ -112,11 +113,11 @@ class Backend(core.Backend):
 
         container._fiber_backend_reloading = False
 
-    def get_job_logs(self, job):
+    def get_job_logs(self, job: core.Job) -> str:
         container = job.data
         return container.logs(stream=False).decode('utf-8')
 
-    def get_job_status(self, job):
+    def get_job_status(self, job: core.Job) -> ProcessStatus:
         container = job.data
 
         if config.merge_output:
@@ -131,7 +132,7 @@ class Backend(core.Backend):
             logger.debug("start container reloading thread %s", container.name)
         return status
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         container = job.data
         logger.debug("wait_for_job: %s", container.name)
 
@@ -165,7 +166,7 @@ class Backend(core.Backend):
 
         return res['StatusCode']
 
-    def terminate_job(self, job):
+    def terminate_job(self, job: core.Job) -> None:
         logging.debug("terminate_job")
         container = job.data
 
@@ -184,7 +185,7 @@ class Backend(core.Backend):
             raise e
         logger.debug("terminate job finished, %s", container.status)
 
-    def get_listen_addr(self):
+    def get_listen_addr(self) -> Tuple[Optional[str], int, Optional[str]]:
         ip = None
 
         if sys.platform == "darwin":

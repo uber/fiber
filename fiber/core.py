@@ -90,28 +90,28 @@ class Backend(object):
     def name(self):
         raise NotImplementedError
 
-    def create_job(self, job_spec) -> NoReturn:
+    def create_job(self, job_spec: JobSpec) -> NoReturn:
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError
 
-    def get_job_status(self, job) -> NoReturn:
+    def get_job_status(self, job: JobSpec) -> NoReturn:
         """This function is called when Fiber wants to to get job status."""
         raise NotImplementedError
 
-    def get_job_logs(self, job) -> str:
+    def get_job_logs(self, job: JobSpec) -> str:
         """
         This function is called when Fiber wants to to get logs of this job
         """
         return ""
 
-    def wait_for_job(self, job, timeout) -> NoReturn:
+    def wait_for_job(self, job: JobSpec, timeout: float) -> NoReturn:
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
         raise NotImplementedError
 
-    def terminate_job(self, job) -> NoReturn:
+    def terminate_job(self, job: JobSpec) -> NoReturn:
         """Terminate a job described by `job`."""
         raise NotImplementedError
 

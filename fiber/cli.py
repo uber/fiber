@@ -34,18 +34,26 @@ import click
 import fiber
 import fiber.core as core
 from fiber.core import ProcessStatus
+import pathlib
+from typing import Any, List, Tuple, TypeVar, Optional
+
+_T0 = TypeVar("_T0")
+_TDockerImageBuilder = TypeVar(
+    "_TDockerImageBuilder", bound="DockerImageBuilder"
+)
 
 
 CONFIG = {}
 
 
-def get_backend(platform):
+def get_backend(platform: str) -> fiber.kubernetes_backend.Backend:
     from fiber.kubernetes_backend import Backend as K8sBackend
+
     backend = K8sBackend(incluster=False)
     return backend
 
 
-def find_docker_files():
+def find_docker_files() -> List[pathlib.Path]:
     """Find all possible docker files on current directory."""
     p = Path(".")
     q = p / "Dockerfile"
@@ -58,7 +66,7 @@ def find_docker_files():
     return files
 
 
-def select_docker_file(files):
+def select_docker_file(files: List[pathlib.Path]) -> pathlib.Path:
     """Ask user which docker file to use and return a PurePath object."""
     num = 0
     n = len(files)
@@ -89,7 +97,7 @@ def select_docker_file(files):
     return files[num]
 
 
-def get_default_project_gcp():
+def get_default_project_gcp() -> str:
     """Get default GCP project name."""
     name = sp.check_output(
         "gcloud config list --format 'value(core.project)' 2>/dev/null",
@@ -98,7 +106,7 @@ def get_default_project_gcp():
     return name.decode("utf-8").strip()
 
 
-def parse_file_path(path):
+def parse_file_path(path: str) -> Tuple[Optional[str], str]:
     parts = path.split(":")
     if len(parts) == 1:
         return (None, path)
@@ -112,7 +120,7 @@ def parse_file_path(path):
 @click.command()
 @click.argument("src")
 @click.argument("dst")
-def cp(src, dst):
+def cp(src: str, dst: str) -> None:
     """Copy file from a persistent storage"""
     platform = CONFIG["platform"]
 
@@ -170,7 +178,7 @@ def cp(src, dst):
     # k8s_backend.terminate_job(job)
 
 
-def detect_platforms():
+def detect_platforms() -> List[str]:
     commands = ["gcloud", "aws"]
     platforms = ["gcp", "aws"]
     found_platforms = []
@@ -186,7 +194,7 @@ def detect_platforms():
     return found_platforms
 
 
-def prompt_choices(choices, prompt):
+def prompt_choices(choices: List[_T0], prompt: str) -> _T0:
     num = 0
     n = len(choices)
 
@@ -216,13 +224,13 @@ def prompt_choices(choices, prompt):
 
 
 class DockerImageBuilder:
-    def __init__(self, registry=""):
+    def __init__(self, registry: str = "") -> None:
         self.registry = registry
 
-    def get_docker_registry_image_name(image_base_name):
+    def get_docker_registry_image_name(image_base_name: str) -> str:
         return image_base_name
 
-    def build(self):
+    def build(self) -> str:
         files = find_docker_files()
         n = len(files)
         if n == 0:
@@ -248,25 +256,25 @@ class DockerImageBuilder:
 
         return self.full_image_name
 
-    def tag(self):
+    def tag(self) -> None:
         self.full_image_name = self.image_name
 
-    def push(self):
+    def push(self) -> None:
         sp.check_call(
             "docker push {}".format(self.full_image_name), shell=True,
         )
 
-    def docker_tag(self, in_name, out_name):
+    def docker_tag(self, in_name: str, out_name: str) -> None:
         sp.check_call("docker tag {} {}".format(in_name, out_name), shell=True)
 
 
 class AWSImageBuilder(DockerImageBuilder):
-    def __init__(self, registry):
+    def __init__(self, registry: str) -> None:
         self.registry = registry
         parts = registry.split(".")
         self.region = parts[-3]
 
-    def tag(self):
+    def tag(self) -> str:
         image_name = self.image_name
         full_image_name = "{}/{}".format(self.registry, self.image_name)
 
@@ -275,7 +283,7 @@ class AWSImageBuilder(DockerImageBuilder):
         self.full_image_name = full_image_name
         return full_image_name
 
-    def need_new_repo(self):
+    def need_new_repo(self) -> bool:
         output = sp.check_output(
             "aws ecr describe-repositories --region {}".format(self.region),
             shell=True,
@@ -293,7 +301,7 @@ class AWSImageBuilder(DockerImageBuilder):
 
         return True
 
-    def create_repo_if_needed(self):
+    def create_repo_if_needed(self) -> None:
         if self.need_new_repo():
             sp.check_call(
                 "aws ecr create-repository --region {} --repository-name {}".format(
@@ -304,7 +312,7 @@ class AWSImageBuilder(DockerImageBuilder):
 
         return
 
-    def push(self):
+    def push(self) -> None:
         self.create_repo_if_needed()
 
         try:
@@ -320,10 +328,10 @@ class AWSImageBuilder(DockerImageBuilder):
 
 
 class GCPImageBuilder(DockerImageBuilder):
-    def __init__(self, registry="gcr.io"):
+    def __init__(self, registry: str = "gcr.io") -> None:
         self.registry = registry
 
-    def tag(self):
+    def tag(self) -> str:
         image_name = self.image_name
         proj = get_default_project_gcp()
 
@@ -343,7 +351,15 @@ class GCPImageBuilder(DockerImageBuilder):
 @click.option("--memory")
 @click.option("-v", "--volume")
 @click.argument("args", nargs=-1)
-def run(attach, image, gpu, cpu, memory, volume, args):
+def run(
+    attach: bool,
+    image: str,
+    gpu: int,
+    cpu: int,
+    memory: int,
+    volume: str,
+    args: List[str],
+) -> int:
     """Run a command on a kubernetes cluster with fiber."""
     platform = CONFIG["platform"]
     print(
@@ -414,7 +430,7 @@ def run(attach, image, gpu, cpu, memory, volume, args):
     return 0
 
 
-def auto_select_platform():
+def auto_select_platform() -> str:
     platforms = detect_platforms()
     if len(platforms) > 1:
         choice = prompt_choices(
@@ -438,7 +454,7 @@ def auto_select_platform():
     "--gcp", is_flag=True, help="Run commands on Google Cloud Platform"
 )
 @click.version_option(version=fiber.__version__, prog_name="fiber")
-def main(docker_registry, aws, gcp):
+def main(docker_registry: str, aws: bool, gcp: bool) -> None:
     """fiber command line tool that helps to manage workflow of distributed
     fiber applications.
     """

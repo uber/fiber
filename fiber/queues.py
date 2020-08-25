@@ -63,6 +63,10 @@ import atexit
 from fiber.process import current_process
 from fiber.backend import get_backend
 from fiber.socket import Socket, ProcessDevice
+from typing import Any, Dict, List, NoReturn, Tuple, Union
+
+_io_threads: List[Any]
+_poller_threads: Dict[Any, Any]
 
 # define the port range that fiber can use to listen for incoming connections
 MIN_PORT = 40000
@@ -74,7 +78,7 @@ _io_threads = []
 _poller_threads = {}
 
 
-def _clean_up():
+def _clean_up() -> None:
     for t in _io_threads:
         logger.debug("cleanup thread %s", t)
         t.stop()
@@ -98,7 +102,7 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
     > note: ZConnection's fileno method returns a Fiber socket.
     """
 
-    def __init__(self, handle, readable=True, writable=True):
+    def __init__(self, handle: Union[Socket, Tuple[str, str]], readable: bool = True, writable: bool = True) -> None:
         self._name = None
         if handle is None:
             raise ValueError("invalid socket")
@@ -119,14 +123,14 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         mp_register_after_fork(self, ZConnection._create_handle)
         atexit.register(self._close)
 
-    def __getstate__(self):
+    def __getstate__(self) -> Dict:
         return {"sock_type": self.sock_type,
                 "dest_addr": self.dest_addr,
                 "_readable": self._readable,
                 "_writable": self._writable,
                 "_name": self._name}
 
-    def __setstate__(self, state):
+    def __setstate__(self, state) -> None:
         self.sock_type = state['sock_type']
         self.dest_addr = state['dest_addr']
         self._readable = state['_readable']
@@ -136,11 +140,11 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         mp_register_after_fork(self, ZConnection._create_handle)
         atexit.register(self._close)
 
-    def __del__(self):
+    def __del__(self) -> None:
         # __del__ is not reliable, we use atexit to clean up things
         return
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         name = (
             self._name
             if getattr(self, "_name", None) is not None
@@ -148,7 +152,7 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         )
         return '<ZConnection [{}, {}]>'.format(name, getattr(self, "_handle", None))
 
-    def _create_handle(self):
+    def _create_handle(self) -> None:
         logger.debug("%s _create_handle called", self)
 
         #self._handle = context.socket(self.sock_type)
@@ -156,23 +160,23 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         self._handle.connect(self.dest_addr)
         logger.debug("connect to %s", self.dest_addr)
 
-    def _close(self):
+    def _close(self) -> None:
         if self._handle:
             self._handle.close()
             self._handle = None
 
-    def _send_bytes(self, buf):
+    def _send_bytes(self, buf: bytes) -> None:
         self._handle.send(buf)
 
     # TODO(jiale) _ConnectionBase's send use _ForkingPickler. Switch to
     # send_pyobj instead?
 
-    def _recv_bytes(self, maxsize=None):
+    def _recv_bytes(self, maxsize: int = None) -> bytes:
         # TODO(jiale) support maxsize
 
         return self._handle.recv()
 
-    def recv(self):
+    def recv(self) -> Any:
         """Receive a (picklable) object"""
         #logger.debug("recv called")
         self._check_closed()
@@ -180,15 +184,15 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         buf = self._recv_bytes()
         return reduction.ForkingPickler.loads(buf)
 
-    def _poll(self, timeout):
+    def _poll(self, timeout: float) -> bool:
         return bool(self._handle.poll(timeout=timeout))
 
-    def set_name(self, name):
+    def set_name(self, name: str) -> None:
         self._name = name
 
 
 class LazyZConnection(ZConnection):
-    def __init__(self, handle, readable=True, writable=True, name=None):
+    def __init__(self, handle: Union[Socket, Tuple(str, str)], readable : bool = True, writable: bool = True, name: str = None) -> None:
         self._name = None
 
         if handle is None:
@@ -210,23 +214,23 @@ class LazyZConnection(ZConnection):
         self._readable = readable
         self._writable = writable
 
-    def _check_closed(self):
+    def _check_closed(self) -> None:
         if self._inited is False:
             self._create_handle()
             self._inited = True
         if self._handle is None:
             raise OSError("handle is closed")
 
-    def _close(self):
+    def _close(self) -> None:
         if not self._inited:
             return
         self._handle.close()
 
-    def _send_bytes(self, buf):
+    def _send_bytes(self, buf: bytes) -> None:
         #self._handle.send_multipart([b"", buf])
         self._handle.send(buf)
 
-    def _recv_bytes(self, maxsize=None):
+    def _recv_bytes(self, maxsize: int = None) -> bytes:
         # TODO(jiale) support maxsize
         #msg = self._handle.recv_multipart()
         # msg -> b'' b'message data' (because of ROUTER)
@@ -235,13 +239,13 @@ class LazyZConnection(ZConnection):
 
         return data
 
-    def __getstate__(self):
+    def __getstate__(self) -> Dict:
         return {"sock_type": self.sock_type,
                 "dest_addr": self.dest_addr,
                 "_readable": self._readable,
                 "_writable": self._writable}
 
-    def __setstate__(self, state):
+    def __setstate__(self, state) -> None:
         self.sock_type = state['sock_type']
         self.dest_addr = state['dest_addr']
         self._readable = state['_readable']
@@ -250,16 +254,16 @@ class LazyZConnection(ZConnection):
 
 
 class LazyZConnectionPipe(LazyZConnection):
-    def _send_bytes(self, buf):
+    def _send_bytes(self, buf: bytes) -> None:
         self._handle.send(buf)
 
-    def _recv_bytes(self, maxsize=None):
+    def _recv_bytes(self, maxsize: int = None) -> Any:
         # TODO(jiale) support maxsize
 
         return self._handle.recv()
 
 
-def Pipe(duplex=True):
+def Pipe(duplex: bool = True) -> Tuple[LazyZConnection, LazyZConnection]:
     """Return a pair of connected ZConnection objects.
 
     :param duplex: if duplex, then both read and write are allowed on each
@@ -286,11 +290,11 @@ class SimpleQueuePush():
     socket combination. Messages are pushed from one end of the queue to
     the other end without explicitly pulling.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "SimpleQueuePush<reader:{}, writer: {}>".format(
             self._reader_addr, self._writer_addr)
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.done = False
         backend = get_backend()
         ip, _, _ = backend.get_listen_addr()
@@ -311,7 +315,7 @@ class SimpleQueuePush():
         self.reader = LazyZConnection(("r", self._reader_addr,))
         self.writer = LazyZConnection(("w", self._writer_addr,))
 
-    def get(self):
+    def get(self) -> Any:
         """Get an element from this Queue.
 
         :returns: An element from this queue. If there is no element in the
@@ -332,7 +336,7 @@ class SimpleQueuePush():
         logger.debug("%s got %s", self, msg)
         return msg
 
-    def put(self, obj):
+    def put(self, obj: Any) -> None:
         """Put an element into the Queue.
 
         :param obj: Any picklable Python object.

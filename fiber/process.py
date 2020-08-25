@@ -36,6 +36,7 @@ import multiprocessing as mp
 import logging
 
 from multiprocessing.process import BaseProcess
+from typing import Callable, Sequence, Tuple, Optional, List
 
 
 logger = logging.getLogger('fiber')
@@ -45,14 +46,14 @@ _children = set()
 _current_process = mp.current_process()
 
 
-def _cleanup():
+def _cleanup() -> None:
     # check for processes which have finished
     for p in list(_children):
         if p._popen.poll() is not None:
             _children.discard(p)
 
 
-def active_children():
+def active_children() -> List["Process"]:
     """
     Get a list of children processes of the current process.
 
@@ -69,7 +70,7 @@ def active_children():
     return list(_children)
 
 
-def current_process():
+def current_process() -> "Process":
     """Return a Process object representing the current process.
 
     Example:
@@ -162,19 +163,20 @@ class Process(BaseProcess):
     _pid = None
 
     @staticmethod
-    def _Popen(process_obj):
+    def _Popen(process_obj: "Process") -> fiber.popen_fiber_spawn.Popen:
         from .popen_fiber_spawn import Popen
         return Popen(process_obj)
 
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs={},
-                 *, daemon=None):
+    def __init__(self, group: None = None, target: Callable = None,
+                 name: str = None, args: Tuple = (), kwargs={},
+                 *, daemon: bool = None):
         super(Process, self).__init__(group=group, target=target, name=name,
                                       args=args, kwargs=kwargs, daemon=daemon)
         self._parent_pid = current_process().pid
         # set when Process.start() failed
         self._start_failed = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{}({}, {})>".format(type(self).__name__, self._name, self.ident)
 
     def run(self):
@@ -184,7 +186,7 @@ class Process(BaseProcess):
         """
         return super().run()
 
-    def start(self):
+    def start(self) -> None:
         """Start this process.
 
         Under the hood, Fiber calls the API on the computer cluster to start a
@@ -214,7 +216,7 @@ class Process(BaseProcess):
         del self._target, self._args, self._kwargs
         _children.add(self)
 
-    def terminate(self):
+    def terminate(self) -> None:
         """Terminate current process.
 
         When running locally, Fiber sends an SIGTERM signal to the child
@@ -227,7 +229,7 @@ class Process(BaseProcess):
             return
         self._popen.terminate()
 
-    def join(self, timeout=None):
+    def join(self, timeout=None) -> Optional[int]:
         """Wait for this process to terminate.
 
         :param timeout: The maximum duration of time in seconds that this call
@@ -240,7 +242,7 @@ class Process(BaseProcess):
         """
         return super().join(timeout=timeout)
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         """Check if current process is still alive
 
         :returns: `True` if current process is still alive. Returns `False` if
@@ -261,7 +263,7 @@ class Process(BaseProcess):
 
     pid = ident
 
-    def _bootstrap(self):
+    def _bootstrap(self) -> Tuple[int, Optional[str]]:
         from multiprocessing import util, context
         global _current_process, _process_counter, _children
         err = None

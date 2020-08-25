@@ -1,3 +1,6 @@
+from typing import Any, Callable, TypeVar
+
+_T0 = TypeVar('_T0')
 # Copyright 2020 Uber Technologies, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +19,7 @@
 VALID_META_KEYS = ["cpu", "memory", "gpu"]
 
 
-def post_process(metadata):
+def post_process(metadata: _T0) -> _T0:
     # memory should be in MB
     if "memory" in metadata:
         memory = metadata.pop("memory")
@@ -25,7 +28,7 @@ def post_process(metadata):
     return metadata
 
 
-def meta(**kwargs):
+def meta(**kwargs) -> Callable[[Any], Any]:
     """
     fiber.meta API allows you to decorate your function and provide some hints to
     Fiber. Currently this is mainly used for specify the resource usage of user

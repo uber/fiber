@@ -20,6 +20,11 @@ import logging
 from fiber import context
 from fiber.init import init_fiber
 from fiber.meta import meta
+from typing import List
+
+__version__: str
+_in_interactive_console: bool
+_names: List[str]
 
 
 __version__ = "0.2.1"
@@ -47,11 +52,11 @@ else:
     _in_interactive_console = False
 
 
-def reset():
+def reset() -> None:
     init_fiber()
 
 
-def init(**kwargs):
+def init(**kwargs) -> None:
     """
     Initialize Fiber. This function is called when you want to re-initialize
     Fiber with new config values and also re-init loggers.

@@ -21,6 +21,9 @@ import random
 
 import fiber
 from fiber.backend import get_backend
+from typing import Any, NoReturn, Callable, Sequence
+
+_manager: Any
 
 
 __all__ = [
@@ -32,7 +35,7 @@ __all__ = [
 _manager = None
 
 
-def _get_manager():
+def _get_manager() -> fiber.managers.BaseManager:
     global _manager
     if _manager is None:
         _manager = fiber.Manager()
@@ -48,7 +51,7 @@ class RingNode:
     :param rank: The id assigned to this node. Each node will be assigned a
         unique id called `rank`. Rank 0 is the control node of the `Ring`.
     """
-    def __init__(self, rank):
+    def __init__(self, rank) -> None:
         self.rank = rank
         self.connected = False
         self.ip = None
@@ -68,7 +71,7 @@ class Ring:
     :param initargs: positional arguments that are passed to initializer.
         Currently this is not used.
     """
-    def __init__(self, processes, func, initializer, initargs=None):
+    def __init__(self, processes: int, func: Callable[[int, int], Any], initializer: Callable[[Sequence], Any], initargs: Sequence = None) -> None:
         self.size = processes
         self.initializer = initializer
         self.initargs = initargs
@@ -84,7 +87,7 @@ class Ring:
         manager = _get_manager()
         self.members = manager.list([RingNode(i) for i in range(self.size)])
 
-    def _target(self):
+    def _target(self) -> None:
         rank = self.rank
         node = self.members[rank]
 
@@ -100,7 +103,7 @@ class Ring:
         self.initializer(self)
         self.func(rank, self.size)
 
-    def run(self):
+    def run(self) -> None:
         """
         Start this Ring. This will start the ring 0 process on the same machine
         and start all the other ring nodes with Fiber processes.

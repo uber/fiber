@@ -34,6 +34,12 @@ import fiber.util
 import fiber.queues
 from fiber import process
 from fiber.backend import get_backend
+from typing import Any, TypeVar, Callable, Sequence, Dict
+
+_validate_family: Any
+_T0 = TypeVar('_T0')
+_T1 = TypeVar('_T1')
+_TAsyncListProxy = TypeVar('_TAsyncListProxy', bound=AsyncListProxy)
 
 logger = logging.getLogger('fiber')
 
@@ -42,7 +48,7 @@ default_family = 'AF_INET'
 
 
 class Listener(multiprocessing.connection.Listener):
-    def __init__(self, address=None, family=None, backlog=500, authkey=None):
+    def __init__(self, address: str = None, family: str = None, backlog: int = 500, authkey: bytes = None) -> None:
         family = family or (address and address_type(address)) \
                  or default_family
         if family != 'AF_INET':
@@ -85,7 +91,7 @@ listener_client = {
 
 
 class Server(multiprocessing.managers.Server):
-    def __init__(self, registry, address, authkey, serializer):
+    def __init__(self, registry: Dict, address: str, authkey: bytes, serializer: str) -> None:
         assert isinstance(authkey, bytes)
         self.registry = registry
         self.authkey = AuthenticationString(authkey)
@@ -114,8 +120,8 @@ class BaseManager(multiprocessing.managers.BaseManager):
     _registry = {}
     _Server = Server
 
-    def __init__(self, address=None, authkey=None, serializer='pickle',
-                 ctx=None):
+    def __init__(self, address: str = None, authkey: bytes = None, serializer: str = 'pickle',
+                 ctx=None) -> None:
         if authkey is None:
             authkey = process.current_process().authkey
         self._address = address     # XXX not final address if eg ('', 0)
@@ -125,7 +131,7 @@ class BaseManager(multiprocessing.managers.BaseManager):
         self._serializer = serializer
         self._Listener, self._Client = listener_client[serializer]
 
-    def get_server(self):
+    def get_server(self) -> Server:
         """
         Return server object with serve_forever() method and address attribute
         """
@@ -134,8 +140,8 @@ class BaseManager(multiprocessing.managers.BaseManager):
                       self._authkey, self._serializer)
 
     @classmethod
-    def _run_server(cls, registry, address, authkey, serializer, writer,
-                    initializer=None, initargs=()):
+    def _run_server(cls, registry: Dict, address: str, authkey: bytes, serializer: str, writer: fiber.queues.LazyZConnection,
+            initializer: Callable = None, initargs: Sequence = ()) -> None:
         """Create a server, report its address and run it."""
         if initializer is not None:
             initializer(*initargs)
@@ -151,7 +157,7 @@ class BaseManager(multiprocessing.managers.BaseManager):
         logger.info('manager serving at %r', server.address)
         server.serve_forever()
 
-    def start(self, initializer=None, initargs=()):
+    def start(self, initializer: Callable = None, initargs: Sequence = ()) -> None:
         """Spawn a server process for this manager object."""
         assert self._state.value == State.INITIAL
         logger.debug("start manager %s", self)
@@ -187,8 +193,8 @@ class BaseManager(multiprocessing.managers.BaseManager):
         )
 
     @classmethod
-    def register(cls, typeid, callable=None, proxytype=None, exposed=None,
-                 method_to_typeid=None, create_method=True):
+    def register(cls, typeid: str, callable: Callable = None, proxytype: Any = None, exposed: Sequence = None,
+            method_to_typeid: Dict = None, create_method: bool = True) -> None:
         """Register a typeid with the manager type."""
         if '_registry' not in cls.__dict__:
             cls._registry = cls._registry.copy()
@@ -227,7 +233,7 @@ class BaseManager(multiprocessing.managers.BaseManager):
 
 
 class ProcessLocalSet(set):
-    def __init__(self):
+    def __init__(self) -> None:
         fiber.util.register_after_fork(self, lambda obj: obj.clear())
 
     def __reduce__(self):
@@ -239,8 +245,8 @@ class BaseProxy(multiprocessing.managers.BaseProxy):
     _address_to_local = {}
     _mutex = fiber.util.ForkAwareThreadLock()
 
-    def __init__(self, token, serializer, manager=None,
-                 authkey=None, exposed=None, incref=True, manager_owned=False):
+    def __init__(self, token: bytes, serializer: str, manager: BaseManager = None,
+            authkey: bytes = None, exposed: Sequence = None, incref: bool = True, manager_owned: bool = False) -> None:
         with BaseProxy._mutex:
             tls_idset = BaseProxy._address_to_local.get(token.address, None)
             if tls_idset is None:
@@ -280,7 +286,7 @@ class BaseProxy(multiprocessing.managers.BaseProxy):
 
         fiber.util.register_after_fork(self, BaseProxy._after_fork)
 
-    def connect(self):
+    def connect(self) -> None:
         """Connect manager object to the server process."""
         Listener, Client = listener_client[self._serializer]
         conn = Client(self._address, authkey=self._authkey)
@@ -301,8 +307,8 @@ class BaseProxy(multiprocessing.managers.BaseProxy):
                     (type(self), self._token, self._serializer, kwds))
 
 
-def AutoProxy(token, serializer, manager=None, authkey=None,
-              exposed=None, incref=True):
+def AutoProxy(token: bytes, serializer: str, manager: BaseManager = None, authkey: bytes = None,
+                    exposed: Sequence = None, incref: bool = True) -> BaseProxy:
     """Return an auto-proxy for `token`."""
     _Client = listener_client[serializer][1]
 
@@ -325,7 +331,7 @@ def AutoProxy(token, serializer, manager=None, authkey=None,
     return proxy
 
 
-def MakeProxyType(name, exposed, _cache={}):
+def MakeProxyType(name: str, exposed: Sequence, _cache: Dict = {}) -> Any:
     """Return a proxy type whose methods are given by `exposed`."""
     exposed = tuple(exposed)
     try:
@@ -409,7 +415,7 @@ class NamespaceProxy(BaseProxy):
         callmethod = object.__getattribute__(self, '_callmethod')
         return callmethod('__setattr__', (key, value))
 
-    def __delattr__(self, key):
+    def __delattr__(self, key) -> None:
         if key[0] == '_':
             return object.__delattr__(self, key)
         callmethod = object.__getattribute__(self, '_callmethod')
@@ -419,10 +425,10 @@ class NamespaceProxy(BaseProxy):
 class ValueProxy(BaseProxy):
     _exposed_ = ('get', 'set')
 
-    def get(self):
+    def get(self) -> Any:
         return self._callmethod('get')
 
-    def set(self, value):
+    def set(self, value) -> Any:
         return self._callmethod('set', (value,))
 
     value = property(get, set)
@@ -431,11 +437,11 @@ class ValueProxy(BaseProxy):
 # Define AsyncProxy and AsyncManager
 
 class AsyncProxyResult():
-    def __init__(self, conn, proxy):
+    def __init__(self, conn, proxy) -> None:
         self._conn = conn
         self._proxy = proxy
 
-    def get(self):
+    def get(self) -> Any:
         kind, result = self._conn.recv()
 
         if kind == '#RETURN':
@@ -446,7 +452,7 @@ class AsyncProxyResult():
 
 
 class AsyncBaseProxy(BaseProxy):
-    def _callmethod(self, methodname, args=(), kwds={}):
+    def _callmethod(self, methodname: str, args: Sequence = (), kwds: Dict = {}) -> AsyncProxyResult:
         try:
             conn = self._tls.connection
         except AttributeError:
@@ -458,7 +464,7 @@ class AsyncBaseProxy(BaseProxy):
         return AsyncProxyResult(conn, self)
 
 
-def MakeAsyncProxyType(name, exposed, _cache={}):
+def MakeAsyncProxyType(name: str, exposed: Sequence, _cache: Dict = {}) -> Any:
     """Return a proxy type whose methods are given by `exposed`."""
     exposed = tuple(exposed)
     try:
@@ -478,8 +484,8 @@ def MakeAsyncProxyType(name, exposed, _cache={}):
     return ProxyType
 
 
-def AsyncAutoProxy(token, serializer, manager=None, authkey=None,
-                   exposed=None, incref=True):
+def AsyncAutoProxy(token: bytes, serializer: str, manager: BaseManager = None, authkey: bytes = None,
+        exposed: Sequence = None, incref: bool = True) -> Any:
     """Return an auto-proxy for `token`."""
     _Client = listener_client[serializer][1]
 
@@ -505,10 +511,10 @@ def AsyncAutoProxy(token, serializer, manager=None, authkey=None,
 class AsyncValueProxy(AsyncBaseProxy):
     _exposed_ = ('get', 'set')
 
-    def get(self):
+    def get(self) -> AsyncProxyResult:
         return self._callmethod('get')
 
-    def set(self, value):
+    def set(self, value) -> AsyncProxyResult:
         return self._callmethod('set', (value,))
 
     value = property(get, set)
@@ -547,8 +553,8 @@ class AsyncManager(BaseManager):
     ```
     """
     @classmethod
-    def register(cls, typeid, callable=None, proxytype=None, exposed=None,
-                 method_to_typeid=None, create_method=True):
+    def register(cls, typeid: str, callable: Callable = None, proxytype: Any = None, exposed: Sequence = None,
+            method_to_typeid: Dict = None, create_method: bool = True) -> None:
         """Register a typeid with the manager type."""
         if '_registry' not in cls.__dict__:
             cls._registry = cls._registry.copy()

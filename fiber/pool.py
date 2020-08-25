@@ -55,6 +55,9 @@ from fiber.queues import LazyZConnection
 from fiber.socket import Socket
 from fiber.process import current_process
 import signal
+from typing import Any, Generator, Iterator, NoReturn, Callable, Sequence
+
+_helper_reraises_exception: Any
 
 
 if fiber.util.is_in_interactive_console():
@@ -68,7 +71,7 @@ MIN_PORT = 40000
 MAX_PORT = 65535
 
 
-def safe_join_worker(proc):
+def safe_join_worker(proc: threading.Thread) -> None:
     p = proc
     if p.is_alive():
         # worker has not yet exited
@@ -77,7 +80,7 @@ def safe_join_worker(proc):
         p.join(5)
 
 
-def safe_terminate_worker(proc):
+def safe_terminate_worker(proc: threading.Thread) -> None:
     delay = random.random()
 
     # Randomize start time to prevent overloading the server
@@ -93,7 +96,7 @@ def safe_terminate_worker(proc):
     logger.debug("safe_terminate_worker() finished")
 
 
-def safe_start(proc):
+def safe_start(proc: threading.Thread) -> None:
     try:
         proc.start()
         proc._start_failed = False
@@ -104,7 +107,7 @@ def safe_start(proc):
         proc._start_failed = True
 
 
-def mp_worker_core(inqueue, outqueue, maxtasks=None, wrap_exception=False):
+def mp_worker_core(inqueue: fiber.queues.SimpleQueue, outqueue: fiber.queues.SimpleQueue, maxtasks: int = None, wrap_exception: bool = False) -> None:
     logger.debug('mp_worker_core running')
     put = outqueue.put
     get = inqueue.get
@@ -141,8 +144,8 @@ def mp_worker_core(inqueue, outqueue, maxtasks=None, wrap_exception=False):
     logger.debug('worker exiting after %s tasks' % completed)
 
 
-def mp_worker(inqueue, outqueue, initializer=None, initargs=(), maxtasks=None,
-              wrap_exception=False, num_workers=1):
+def mp_worker(inqueue: fiber.queues.SimpleQueue, outqueue: fiber.queues.SimpleQueue, initializer: Callable = None, initargs: Sequence = (), maxtasks: int = None,
+              wrap_exception: bool = False, num_workers: int = 1) -> None:
     """This is mostly the same as multiprocessing.pool.worker, the difference
     is that it will start multiple workers (specified by `num_workers` argument)
     via multiproccessing and allow the Fiber pool worker to take multiple CPU
@@ -175,11 +178,11 @@ def mp_worker(inqueue, outqueue, initializer=None, initargs=(), maxtasks=None,
 class ClassicPool(mp_pool.Pool):
 
     @staticmethod
-    def Process(ctx, *args, **kwds):
+    def Process(ctx, *args, **kwds) -> fiber.process.Process:
         return fiber.process.Process(*args, **kwds)
 
-    def __init__(self, processes=None, initializer=None, initargs=(),
-                 maxtasksperchild=None, cluster=None):
+    def __init__(self, processes: int = None, initializer: Callable = None, initargs: Sequence = (),
+            maxtasksperchild: int = None, cluster=None) -> None:
 
         self._ctx = None
         self._setup_queues()
@@ -261,7 +264,7 @@ class ClassicPool(mp_pool.Pool):
         )
         logger.debug("Pool: registered _terminate_pool finalizer")
 
-    def _setup_queues(self):
+    def _setup_queues(self) -> None:
         self._inqueue = fiber.queues.SimpleQueue()
         logger.debug("Pool|created Pool._inqueue: %s", self._inqueue)
         self._outqueue = fiber.queues.SimpleQueue()
@@ -273,8 +276,8 @@ class ClassicPool(mp_pool.Pool):
         # is a REQ socket. It can't be called consecutively.
         self._quick_get = self._outqueue.get
 
-    def _map_async(self, func, iterable, mapper, chunksize=None, callback=None,
-                   error_callback=None):
+    def _map_async(self, func: callable, iterable: Sequence, mapper, chunksize: int = None, callback: Callable = None,
+            error_callback: Callable = None) -> mp.pool.MapResult:
         """
         Helper function to implement map, starmap and their async counterparts.
         """
@@ -309,7 +312,7 @@ class ClassicPool(mp_pool.Pool):
     @staticmethod
     def _handle_workers(cache, taskqueue, ctx, Process, processes, pool,
                         threads, inqueue, outqueue, initializer, initargs,
-                        maxtasksperchild, wrap_exception):
+                        maxtasksperchild, wrap_exception) -> None:
         thread = threading.current_thread()
 
         # Keep maintaining workers until the cache gets drained, unless the
@@ -323,7 +326,7 @@ class ClassicPool(mp_pool.Pool):
         logger.debug("_handle_workers exits")
 
     @staticmethod
-    def _join_exited_workers(pool):
+    def _join_exited_workers(pool) -> bool:
         """Cleanup after any worker processes which have exited due to reaching
         their specified lifetime.  Returns True if any workers were cleaned up.
         """
@@ -353,7 +356,7 @@ class ClassicPool(mp_pool.Pool):
                 del pool[i]
         return cleaned
 
-    def _repopulate_pool(self):
+    def _repopulate_pool(self) -> Any:
         return self._repopulate_pool_static(self._ctx, self.Process,
                                             self._processes,
                                             self._pool, self._threads,
@@ -366,7 +369,7 @@ class ClassicPool(mp_pool.Pool):
     @staticmethod
     def _repopulate_pool_static(ctx, Process, processes, pool, threads,
                                 inqueue, outqueue, initializer, initargs,
-                                maxtasksperchild, wrap_exception):
+                                maxtasksperchild, wrap_exception) -> None:
         """Bring the number of pool processes up to the specified number,
         for use after reaping workers which have exited.
         """
@@ -413,7 +416,7 @@ class ClassicPool(mp_pool.Pool):
     @staticmethod
     def _maintain_pool(ctx, Process, processes, pool, threads, inqueue,
                        outqueue, initializer, initargs, maxtasksperchild,
-                       wrap_exception):
+                       wrap_exception) -> None:
         """Clean up any exited workers and start replacements for them.
         """
         if ClassicPool._join_exited_workers(pool):
@@ -424,7 +427,7 @@ class ClassicPool(mp_pool.Pool):
                                          wrap_exception)
 
     @staticmethod
-    def _handle_tasks(taskqueue, put, outqueue, pool, cache):
+    def _handle_tasks(taskqueue, put, outqueue, pool, cache) -> None:
         thread = threading.current_thread()
 
         for taskseq, set_length in iter(taskqueue.get, None):
@@ -471,7 +474,7 @@ class ClassicPool(mp_pool.Pool):
         logger.debug('_handle_tasks: task handler exiting')
 
     @staticmethod
-    def _handle_results(outqueue, get, cache):
+    def _handle_results(outqueue, get, cache) -> None:
         thread = threading.current_thread()
 
         while 1:
@@ -532,7 +535,7 @@ class ClassicPool(mp_pool.Pool):
 
     @classmethod
     def _terminate_pool(cls, taskqueue, inqueue, outqueue, pool, threads,
-                        worker_handler, task_handler, result_handler, cache):
+                        worker_handler, task_handler, result_handler, cache) -> None:
         # this is guaranteed to only be called once
         logger.debug('finalizing pool')
         start = time.time()
@@ -649,21 +652,21 @@ class Inventory():
     can be called with corresponding `seq`. This inventory will handle waiting,
     managing results from different map calls.
     """
-    def __init__(self, queue_get):
+    def __init__(self, queue_get: Callable[[], Any]) -> None:
         self._seq = 0
         self._queue_get = queue_get
         self._inventory = {}
         self._spec = {}
         self._idx_cur = {}
 
-    def add(self, ntasks):
+    def add(self, ntasks: int) -> int:
         self._seq += 1
         self._inventory[self._seq] = [None] * ntasks
         self._spec[self._seq] = ntasks
         self._idx_cur[self._seq] = 0
         return self._seq
 
-    def get(self, job_seq):
+    def get(self, job_seq: int) -> Any:
         n = self._spec[job_seq]
 
         while n != 0:
@@ -678,7 +681,7 @@ class Inventory():
         self._inventory[job_seq] = None
         return ret
 
-    def iget_unordered(self, job_seq):
+    def iget_unordered(self, job_seq: int) -> Iterator[Any]:
         n = self._spec[job_seq]
 
         while n != 0:
@@ -694,7 +697,7 @@ class Inventory():
 
         return
 
-    def iget_ordered(self, job_seq):
+    def iget_ordered(self, job_seq: int) -> Iterator[Any]:
         idx = self._idx_cur[job_seq]
         total = len(self._inventory[job_seq])
 
@@ -729,17 +732,17 @@ class Inventory():
 
 
 class MapResult():
-    def __init__(self, seq, inventory):
+    def __init__(self, seq: int, inventory: Inventory) -> None:
         self._seq = seq
         self._inventory = inventory
 
-    def get(self):
+    def get(self) -> Any:
         return self._inventory.get(self._seq)
 
-    def iget_ordered(self):
+    def iget_ordered(self) -> Any:
         return self._inventory.iget_ordered(self._seq)
 
-    def iget_unordered(self):
+    def iget_unordered(self) -> Any:
         return self._inventory.iget_unordered(self._seq)
 
 
@@ -748,7 +751,7 @@ class ApplyResult(MapResult):
     represents an handle that can be used to get the actual result.
     """
 
-    def get(self):
+    def get(self) -> Any:
         """Get the actual result represented by this object
 
         :returns: Actual result. This method will block if the actual result
@@ -757,8 +760,8 @@ class ApplyResult(MapResult):
         return self._inventory.get(self._seq)[0]
 
 
-def zpool_worker_core(master_conn, result_conn, maxtasksperchild,
-                      wrap_exception, rank=-1, req=False):
+def zpool_worker_core(master_conn: LazyZConnection, result_conn: LazyZConnection, maxtasksperchild: int,
+        wrap_exception: bool, rank: int = -1, req: bool =False) -> None:
     """
     The actual function that processes tasks.
 
@@ -825,12 +828,12 @@ def zpool_worker_core(master_conn, result_conn, maxtasksperchild,
     #print("worker_core exit, ", rank, proc.pid)
 
 
-def handle_signal(signal, frame):
+def handle_signal(signal, frame) -> None:
     # run sys.exit() so that atexit handlers can run
     sys.exit()
 
-def zpool_worker(master_conn, result_conn, initializer=None, initargs=(),
-                 maxtasks=None, wrap_exception=False, num_workers=1, req=False):
+def zpool_worker(master_conn: LazyZConnection, result_conn: LazyZConnection, initializer: Callable = None, initargs: Sequence = (),
+        maxtasks: int = None, wrap_exception: bool = False, num_workers: int = 1, req: bool = False) -> None:
     """
     The entry point of Pool worker function.
 
@@ -885,9 +888,9 @@ class ZPool():
     results handling. This makes it faster.
     """
 
-    def __init__(self, processes=None, initializer=None, initargs=(),
-                 maxtasksperchild=None, cluster=None,
-                 master_sock_type="w"):
+    def __init__(self, processes: int = None, initializer: Callable = None, initargs: Sequence = (),
+            maxtasksperchild: int = None, cluster=None,
+            master_sock_type: str = "w") -> None:
 
         self._pool = []
         # Set default processes to 1
@@ -942,14 +945,14 @@ class ZPool():
         td.start()
         self._task_handler = td
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<{}({}, {})>".format(
             type(self).__name__,
             getattr(self, "_processes", None),
             getattr(self, "_master_addr", None),
         )
 
-    def _handle_tasks(self):
+    def _handle_tasks(self) -> None:
         taskq = self.taskq
         master_sock = self._master_sock
 
@@ -962,10 +965,10 @@ class ZPool():
             master_sock.send(data)
             self.sent_tasks += 1
 
-    def _task_put(self, task):
+    def _task_put(self, task) -> None:
         self.taskq.put(task)
 
-    def _res_get(self):
+    def _res_get(self) -> Any:
         payload = self._result_sock.recv()
         self.recv_tasks += 1
         data = pickle.loads(payload)
@@ -973,7 +976,7 @@ class ZPool():
         return data
 
     @staticmethod
-    def _join_exited_workers(workers):
+    def _join_exited_workers(workers: List[fiber.process.Process]) -> List[fiber.process.Process]:
 
         thread = threading.current_thread()
 
@@ -1007,8 +1010,8 @@ class ZPool():
         return exited_workers
 
     @staticmethod
-    def _maintain_workers(processes, workers, master_addr, result_addr, initializer,
-                          initargs, maxtasksperchild):
+    def _maintain_workers(processes: int, workers: List[fiber.proess.Process], master_addr: str, result_addr: str, initializer: Callable,
+            initargs: Sequence, maxtasksperchild: int) -> None:
         thread = threading.current_thread()
 
         workers_per_fp = config.cpu_per_job
@@ -1057,7 +1060,7 @@ class ZPool():
         logger.debug("ZPool _maintain_workers finished, workers %s", workers)
 
     @staticmethod
-    def _handle_workers(pool):
+    def _handle_workers(pool: List(fiber.process.Process)) -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 
@@ -1082,12 +1085,12 @@ class ZPool():
                      pool)
 
     @staticmethod
-    def _chunks(iterable, size):
+    def _chunks(iterable: Sequence, size: int) -> Iterator[Any]:
         for i in range(0, len(iterable), size):
             yield iterable[i:i + size]
 
-    def apply_async(self, func, args=(), kwds={}, callback=None,
-                    error_callback=None):
+    def apply_async(self, func: Callable, args: Sequence = (), kwds: Dict = {}, callback: Callable = None,
+            error_callback: Callable = None) -> ApplyResult:
         """
         Run function `func` with arguments `args` and keyword arguments `kwds`
         on a remote Pool worker. This is an asynchronous version of `apply`.
@@ -1115,11 +1118,11 @@ class ZPool():
 
         return res
 
-    def start_workers(self):
+    def start_workers(self) -> None:
         self._worker_handler.start()
         self._worker_handler_started = True
 
-    def lazy_start_workers(self, func):
+    def lazy_start_workers(self, func: Callable) -> None:
         if hasattr(func, "__fiber_meta__"):
             if (
                 not hasattr(zpool_worker, "__fiber_meta__")
@@ -1136,8 +1139,8 @@ class ZPool():
         if not self._worker_handler_started:
             self.start_workers()
 
-    def map_async(self, func, iterable, chunksize=None, callback=None,
-                  error_callback=None):
+    def map_async(self, func: Callable, iterable: Sequence, chunksize: int = None, callback: Callable = None,
+            error_callback: Callable = None) -> MapResult:
         """
         For each element `e` in `iterable`, run `func(e)`. The workload is
         distributed between all the Pool workers. This is an asynchronous
@@ -1183,7 +1186,7 @@ class ZPool():
 
         return res
 
-    def apply(self, func, args=(), kwds={}):
+    def apply(self, func: Callable, args: Sequence = (), kwds: Dict ={}) -> Any:
         """
         Run function `func` with arguments `args` and keyword arguments `kwds`
         on a remote Pool worker.
@@ -1196,7 +1199,7 @@ class ZPool():
         """
         return self.apply_async(func, args, kwds).get()
 
-    def map(self, func, iterable, chunksize=None):
+    def map(self, func: Callable, iterable: Sequence, chunksize: int = None) -> List[Any]:
         """
         For each element `e` in `iterable`, run `func(e)`. The workload is
         distributed between all the Pool workers.
@@ -1215,7 +1218,7 @@ class ZPool():
         logger.debug('%s map func=%s', self, func)
         return self.map_async(func, iterable, chunksize).get()
 
-    def imap(self, func, iterable, chunksize=1):
+    def imap(self, func: Callable, iterable: Sequence, chunksize: int = 1) -> Iterator[Any]:
         """
         For each element `e` in `iterable`, run `func(e)`. The workload is
         distributed between all the Pool workers. This function returns an
@@ -1234,7 +1237,7 @@ class ZPool():
         res = self.map_async(func, iterable, chunksize)
         return res.iget_ordered()
 
-    def imap_unordered(self, func, iterable, chunksize=1):
+    def imap_unordered(self, func: Callable, iterable: Sequence, chunksize: int = 1) -> Iterator[Any]:
         """
         For each element `e` in `iterable`, run `func(e)`. The workload is
         distributed between all the Pool workers. This function returns an
@@ -1255,8 +1258,8 @@ class ZPool():
         res = self.map_async(func, iterable, chunksize)
         return res.iget_unordered()
 
-    def starmap_async(self, func, iterable, chunksize=None, callback=None,
-                      error_callback=None):
+    def starmap_async(self, func: Callable, iterable: Sequence, chunksize: int = None, callback: Callable= None,
+            error_callback: Callable = None) -> MapResult:
         """
         For each element `args` in `iterable`, run `func(*args)`. The workload
         is distributed between all the Pool workers. This is an asynchronous
@@ -1304,7 +1307,7 @@ class ZPool():
 
         return res
 
-    def starmap(self, func, iterable, chunksize=None):
+    def starmap(self, func: Callable, iterable: Sequence, chunksize: int = None) -> MapResult:
         """
         For each element `args` in `iterable`, run `func(*args)`. The workload
         is distributed between all the Pool workers.
@@ -1329,12 +1332,12 @@ class ZPool():
         """
         return self.starmap_async(func, iterable, chunksize).get()
 
-    def _send_sentinels_to_workers(self):
+    def _send_sentinels_to_workers(self) -> None:
         logger.debug('send sentinels(None) to workers %s', self)
         for i in range(self._processes):
             self._task_put(None)
 
-    def close(self):
+    def close(self) -> None:
         """
         Close this Pool. This means the current pool will be put in to a
         closing state and it will not accept new tasks. Existing workers will
@@ -1352,7 +1355,7 @@ class ZPool():
 
             self._send_sentinels_to_workers()
 
-    def terminate(self):
+    def terminate(self) -> None:
         """
         Terminate this pool. This means that this pool will be terminated and
         all its pool workers will also be terminated. Task that have been
@@ -1387,7 +1390,7 @@ class ZPool():
         logger.debug("joining pool._worker_handler")
         self._worker_handler.join()
 
-    def join(self):
+    def join(self) -> None:
         """
         Wait for all the pool workers of this pool to exit. This should be
         used after `terminate()` or `close()` are called on this pool.
@@ -1402,7 +1405,7 @@ class ZPool():
                 continue
             p.join()
 
-    def wait_until_workers_up(self):
+    def wait_until_workers_up(self) -> None:
         logger.debug('%s begin wait_until_workers_up', self)
         workers_per_fp = config.cpu_per_job
         n = math.ceil(float(self._processes) / workers_per_fp)
@@ -1434,8 +1437,8 @@ class ResilientZPool(ZPool):
     The API of `ResilientZPool` is the same as `ZPool`. One difference is that
     if `processes` argument is not set, its default value is 1.
     """
-    def __init__(self, processes=None, initializer=None, initargs=(),
-                 maxtasksperchild=None, cluster=None):
+    def __init__(self, processes: int = None, initializer: Callable = None, initargs: Sequence = (),
+            maxtasksperchild: int = None, cluster=None) -> None:
 
         self.active_peer_dict = {}
         self.active_peer_list = []
@@ -1469,7 +1472,7 @@ class ResilientZPool(ZPool):
 
         self._pid_to_rid = {}
 
-    def _add_peer(self, ident):
+    def _add_peer(self, ident: bytes) -> None:
         self.peer_lock.acquire()
 
         self.active_peer_dict[ident] = True
@@ -1478,7 +1481,7 @@ class ResilientZPool(ZPool):
 
         self.peer_lock.release()
 
-    def _remove_peer(self, ident):
+    def _remove_peer(self, ident: bytes) -> None:
         # _pendint_table will be cleared later in error handling phase
         self.peer_lock.acquire()
 
@@ -1487,7 +1490,7 @@ class ResilientZPool(ZPool):
 
         self.peer_lock.release()
 
-    def _res_get(self):
+    def _res_get(self) -> Any:
         # check for system messages
         payload = self._result_sock.recv()
         data = pickle.loads(payload)
@@ -1507,10 +1510,10 @@ class ResilientZPool(ZPool):
         # skip ident
         return data[:-1]
 
-    def _task_put(self, task):
+    def _task_put(self, task: Union[None, Tuple[int, int, Callable, Sequence, bool]]) -> None:
         self.taskq.put(task)
 
-    def _handle_tasks(self):
+    def _handle_tasks(self) -> None:
         thread = threading.current_thread()
         taskq = self.taskq
         master_sock = self._master_sock
@@ -1555,8 +1558,8 @@ class ResilientZPool(ZPool):
         logger.debug('ResilientZPool _handle_tasks exited')
 
     @staticmethod
-    def _maintain_workers(processes, workers, master_addr, result_addr, initializer,
-                          initargs, maxtasksperchild):
+    def _maintain_workers(processes: int, workers: List[fiber.proess.Process], master_addr: str, result_addr: str, initializer: Callable,
+            initargs: Sequence, maxtasksperchild: int) -> None:
         thread = threading.current_thread()
 
         workers_per_fp = config.cpu_per_job
@@ -1610,7 +1613,7 @@ class ResilientZPool(ZPool):
                      workers)
 
     @staticmethod
-    def _handle_workers(pool):
+    def _handle_workers(pool: List(fiber.process.Process)) -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 
@@ -1658,12 +1661,12 @@ class ResilientZPool(ZPool):
         logger.debug("%s _handle_workers finished. Status is not RUN",
                      pool)
 
-    def terminate(self):
+    def terminate(self) -> None:
         self._task_handler._state = TERMINATE
 
         super(ResilientZPool, self).terminate()
 
-    def close(self):
+    def close(self) -> None:
         logger.debug('closing pool %s', self)
         if self._state == RUN:
             self._state = CLOSE
@@ -1680,7 +1683,7 @@ class ResilientZPool(ZPool):
         self._task_put(None)
         self._task_handler._state = CLOSE
 
-    def _send_sentinels_to_workers(self):
+    def _send_sentinels_to_workers(self) -> None:
         logger.debug("ResilientZPool _send_sentinels_to_workers: "
                      "send to workers")
         data = pickle.dumps(None)

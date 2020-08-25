@@ -71,7 +71,7 @@ _poller_threads: Dict[Any, Any]
 # define the port range that fiber can use to listen for incoming connections
 MIN_PORT = 40000
 MAX_PORT = 65535
-logger = logging.getLogger('fiber')
+logger = logging.getLogger("fiber")
 
 
 _io_threads = []
@@ -102,7 +102,12 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
     > note: ZConnection's fileno method returns a Fiber socket.
     """
 
-    def __init__(self, handle: Union[Socket, Tuple[str, str]], readable: bool = True, writable: bool = True) -> None:
+    def __init__(
+        self,
+        handle: Union[Socket, Tuple[str, str]],
+        readable: bool = True,
+        writable: bool = True,
+    ) -> None:
         self._name = None
         if handle is None:
             raise ValueError("invalid socket")
@@ -116,7 +121,8 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
 
         if not readable and not writable:
             raise ValueError(
-                "at least one of `readable` and `writable` must be True")
+                "at least one of `readable` and `writable` must be True"
+            )
         self._readable = readable
         self._writable = writable
 
@@ -124,18 +130,20 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
         atexit.register(self._close)
 
     def __getstate__(self) -> Dict:
-        return {"sock_type": self.sock_type,
-                "dest_addr": self.dest_addr,
-                "_readable": self._readable,
-                "_writable": self._writable,
-                "_name": self._name}
+        return {
+            "sock_type": self.sock_type,
+            "dest_addr": self.dest_addr,
+            "_readable": self._readable,
+            "_writable": self._writable,
+            "_name": self._name,
+        }
 
     def __setstate__(self, state) -> None:
-        self.sock_type = state['sock_type']
-        self.dest_addr = state['dest_addr']
-        self._readable = state['_readable']
-        self._writable = state['_writable']
-        self._name = state['_name']
+        self.sock_type = state["sock_type"]
+        self.dest_addr = state["dest_addr"]
+        self._readable = state["_readable"]
+        self._writable = state["_writable"]
+        self._name = state["_name"]
         self._create_handle()
         mp_register_after_fork(self, ZConnection._create_handle)
         atexit.register(self._close)
@@ -150,12 +158,14 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
             if getattr(self, "_name", None) is not None
             else self.dest_addr
         )
-        return '<ZConnection [{}, {}]>'.format(name, getattr(self, "_handle", None))
+        return "<ZConnection [{}, {}]>".format(
+            name, getattr(self, "_handle", None)
+        )
 
     def _create_handle(self) -> None:
         logger.debug("%s _create_handle called", self)
 
-        #self._handle = context.socket(self.sock_type)
+        # self._handle = context.socket(self.sock_type)
         self._handle = Socket(mode=self.sock_type)
         self._handle.connect(self.dest_addr)
         logger.debug("connect to %s", self.dest_addr)
@@ -178,7 +188,7 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
 
     def recv(self) -> Any:
         """Receive a (picklable) object"""
-        #logger.debug("recv called")
+        # logger.debug("recv called")
         self._check_closed()
         self._check_readable()
         buf = self._recv_bytes()
@@ -192,7 +202,13 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
 
 
 class LazyZConnection(ZConnection):
-    def __init__(self, handle: Union[Socket, Tuple(str, str)], readable : bool = True, writable: bool = True, name: str = None) -> None:
+    def __init__(
+        self,
+        handle: Union[Socket, Tuple(str, str)],
+        readable: bool = True,
+        writable: bool = True,
+        name: str = None,
+    ) -> None:
         self._name = None
 
         if handle is None:
@@ -210,7 +226,8 @@ class LazyZConnection(ZConnection):
 
         if not readable and not writable:
             raise ValueError(
-                "at least one of `readable` and `writable` must be True")
+                "at least one of `readable` and `writable` must be True"
+            )
         self._readable = readable
         self._writable = writable
 
@@ -227,29 +244,31 @@ class LazyZConnection(ZConnection):
         self._handle.close()
 
     def _send_bytes(self, buf: bytes) -> None:
-        #self._handle.send_multipart([b"", buf])
+        # self._handle.send_multipart([b"", buf])
         self._handle.send(buf)
 
     def _recv_bytes(self, maxsize: int = None) -> bytes:
         # TODO(jiale) support maxsize
-        #msg = self._handle.recv_multipart()
+        # msg = self._handle.recv_multipart()
         # msg -> b'' b'message data' (because of ROUTER)
-        #data = msg[1]
+        # data = msg[1]
         data = self._handle.recv()
 
         return data
 
     def __getstate__(self) -> Dict:
-        return {"sock_type": self.sock_type,
-                "dest_addr": self.dest_addr,
-                "_readable": self._readable,
-                "_writable": self._writable}
+        return {
+            "sock_type": self.sock_type,
+            "dest_addr": self.dest_addr,
+            "_readable": self._readable,
+            "_writable": self._writable,
+        }
 
     def __setstate__(self, state) -> None:
-        self.sock_type = state['sock_type']
-        self.dest_addr = state['dest_addr']
-        self._readable = state['_readable']
-        self._writable = state['_writable']
+        self.sock_type = state["sock_type"]
+        self.dest_addr = state["dest_addr"]
+        self._readable = state["_readable"]
+        self._writable = state["_writable"]
         self._inited = False
 
 
@@ -279,20 +298,26 @@ def Pipe(duplex: bool = True) -> Tuple[LazyZConnection, LazyZConnection]:
     d.start()
 
     if duplex:
-        return (LazyZConnection(("rw", d.out_addr,)),
-                LazyZConnection(("rw", d.in_addr,)))
-    return (LazyZConnection(("r", d.out_addr,)),
-            LazyZConnection(("w", d.in_addr,)))
+        return (
+            LazyZConnection(("rw", d.out_addr,)),
+            LazyZConnection(("rw", d.in_addr,)),
+        )
+    return (
+        LazyZConnection(("r", d.out_addr,)),
+        LazyZConnection(("w", d.in_addr,)),
+    )
 
 
-class SimpleQueuePush():
+class SimpleQueuePush:
     """A queue build on top of Fiber socket. It uses "w" - ("r" - "w") - "r"
     socket combination. Messages are pushed from one end of the queue to
     the other end without explicitly pulling.
     """
+
     def __repr__(self) -> str:
         return "SimpleQueuePush<reader:{}, writer: {}>".format(
-            self._reader_addr, self._writer_addr)
+            self._reader_addr, self._writer_addr
+        )
 
     def __init__(self) -> None:
         self.done = False
@@ -311,7 +336,7 @@ class SimpleQueuePush():
         # set reader to None because if reader is connected, Fiber socket will
         # fairly queue  messages to all readers even if this reader is
         # not reading.
-        #self.reader = None
+        # self.reader = None
         self.reader = LazyZConnection(("r", self._reader_addr,))
         self.writer = LazyZConnection(("w", self._writer_addr,))
 
@@ -330,9 +355,9 @@ class SimpleQueuePush():
 
             self.reader = LazyZConnection(("r", self._reader_addr,))
         """
-        #data = self.reader._handle.recv()
+        # data = self.reader._handle.recv()
         msg = self.reader.recv()
-        #msg = reduction.ForkingPickler.loads(data)
+        # msg = reduction.ForkingPickler.loads(data)
         logger.debug("%s got %s", self, msg)
         return msg
 
@@ -342,10 +367,10 @@ class SimpleQueuePush():
         :param obj: Any picklable Python object.
         """
         logger.debug("%s put %s", self, obj)
-        #data = reduction.ForkingPickler.dumps(obj)
+        # data = reduction.ForkingPickler.dumps(obj)
         self.writer.send(obj)
 
-    '''
+    """
     def __getstate__(self):
         d = self.__dict__.copy()
         # set reader to None so that de-serialized Queue doesn't connect to
@@ -353,8 +378,8 @@ class SimpleQueuePush():
         # to all the readers. We want to prevent this behavior.
         d["reader"] = None
         return d
-    '''
+    """
 
 
-#Pipe = ClassicPipe
+# Pipe = ClassicPipe
 SimpleQueue = SimpleQueuePush

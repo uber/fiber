@@ -1,6 +1,3 @@
-from typing import Any, Callable, TypeVar
-
-_T0 = TypeVar('_T0')
 # Copyright 2020 Uber Technologies, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +13,13 @@ _T0 = TypeVar('_T0')
 # limitations under the License.
 
 
+from typing import Any, Callable, Dict
+
+
 VALID_META_KEYS = ["cpu", "memory", "gpu"]
 
 
-def post_process(metadata: _T0) -> _T0:
+def post_process(metadata: Dict) -> Dict:
     # memory should be in MB
     if "memory" in metadata:
         memory = metadata.pop("memory")

@@ -67,7 +67,7 @@ any Fiber processes.
 import os
 import logging
 import configparser
-from typing import Any, Dict, List, Type, TypeVar
+from typing import Any, Dict, List, Type, TypeVar, Optional
 
 _current_config: None
 _TConfig = TypeVar('_TConfig', bound="Config")
@@ -110,7 +110,24 @@ class Config(object):
 
 
     """
-    def __init__(self, conf_file: str=None) -> None:
+    merge_output: bool
+    debug: bool
+    image: Optional[str]
+    default_image: str
+    backend: Optional[str]
+    default_backend: str
+    use_bash: bool
+    log_level: int
+    log_file: str
+    ipc_active: bool
+    ipc_admin_master_port: int
+    ipc_admin_worker_port: int
+    cpu_per_job: int
+    mem_per_job: Optional[int]
+    use_push_queue: bool
+    kubernetes_namespace: str
+
+    def __init__(self, conf_file: str = None) -> None:
         # Not documented, people should not use this
         self.merge_output = False
         self.debug = False

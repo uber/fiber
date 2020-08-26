@@ -35,12 +35,13 @@ import fiber
 import fiber.core as core
 from fiber.core import ProcessStatus
 import pathlib
-from typing import Any, List, Tuple, TypeVar, Optional
+from typing import Any, List, Tuple, TypeVar, Optional, Union, Dict
 
 _T0 = TypeVar("_T0")
 _TDockerImageBuilder = TypeVar(
     "_TDockerImageBuilder", bound="DockerImageBuilder"
 )
+CONFIG: Dict[str, str]
 
 
 CONFIG = {}
@@ -148,6 +149,9 @@ def cp(src: str, dst: str) -> None:
         volumes={volume: {"mode": "rw", "bind": "/persistent"}},
     )
     job = k8s_backend.create_job(job_spec)
+    if job.data is None:
+        raise RuntimeError("Failed to create a new job for data copying")
+
     pod_name = job.data.metadata.name
 
     print("launched pod: {}".format(pod_name))
@@ -227,7 +231,7 @@ class DockerImageBuilder:
     def __init__(self, registry: str = "") -> None:
         self.registry = registry
 
-    def get_docker_registry_image_name(image_base_name: str) -> str:
+    def get_docker_registry_image_name(self, image_base_name: str) -> str:
         return image_base_name
 
     def build(self) -> str:
@@ -256,8 +260,9 @@ class DockerImageBuilder:
 
         return self.full_image_name
 
-    def tag(self) -> None:
+    def tag(self) -> str:
         self.full_image_name = self.image_name
+        return self.full_image_name
 
     def push(self) -> None:
         sp.check_call(
@@ -368,6 +373,8 @@ def run(
         )
     )
 
+    builder: DockerImageBuilder
+
     if image:
         full_image_name = image
     else:
@@ -409,6 +416,9 @@ def run(
         job_spec.volumes = volumes
 
     job = k8s_backend.create_job(job_spec)
+    if job.data is None:
+        raise RuntimeError("Failed to create a new job")
+
     pod_name = job.data.metadata.name
     exitcode = 0
 

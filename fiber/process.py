@@ -43,6 +43,9 @@ from typing import Callable, Sequence, Tuple, Optional, List
 logger = logging.getLogger('fiber')
 
 
+_children: Set["Process"]
+_current_process: "BaseProcess"
+
 _children = set()
 _current_process = mp.current_process()
 
@@ -71,7 +74,7 @@ def active_children() -> List["Process"]:
     return list(_children)
 
 
-def current_process() -> "Process":
+def current_process() -> "BaseProcess":
     """Return a Process object representing the current process.
 
     Example:
@@ -160,6 +163,10 @@ class Process(BaseProcess):
     can call `select` and other eligible functions that works on fds on this
     file descriptor.
     """
+    _popen: fiber.popen_fiber_spawn.Popen
+    _name: str
+    _pid: int
+
     _start_method = None
     _pid = None
 
@@ -229,7 +236,7 @@ class Process(BaseProcess):
             return
         self._popen.terminate()
 
-    def join(self, timeout=None) -> Optional[int]:
+    def join(self, timeout=None) -> None:
         """Wait for this process to terminate.
 
         :param timeout: The maximum duration of time in seconds that this call
@@ -238,7 +245,7 @@ class Process(BaseProcess):
             `timeout` is `0`, it will check if the process has exited and
             return immediately.
 
-        :returns: The exit code of this process
+        :returns: None if process terminates or the method times out
         """
         return super().join(timeout=timeout)
 

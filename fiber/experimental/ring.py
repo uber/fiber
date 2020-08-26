@@ -21,7 +21,7 @@ import random
 
 import fiber
 from fiber.backend import get_backend
-from typing import Any, NoReturn, Callable, Sequence
+from typing import Any, NoReturn, Callable, Sequence, Dict
 
 _manager: Any
 
@@ -71,6 +71,9 @@ class Ring:
     :param initargs: positional arguments that are passed to initializer.
         Currently this is not used.
     """
+
+    __fiber_meta__: Dict
+
     def __init__(self, processes: int, func: Callable[[int, int], Any], initializer: Callable[[Sequence], Any], initargs: Sequence = None) -> None:
         self.size = processes
         self.initializer = initializer

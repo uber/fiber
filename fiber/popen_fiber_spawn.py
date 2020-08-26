@@ -417,7 +417,7 @@ class Popen(object):
             cwd=os.getcwd(), host=admin_host, port=port, id=ident
         )
 
-        job = self._get_job(cmd)
+        job_spec = self._get_job(cmd)
 
         event = threading.Event()
         event.clear()
@@ -455,7 +455,7 @@ class Popen(object):
         process_obj._popen = self
 
         # launch job
-        job = self._run_job(job)
+        job = self._run_job(job_spec)
         self.pid = get_pid_from_jid(job.jid)
         # Fix process obj's pid
         process_obj.ident = self.pid

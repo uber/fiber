@@ -1061,7 +1061,7 @@ class ZPool():
         logger.debug("ZPool _maintain_workers finished, workers %s", workers)
 
     @staticmethod
-    def _handle_workers(pool: List[fiber.process.Process]) -> None:
+    def _handle_workers(pool: "ZPool") -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 
@@ -1614,7 +1614,7 @@ class ResilientZPool(ZPool):
                      workers)
 
     @staticmethod
-    def _handle_workers(pool: List[fiber.process.Process]) -> None:
+    def _handle_workers(pool: "ResilientZPool") -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 

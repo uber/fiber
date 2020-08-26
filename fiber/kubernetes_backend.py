@@ -245,7 +245,7 @@ class Backend(core.Backend):
         )
         return terminated.exit_code
 
-    def terminate_job(self, job: core.JobSpec) -> None:
+    def terminate_job(self, job: core.Job) -> None:
         v1job = job.data
         name = v1job.metadata.name
         namespace = v1job.metadata.namespace

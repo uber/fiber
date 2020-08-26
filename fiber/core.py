@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import enum
-from typing import Dict, List, NoReturn
+from typing import Dict, List, NoReturn, Optional
 
 
 MEM_CPU_RATIO = 2  # 2G per cpu
@@ -27,11 +27,19 @@ class ProcessStatus(enum.Enum):
 
 
 class JobSpec(object):
+    image: Optional[str]
+    command: List[str]
+    name: str
+    cpu: Optional[int]
+    mem: Optional[int]
+    volumes: Optional[Dict[str, Dict]]
+    gpu: Optional[int]
+
     def __init__(
         self,
         image: str = None,
-        command: List[str] = None,
-        name: str = None,
+        command: List[str] = [],
+        name: str = "",
         cpu: int = None,
         mem: int = None,
         volumes: Dict[str, Dict] = None,
@@ -77,6 +85,7 @@ class Job(object):
     host = None
 
     def __init__(self, data, jid) -> None:
+        assert data is not None, "Job data is None"
         self.data = data
         self.jid = jid
 
@@ -94,24 +103,24 @@ class Backend(object):
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError
 
-    def get_job_status(self, job: JobSpec):
+    def get_job_status(self, job: Job):
         """This function is called when Fiber wants to to get job status."""
         raise NotImplementedError
 
-    def get_job_logs(self, job: JobSpec) -> str:
+    def get_job_logs(self, job: Job) -> str:
         """
         This function is called when Fiber wants to to get logs of this job
         """
         return ""
 
-    def wait_for_job(self, job: JobSpec, timeout: float):
+    def wait_for_job(self, job: Job, timeout: float):
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
         raise NotImplementedError
 
-    def terminate_job(self, job: JobSpec):
+    def terminate_job(self, job: Job):
         """Terminate a job described by `job`."""
         raise NotImplementedError
 

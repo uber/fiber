@@ -119,6 +119,8 @@ class Backend(core.Backend):
 
     def get_job_status(self, job: core.Job) -> ProcessStatus:
         container = job.data
+        if container is None:
+            return ProcessStatus.UNKNOWN
 
         if config.merge_output:
             print(container.logs(stream=False).decode('utf-8'))
@@ -134,6 +136,10 @@ class Backend(core.Backend):
 
     def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         container = job.data
+        if container is None:
+            # Job not started
+            return None
+
         logger.debug("wait_for_job: %s", container.name)
 
         if config.merge_output:
@@ -193,7 +199,7 @@ class Backend(core.Backend):
             # because docker.for.mac.localhost resolves to different inside
             # and outside docker container. "docker.for.mac.localhost" is
             # the name that doesn't change in and outside the container.
-            return "docker.for.mac.localhost", 0
+            return "docker.for.mac.localhost", 0, "eth0"
 
         if not isinstance(fiber.current_process(), fiber.Process):
             # not inside docker

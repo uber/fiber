@@ -110,7 +110,7 @@ def get_fiber_init() -> str:
 
 
 def fiber_background(
-    listen_addr: Tuple(str, int), event_dict: Dict[int, threading.Event]
+    listen_addr: Tuple[str, int], event_dict: Dict[int, threading.Event]
 ) -> None:
     global admin_host, admin_port
 
@@ -191,7 +191,7 @@ class Popen(object):
 
     def __init__(
         self,
-        process_obj: fiber.process.Process,
+        process_obj: "fiber.process.Process",
         backend=None,
         launch: bool = False,
     ) -> NoReturn:
@@ -271,7 +271,7 @@ class Popen(object):
             + ["-c", prog, "--multiprocessing-fork"]
         )
 
-    def _accept(self) -> socket.Socket:
+    def _accept(self) -> socket.socket:
         conn, addr = self.sock.accept()
         logger.debug("successfully accept")
         # TODO verify if it's the same client
@@ -368,7 +368,7 @@ class Popen(object):
             self.returncode = code
         return self.returncode
 
-    def _spawn(self, cmd) -> subprocess.Popen[bytes]:
+    def _spawn(self, cmd) -> subprocess.Popen:
         p = subprocess.Popen(cmd)
 
         return p

@@ -36,6 +36,7 @@ import multiprocessing as mp
 import logging
 
 from multiprocessing.process import BaseProcess
+from .popen_fiber_spawn import Popen
 from typing import Callable, Sequence, Tuple, Optional, List
 
 
@@ -163,8 +164,7 @@ class Process(BaseProcess):
     _pid = None
 
     @staticmethod
-    def _Popen(process_obj: "Process") -> fiber.popen_fiber_spawn.Popen:
-        from .popen_fiber_spawn import Popen
+    def _Popen(process_obj: "Process") -> Popen:
         return Popen(process_obj)
 
     def __init__(self, group: None = None, target: Callable = None,

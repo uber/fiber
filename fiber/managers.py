@@ -39,7 +39,7 @@ from typing import Any, TypeVar, Callable, Sequence, Dict
 _validate_family: Any
 _T0 = TypeVar('_T0')
 _T1 = TypeVar('_T1')
-_TAsyncListProxy = TypeVar('_TAsyncListProxy', bound=AsyncListProxy)
+_TAsyncListProxy = TypeVar('_TAsyncListProxy', bound="AsyncListProxy")
 
 logger = logging.getLogger('fiber')
 

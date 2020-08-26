@@ -21,7 +21,7 @@ import weakref
 import psutil
 from typing import Any, Dict, Iterator, Tuple, Optional, Callable, Sequence
 
-_afterfork_registry: weakref.WeakValueDictionary[Tuple[int, int, Callable], Any]
+_afterfork_registry: weakref.WeakValueDictionary
 _finalizer_counter: Iterator
 _finalizer_registry: Dict[Tuple[Any, Any], "Finalize"]
 

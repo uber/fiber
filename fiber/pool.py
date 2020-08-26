@@ -55,7 +55,8 @@ from fiber.queues import LazyZConnection
 from fiber.socket import Socket
 from fiber.process import current_process
 import signal
-from typing import Any, Generator, Iterator, NoReturn, Callable, Sequence
+from typing import (Any, Generator, Iterator, NoReturn, Callable,
+                    Sequence, List, Dict, Union, Tuple)
 
 _helper_reraises_exception: Any
 
@@ -1010,7 +1011,7 @@ class ZPool():
         return exited_workers
 
     @staticmethod
-    def _maintain_workers(processes: int, workers: List[fiber.proess.Process], master_addr: str, result_addr: str, initializer: Callable,
+    def _maintain_workers(processes: int, workers: List[fiber.process.Process], master_addr: str, result_addr: str, initializer: Callable,
             initargs: Sequence, maxtasksperchild: int) -> None:
         thread = threading.current_thread()
 
@@ -1060,7 +1061,7 @@ class ZPool():
         logger.debug("ZPool _maintain_workers finished, workers %s", workers)
 
     @staticmethod
-    def _handle_workers(pool: List(fiber.process.Process)) -> None:
+    def _handle_workers(pool: List[fiber.process.Process]) -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 
@@ -1558,7 +1559,7 @@ class ResilientZPool(ZPool):
         logger.debug('ResilientZPool _handle_tasks exited')
 
     @staticmethod
-    def _maintain_workers(processes: int, workers: List[fiber.proess.Process], master_addr: str, result_addr: str, initializer: Callable,
+    def _maintain_workers(processes: int, workers: List[fiber.process.Process], master_addr: str, result_addr: str, initializer: Callable,
             initargs: Sequence, maxtasksperchild: int) -> None:
         thread = threading.current_thread()
 
@@ -1613,7 +1614,7 @@ class ResilientZPool(ZPool):
                      workers)
 
     @staticmethod
-    def _handle_workers(pool: List(fiber.process.Process)) -> None:
+    def _handle_workers(pool: List[fiber.process.Process]) -> None:
         logger.debug("%s _handle_workers running", pool)
         td = threading.current_thread()
 

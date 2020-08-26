@@ -204,7 +204,7 @@ class ZConnection(multiprocessing.connection._ConnectionBase):
 class LazyZConnection(ZConnection):
     def __init__(
         self,
-        handle: Union[Socket, Tuple(str, str)],
+        handle: Union[Socket, Tuple[str, str]],
         readable: bool = True,
         writable: bool = True,
         name: str = None,

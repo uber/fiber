@@ -28,7 +28,7 @@ class FiberContext():
     current_process = staticmethod(process.current_process)
     active_children = staticmethod(process.active_children)
 
-    def Manager(self) -> fiber.managers.SyncManager:
+    def Manager(self) -> "fiber.managers.SyncManager":
         """Returns a manager associated with a running server process
 
         The managers methods such as `Lock()`, `Condition()` and `Queue()`
@@ -40,7 +40,7 @@ class FiberContext():
         return m
 
     def Pool(self, processes: int = None, initializer: Callable = None, initargs: Sequence = (),
-            maxtasksperchild: int = None, error_handling: bool =False) -> fiber.pool.ZPool:
+            maxtasksperchild: int = None, error_handling: bool =False) -> "fiber.pool.ZPool":
         """Returns a process pool object"""
         from .pool import ZPool, ResilientZPool
         if error_handling:
@@ -48,7 +48,7 @@ class FiberContext():
         else:
             return ZPool(processes, initializer, initargs, maxtasksperchild)
 
-    def SimpleQueue(self) -> fiber.queues.SimpleQueuePush:
+    def SimpleQueue(self) -> "fiber.queues.SimpleQueuePush":
         """Returns a queue object"""
         if config.use_push_queue:
             from .queues import SimpleQueuePush
@@ -57,7 +57,7 @@ class FiberContext():
         # PullQueue is not supported anymore
         raise NotImplementedError
 
-    def Pipe(self, duplex: bool = True) -> Tuple[fiber.queues.LazyZConnection, fiber.queues.LazyZConnection]:
+    def Pipe(self, duplex: bool = True) -> Tuple["fiber.queues.LazyZConnection", "fiber.queues.LazyZConnection"]:
         """Returns two connection object connected by a pipe"""
         from .queues import Pipe
         return Pipe(duplex)

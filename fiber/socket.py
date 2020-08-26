@@ -97,7 +97,7 @@ class ZMQContext(SockContext):
         }
         self.context = zmq.Context.instance()
 
-    def new(self, mode: str) -> zmq.Socket:
+    def new(self, mode: str) -> "zmq.Socket":
         sock_type = self._mode_to_type[mode]
         if sock_type is None:
             return None
@@ -114,7 +114,7 @@ class ZMQContext(SockContext):
     def connect(sock, addr) -> Any:
         return sock.connect(addr)
 
-    def device(self, s1_mode: str, s2_mode: str) -> Tuple[zmq.devices.ThreadDevice, str, str]:
+    def device(self, s1_mode: str, s2_mode: str) -> Tuple["zmq.devices.ThreadDevice", str, str]:
 
         backend = get_backend()
         ip_ext, _, _ = backend.get_listen_addr()
@@ -177,7 +177,7 @@ class NNGDevice:
             )
         return opener
 
-    def _create_socks(self) -> Tuple[pynng.Socket, pynng.Socket]:
+    def _create_socks(self) -> Tuple["pynng.Socket", "pynng.Socket"]:
 
         opener1 = self._mode_to_opener[self.s1_mode]
         opener2 = self._mode_to_opener[self.s2_mode]
@@ -187,13 +187,13 @@ class NNGDevice:
 
         return s1, s2
 
-    def _bind_socks(self, s1: pynng.Socket, s2: pynng.Socket) -> Tuple[Optional[int], Optional[int]]:
+    def _bind_socks(self, s1: "pynng.Socket", s2: "pynng.Socket") -> Tuple[Optional[int], Optional[int]]:
         port1 = bind_to_random_port(s1, self.default_addr)
         port2 = bind_to_random_port(s2, self.default_addr)
 
         return port1, port2
 
-    def _run_device(self, s1: pynng.Socket, s2: pynng.Socket) -> None:
+    def _run_device(self, s1: "pynng.Socket", s2: "pynng.Socket") -> None:
 
         ret = pynng.lib.nng_device(s1.socket, s2.socket)
         check_err(ret)
@@ -263,7 +263,7 @@ class NNGContext(SockContext):
             "rep": pynng.Rep0,
         }
 
-    def new(self, mode: str) -> pynng.Socket:
+    def new(self, mode: str) -> "pynng.Socket":
         func = self._mode_to_creator[mode]
         if func is None:
             return None
@@ -274,7 +274,7 @@ class NNGContext(SockContext):
         return bind_to_random_port(sock, addr)
 
     @staticmethod
-    def connect(sock, addr: str) -> pynng.Dialer:
+    def connect(sock, addr: str) -> "pynng.Dialer":
         return sock.dial(addr)
 
     def device(self, s1_mode: str, s2_mode: str) -> NNGDevice:

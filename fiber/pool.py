@@ -72,7 +72,7 @@ MIN_PORT = 40000
 MAX_PORT = 65535
 
 
-def safe_join_worker(proc: threading.Thread) -> None:
+def safe_join_worker(proc: fiber.process.Process) -> None:
     p = proc
     if p.is_alive():
         # worker has not yet exited
@@ -81,7 +81,7 @@ def safe_join_worker(proc: threading.Thread) -> None:
         p.join(5)
 
 
-def safe_terminate_worker(proc: threading.Thread) -> None:
+def safe_terminate_worker(proc: fiber.process.Process) -> None:
     delay = random.random()
 
     # Randomize start time to prevent overloading the server
@@ -97,7 +97,7 @@ def safe_terminate_worker(proc: threading.Thread) -> None:
     logger.debug("safe_terminate_worker() finished")
 
 
-def safe_start(proc: threading.Thread) -> None:
+def safe_start(proc: fiber.process.Process) -> None:
     try:
         proc.start()
         proc._start_failed = False

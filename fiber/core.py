@@ -80,7 +80,7 @@ class Job(object):
         self.data = data
         self.jid = jid
 
-    def update(self) -> NoReturn:
+    def update(self):
         # update/refresh job attributes
         raise NotImplementedError
 
@@ -90,11 +90,11 @@ class Backend(object):
     def name(self):
         raise NotImplementedError
 
-    def create_job(self, job_spec: JobSpec) -> NoReturn:
+    def create_job(self, job_spec: JobSpec):
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError
 
-    def get_job_status(self, job: JobSpec) -> NoReturn:
+    def get_job_status(self, job: JobSpec):
         """This function is called when Fiber wants to to get job status."""
         raise NotImplementedError
 
@@ -104,18 +104,18 @@ class Backend(object):
         """
         return ""
 
-    def wait_for_job(self, job: JobSpec, timeout: float) -> NoReturn:
+    def wait_for_job(self, job: JobSpec, timeout: float):
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
         raise NotImplementedError
 
-    def terminate_job(self, job: JobSpec) -> NoReturn:
+    def terminate_job(self, job: JobSpec):
         """Terminate a job described by `job`."""
         raise NotImplementedError
 
-    def get_listen_addr(self) -> NoReturn:
+    def get_listen_addr(self):
         """This function is called when Fiber wants to listen on a local
         address for incoming connection. It is currently used by Popen
         and Queue."""

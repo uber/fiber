@@ -7,7 +7,7 @@
 <img src="docs/img/fiber_logo.png" alt="drawing" width="550"/>
 
 [**Project Home**](https://uber.github.io/fiber/) &nbsp;
-[**Blog**](https://uber.github.io/fiber/introduction/) &nbsp;
+[**Blog**](https://eng.uber.com/fiberdistributed/) &nbsp;
 [**Documents**](https://uber.github.io/fiber/getting-started/) &nbsp;
 [**Paper**](https://arxiv.org/abs/2003.11164) &nbsp;
 [**Media Coverage**](https://venturebeat.com/2020/03/26/uber-details-fiber-a-framework-for-distributed-ai-model-training/)

@@ -13,9 +13,7 @@
 # limitations under the License.
 
 import enum
-
-
-MEM_CPU_RATIO = 2  # 2G per cpu
+from typing import Dict, List, NoReturn, Optional, Any, Union
 
 
 class ProcessStatus(enum.Enum):
@@ -26,8 +24,24 @@ class ProcessStatus(enum.Enum):
 
 
 class JobSpec(object):
-    def __init__(self, image=None, command=None, name=None, cpu=None, mem=None,
-                 volumes=None, gpu=None):
+    image: Optional[str]
+    command: List[str]
+    name: str
+    cpu: Optional[int]
+    mem: Optional[int]
+    volumes: Optional[Dict[str, Dict]]
+    gpu: Optional[int]
+
+    def __init__(
+        self,
+        image: str = None,
+        command: List[str] = [],
+        name: str = "",
+        cpu: int = None,
+        mem: int = None,
+        volumes: Dict[str, Dict] = None,
+        gpu: int = None,
+    ) -> None:
         # Docker image used to launch this job
         self.image = image
         # Command to run in this job container, this should be a sequence
@@ -40,8 +54,6 @@ class JobSpec(object):
         # Maximum number of cpu cores this job can use
         self.gpu = gpu
         # Maximum memory size in MB that this job can use
-        #if mem is None:
-        #    mem = cpu * MEM_CPU_RATIO
         self.mem = mem
         # volume name to be mounted, currently only used by k8s backend
         # For example:
@@ -50,24 +62,25 @@ class JobSpec(object):
         #     }
         self.volumes = volumes
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self.__dict__ == other.__dict__
 
-    def __repr__(self):
-        return '<JobSpec: {}>'.format(vars(self))
+    def __repr__(self) -> str:
+        return "<JobSpec: {}>".format(vars(self))
 
 
 class Job(object):
     # Data is used to hold backend specific data associated with this job
-    data = None
+    data: Any
     # Job id. This is set by backend and should only be used by Fiber backend
-    jid = None
+    jid: Union[str, int]
     # (Optional) The hostname/IP address for this job, this is used to
     # communicate with the master process. It is only used when
     # `ipc_admin_passive` is enabled.
-    host = None
+    host: str
 
-    def __init__(self, data, jid):
+    def __init__(self, data: Any, jid: Union[str, int]) -> None:
+        assert data is not None, "Job data is None"
         self.data = data
         self.jid = jid
 
@@ -81,28 +94,28 @@ class Backend(object):
     def name(self):
         raise NotImplementedError
 
-    def create_job(self, job_spec):
+    def create_job(self, job_spec: JobSpec):
         """This function is called when Fiber wants to create a new Process."""
         raise NotImplementedError
 
-    def get_job_status(self, job):
+    def get_job_status(self, job: Job):
         """This function is called when Fiber wants to to get job status."""
         raise NotImplementedError
 
-    def get_job_logs(self, job):
+    def get_job_logs(self, job: Job) -> str:
         """
         This function is called when Fiber wants to to get logs of this job
         """
         return ""
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job: Job, timeout: float):
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
         raise NotImplementedError
 
-    def terminate_job(self, job):
+    def terminate_job(self, job: Job):
         """Terminate a job described by `job`."""
         raise NotImplementedError
 

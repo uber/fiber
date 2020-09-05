@@ -21,6 +21,7 @@ import subprocess
 
 import fiber.core as core
 from fiber.core import ProcessStatus
+from typing import Any, Tuple, Optional
 
 
 class Backend(core.Backend):
@@ -31,17 +32,17 @@ class Backend(core.Backend):
     """
     name = "local"
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def create_job(self, job_spec):
+    def create_job(self, job_spec: core.JobSpec) -> core.Job:
         proc = subprocess.Popen(job_spec.command)
         job = core.Job(proc, proc.pid)
         job.host = 'localhost'
 
         return job
 
-    def get_job_status(self, job):
+    def get_job_status(self, job: core.Job) -> ProcessStatus:
         proc = job.data
 
         if proc.poll() is not None:
@@ -50,7 +51,7 @@ class Backend(core.Backend):
 
         return ProcessStatus.STARTED
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         proc = job.data
 
         if timeout == 0:
@@ -63,10 +64,10 @@ class Backend(core.Backend):
 
         return proc.returncode
 
-    def terminate_job(self, job):
+    def terminate_job(self, job: core.Job) -> None:
         proc = job.data
 
         proc.terminate()
 
-    def get_listen_addr(self):
+    def get_listen_addr(self) -> Tuple[str, int, str]:
         return "127.0.0.1", 0, "lo"

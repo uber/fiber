@@ -22,7 +22,7 @@ import fiber.config as fiber_config
 import fiber.backend as fiber_backend
 
 
-def init_logger(config, proc_name=None):
+def init_logger(config: fiber_config.Config, proc_name: str = "") -> None:
     logger = logging.getLogger("fiber")
     if config.log_file.lower() == "stdout":
         handler = logging.StreamHandler()
@@ -31,7 +31,7 @@ def init_logger(config, proc_name=None):
         if not os.path.exists(log_dir):
             os.makedirs(log_dir, exist_ok=True)
 
-        if not proc_name:
+        if proc_name == "":
             p = fiber.process.current_process()
             proc_name = p.name
 
@@ -49,7 +49,7 @@ def init_logger(config, proc_name=None):
     logger.propagate = False
 
 
-def init_fiber(proc_name=None, **kwargs):
+def init_fiber(proc_name: str = "", **kwargs) -> None:
     """
     Initialize Fiber. This function is called when you want to re-initialize
     Fiber with new config values and also re-init loggers.

@@ -10,7 +10,7 @@
 
 import itertools
 import logging
-import multiprocessing.util as mpu
+import multiprocessing.util as mpu # type: ignore
 import os
 import re
 import sys
@@ -19,9 +19,14 @@ import threading
 import weakref
 
 import psutil
+from typing import Any, Dict, Iterator, Tuple, Optional, Callable, Sequence
+
+_afterfork_registry: weakref.WeakValueDictionary
+_finalizer_counter: Iterator
+_finalizer_registry: Dict[Tuple[Any, Any], "Finalize"]
 
 
-logger = logging.getLogger('fiber')
+logger = logging.getLogger("fiber")
 _afterfork_registry = weakref.WeakValueDictionary()
 _afterfork_counter = itertools.count()
 
@@ -30,27 +35,35 @@ _finalizer_registry = {}
 _finalizer_counter = itertools.count()
 
 
-def register_after_fork(obj, func):
+def register_after_fork(obj, func) -> None:
     _afterfork_registry[(next(_afterfork_counter), id(obj), func)] = obj
 
 
-def _run_after_forkers():
-    logging.debug('_fun_after_forkers called')
+def _run_after_forkers() -> None:
+    logging.debug("_fun_after_forkers called")
     items = list(_afterfork_registry.items())
     items.sort()
     for (index, ident, func), obj in items:
         try:
-            logging.debug('run after forker %s(%s)', func, obj)
+            logging.debug("run after forker %s(%s)", func, obj)
             func(obj)
         except Exception as e:
-            logging.info('after forker raised exception %s', e)
+            logging.info("after forker raised exception %s", e)
 
 
 class Finalize(mpu.Finalize):
     """Basically this is the same as multiprocessing's Finalize class except
     this one uses it's own _finalizer_registry.
     """
-    def __init__(self, obj, callback, args=(), kwargs=None, exitpriority=None):
+
+    def __init__(
+        self,
+        obj: Any,
+        callback: Callable,
+        args: Sequence = (),
+        kwargs: Dict[str, Any] = None,
+        exitpriority: int = None,
+    ) -> None:
         assert exitpriority is None or type(exitpriority) is int
 
         if obj is not None:
@@ -67,7 +80,7 @@ class Finalize(mpu.Finalize):
         _finalizer_registry[self._key] = self
 
 
-def find_ip_by_net_interface(target_interface):
+def find_ip_by_net_interface(target_interface: str) -> Optional[str]:
     """Returns ip, debug_info."""
     ifces = psutil.net_if_addrs()
     ip = None
@@ -84,11 +97,11 @@ def find_ip_by_net_interface(target_interface):
 
 
 class ForkAwareThreadLock(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self._reset()
         register_after_fork(self, ForkAwareThreadLock._reset)
 
-    def _reset(self):
+    def _reset(self) -> None:
         self._lock = threading.Lock()
         self.acquire = self._lock.acquire
         self.release = self._lock.release
@@ -101,14 +114,14 @@ class ForkAwareThreadLock(object):
 
 
 class ForkAwareLocal(threading.local):
-    def __init__(self):
+    def __init__(self) -> None:
         register_after_fork(self, lambda obj: obj.__dict__.clear())
 
     def __reduce__(self):
         return type(self), ()
 
 
-def find_listen_address():
+def find_listen_address() -> Tuple[Optional[str], Optional[str]]:
     """Find an IP address for Fiber to use."""
     ip = None
     ifce = None
@@ -124,8 +137,8 @@ def find_listen_address():
     return ip, ifce
 
 
-def is_in_interactive_console():
-    if hasattr(sys, 'ps1'):
+def is_in_interactive_console() -> bool:
+    if hasattr(sys, "ps1"):
         return True
 
     return False

@@ -25,12 +25,13 @@ import time
 
 
 from fiber.init import init_fiber
+from typing import Any, NoReturn
 
 
 logger = logging.getLogger('fiber')
 
 
-def exit_by_signal():
+def exit_by_signal() -> NoReturn:
     logger.info("Exiting, sending SIGTERM to current process")
 
     os.kill(os.getpid(), signal.SIGTERM)
@@ -41,7 +42,7 @@ def exit_by_signal():
     os._exit(1)
 
 
-def exit_on_fd_close(fd):
+def exit_on_fd_close(fd) -> None:
     while True:
         rl, _, _ = select.select([fd], [], [], 0)
         if fd in rl:
@@ -51,7 +52,7 @@ def exit_on_fd_close(fd):
         time.sleep(1)
 
 
-def spawn_prepare(fd):
+def spawn_prepare(fd) -> int:
     from_parent_r = os.fdopen(fd, "rb", closefd=False)
     preparation_data = reduction.pickle.load(from_parent_r)
 

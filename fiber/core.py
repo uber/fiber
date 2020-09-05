@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC, abstractmethod
 import enum
-from typing import Dict, List, NoReturn, Optional, Any, Union
+from typing import Dict, List, NoReturn, Optional, Any, Union, Tuple
 
 
 class ProcessStatus(enum.Enum):
@@ -89,18 +90,21 @@ class Job(object):
         raise NotImplementedError
 
 
-class Backend(object):
+class Backend(ABC):
     @property
+    @abstractmethod
     def name(self):
-        raise NotImplementedError
+        pass
 
-    def create_job(self, job_spec: JobSpec):
+    @abstractmethod
+    def create_job(self, job_spec: JobSpec) -> Job:
         """This function is called when Fiber wants to create a new Process."""
-        raise NotImplementedError
+        pass
 
-    def get_job_status(self, job: Job):
+    @abstractmethod
+    def get_job_status(self, job: Job) -> ProcessStatus:
         """This function is called when Fiber wants to to get job status."""
-        raise NotImplementedError
+        pass
 
     def get_job_logs(self, job: Job) -> str:
         """
@@ -108,19 +112,22 @@ class Backend(object):
         """
         return ""
 
-    def wait_for_job(self, job: Job, timeout: float):
+    @abstractmethod
+    def wait_for_job(self, job: Job, timeout: float) -> Optional[int]:
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.
         """
-        raise NotImplementedError
+        pass
 
-    def terminate_job(self, job: Job):
+    @abstractmethod
+    def terminate_job(self, job: Job) -> None:
         """Terminate a job described by `job`."""
-        raise NotImplementedError
+        pass
 
-    def get_listen_addr(self):
+    @abstractmethod
+    def get_listen_addr(self) -> Tuple[str, int, str]:
         """This function is called when Fiber wants to listen on a local
         address for incoming connection. It is currently used by Popen
         and Queue."""
-        raise NotImplementedError
+        pass

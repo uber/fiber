@@ -73,7 +73,8 @@ def get_backend(name=None, **kwargs) -> Backend:
 
     _backend = _backends.get(name, None)
     if _backend is None:
-        _backend = importlib.import_module("fiber.{}_backend".format( # type: ignore
-            name)).Backend(**kwargs) # type: Backend
+        backend_name = "fiber.{}_backend".format(name)
+        backend_module = importlib.import_module(backend_name)
+        _backend = backend_module.Backend(**kwargs) # type: ignore
         _backends[name] = _backend
     return _backend

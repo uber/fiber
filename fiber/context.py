@@ -15,53 +15,67 @@
 import os
 import fiber.config as config
 from fiber import process
+from typing import Optional, Tuple, Callable, Sequence
+
+from fiber.managers import SyncManager
+from fiber.pool import ZPool, ResilientZPool
+from fiber.queues import SimpleQueuePush, LazyZConnection
+from fiber.queues import Pipe
+
+_default_context: "FiberContext"
 
 
-class FiberContext():
-    _name = ''
+class FiberContext:
+    _name = ""
     Process = process.Process
 
     current_process = staticmethod(process.current_process)
     active_children = staticmethod(process.active_children)
 
-    def Manager(self):
+    def Manager(self) -> SyncManager:
         """Returns a manager associated with a running server process
 
         The managers methods such as `Lock()`, `Condition()` and `Queue()`
         can be used to create shared objects.
         """
-        from fiber.managers import SyncManager
         m = SyncManager()
         m.start()
         return m
 
-    def Pool(self, processes=None, initializer=None, initargs=(),
-             maxtasksperchild=None, error_handling=False):
+    def Pool(
+        self,
+        processes: int = None,
+        initializer: Callable = None,
+        initargs: Sequence = (),
+        maxtasksperchild: int = None,
+        error_handling: bool = False,
+    ) -> ZPool:
         """Returns a process pool object"""
-        from .pool import ZPool, ResilientZPool
         if error_handling:
-            return ResilientZPool(processes, initializer, initargs, maxtasksperchild)
+            return ResilientZPool(
+                processes, initializer, initargs, maxtasksperchild
+            )
         else:
             return ZPool(processes, initializer, initargs, maxtasksperchild)
 
-    def SimpleQueue(self):
+    def SimpleQueue(self) -> SimpleQueuePush:
         """Returns a queue object"""
         if config.use_push_queue:
-            from .queues import SimpleQueuePush
             return SimpleQueuePush()
 
         # PullQueue is not supported anymore
         raise NotImplementedError
 
-    def Pipe(self, duplex=True):
+    def Pipe(
+        self, duplex: bool = True
+    ) -> Tuple[LazyZConnection, LazyZConnection]:
         """Returns two connection object connected by a pipe"""
-        from .queues import Pipe
         return Pipe(duplex)
 
-    def cpu_count(self):
+    def cpu_count(self) -> Optional[int]:
         return os.cpu_count()
 
-    def get_context(self, method=None):
+    def get_context(self, method: str = None) -> "FiberContext":
         if method is None:
             return self
         if method != "spawn":
@@ -69,8 +83,6 @@ class FiberContext():
         return _concrete_contexts[method]
 
 
-_concrete_contexts = {
-        'spawn': FiberContext()
-}
+_concrete_contexts = {"spawn": FiberContext()}
 
-_default_context = _concrete_contexts['spawn']
+_default_context = _concrete_contexts["spawn"]

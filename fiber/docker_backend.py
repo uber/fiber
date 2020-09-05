@@ -31,6 +31,7 @@ import fiber.core as core
 import fiber.config as config
 from fiber.core import ProcessStatus
 from fiber.util import find_ip_by_net_interface, find_listen_address
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 logger = logging.getLogger('fiber')
 
@@ -47,7 +48,11 @@ HOME_DIR = expanduser("~")
 
 
 class DockerJob(core.Job):
-    def update(self):
+    def __init__(self, data: Any, jid: Union[str, int]) -> None:
+        super().__init__(data, jid)
+        self.update()
+
+    def update(self) -> None:
         container = self.data
         self.host = container.attrs['NetworkSettings']['IPAddress']
 
@@ -55,12 +60,12 @@ class DockerJob(core.Job):
 class Backend(core.Backend):
     name = "docker"
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Based on this link, no lock is needed accessing self.client
         # https://github.com/docker/docker-py/issues/619
         self.client = docker.from_env()
 
-    def create_job(self, job_spec):
+    def create_job(self, job_spec: core.JobSpec) -> DockerJob:
         logger.debug("[docker]create_job: %s", job_spec)
         cwd = os.getcwd()
         volumes = {cwd: {'bind': cwd, 'mode': 'rw'},
@@ -101,7 +106,7 @@ class Backend(core.Backend):
         container._fiber_backend_reloading = False
         return job
 
-    def _reload(self, container):
+    def _reload(self, container) -> None:
         container._fiber_backend_reloading = True
         logger.debug("container reloading %s", container.name)
         container.reload()
@@ -112,12 +117,14 @@ class Backend(core.Backend):
 
         container._fiber_backend_reloading = False
 
-    def get_job_logs(self, job):
+    def get_job_logs(self, job: core.Job) -> str:
         container = job.data
         return container.logs(stream=False).decode('utf-8')
 
-    def get_job_status(self, job):
+    def get_job_status(self, job: core.Job) -> ProcessStatus:
         container = job.data
+        if container is None:
+            return ProcessStatus.UNKNOWN
 
         if config.merge_output:
             print(container.logs(stream=False).decode('utf-8'))
@@ -131,8 +138,12 @@ class Backend(core.Backend):
             logger.debug("start container reloading thread %s", container.name)
         return status
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         container = job.data
+        if container is None:
+            # Job not started
+            return None
+
         logger.debug("wait_for_job: %s", container.name)
 
         if config.merge_output:
@@ -165,7 +176,7 @@ class Backend(core.Backend):
 
         return res['StatusCode']
 
-    def terminate_job(self, job):
+    def terminate_job(self, job: core.Job) -> None:
         logging.debug("terminate_job")
         container = job.data
 
@@ -184,15 +195,16 @@ class Backend(core.Backend):
             raise e
         logger.debug("terminate job finished, %s", container.status)
 
-    def get_listen_addr(self):
+    def get_listen_addr(self) -> Tuple[str, int, str]:
         ip = None
+        ifce: Optional[str] = None
 
         if sys.platform == "darwin":
             # use the same hostname for both master and non master process
             # because docker.for.mac.localhost resolves to different inside
             # and outside docker container. "docker.for.mac.localhost" is
             # the name that doesn't change in and outside the container.
-            return "docker.for.mac.localhost", 0
+            return "docker.for.mac.localhost", 0, "eth0"
 
         if not isinstance(fiber.current_process(), fiber.Process):
             # not inside docker
@@ -206,5 +218,15 @@ class Backend(core.Backend):
             raise mp.ProcessError(
                 "Can't find a usable IPv4 address to listen. ifce_name: {}, "
                 "ifces: {}".format(ifce, psutil.net_if_addrs()))
+
+        if ifce is None:
+            raise mp.ProcessError(
+                "Can't find a usable network interface to listen."
+                "ifces: {}".format(psutil.net_if_addrs())
+            )
+
+        ip_ret: str = ip
+        ifce_ret: str = ifce
+
         # use 0 to bind to a random free port number
-        return ip, 0, ifce
+        return ip_ret, 0, ifce_ret

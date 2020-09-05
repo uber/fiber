@@ -84,6 +84,7 @@ class Job(object):
         assert data is not None, "Job data is None"
         self.data = data
         self.jid = jid
+        self.host = ""
 
     def update(self):
         # update/refresh job attributes

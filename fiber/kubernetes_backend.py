@@ -32,6 +32,7 @@ import fiber.core as core
 import fiber.config as fiber_config
 from fiber.core import ProcessStatus
 from fiber.util import find_ip_by_net_interface, find_listen_address
+from typing import Any, Tuple, Optional
 
 
 logger = logging.getLogger("fiber")
@@ -49,7 +50,7 @@ PHASE_STATUS_MAP = {
 class Backend(core.Backend):
     name = "kubernetes"
 
-    def __init__(self, incluster=True):
+    def __init__(self, incluster: bool = True) -> None:
         if incluster:
             config.load_incluster_config()
         else:
@@ -61,24 +62,23 @@ class Backend(core.Backend):
 
         if incluster:
             podname = socket.gethostname()
-            pod = self.core_api.read_namespaced_pod(podname,
-                                                    self.default_namespace)
+            pod = self.core_api.read_namespaced_pod(podname, self.default_namespace)
             # Current model assume that Fiber only lauches 1 container per pod
             self.current_image = pod.spec.containers[0].image
             self.volumes = pod.spec.volumes
             self.mounts = pod.spec.containers[0].volume_mounts
 
-            #if pod.spec.volumes:
+            # if pod.spec.volumes:
             #    self.current_mount = pod.spec.volumes[0].persistent_volume_claim.claim_name
-            #else:
+            # else:
             #    self.current_mount = None
         else:
             self.current_image = None
             self.mounts = None
             self.volumes = None
 
-    def _get_resource_requirements(self, job_spec):
-        #requests = {}
+    def _get_resource_requirements(self, job_spec: core.JobSpec) -> Any:
+        # requests = {}
         limits = {}
 
         if job_spec.cpu:
@@ -100,17 +100,13 @@ class Backend(core.Backend):
 
         return None
 
-
-    def create_job(self, job_spec):
+    def create_job(self, job_spec: core.JobSpec) -> core.Job:
         logger.debug("[k8s]create_job: %s", job_spec)
         body = client.V1Pod()
         name = "{}-{}".format(
-            job_spec.name.replace("_", "-").lower(),
-            str(uuid.uuid4())[:8]
+            job_spec.name.replace("_", "-").lower(), str(uuid.uuid4())[:8]
         )
-        body.metadata = client.V1ObjectMeta(
-            namespace=self.default_namespace, name=name
-        )
+        body.metadata = client.V1ObjectMeta(namespace=self.default_namespace, name=name)
 
         # set environment varialbes
         # TODO(jiale) add environment variables
@@ -118,22 +114,22 @@ class Backend(core.Backend):
         image = job_spec.image if job_spec.image else self.current_image
 
         container = client.V1Container(
-            name=name, image=image, command=job_spec.command, env=[],
-            stdin=True, tty=True,
+            name=name,
+            image=image,
+            command=job_spec.command,
+            env=[],
+            stdin=True,
+            tty=True,
         )
 
         rr = self._get_resource_requirements(job_spec)
         if rr:
             logger.debug(
-                "[k8s]create_job, container resource requirements: %s",
-                job_spec
+                "[k8s]create_job, container resource requirements: %s", job_spec
             )
             container.resources = rr
 
-        body.spec = client.V1PodSpec(
-            containers=[container],
-            restart_policy="Never"
-        )
+        body.spec = client.V1PodSpec(containers=[container], restart_policy="Never")
 
         # propagate mount points to new containers if necesary
         if job_spec.volumes:
@@ -141,18 +137,14 @@ class Backend(core.Backend):
             volume_mounts = []
 
             for pd_name, mount_info in job_spec.volumes.items():
-            #volume_name = job_spec.volume if job_spec.volume else self.current_mount
-                pvc = client.V1PersistentVolumeClaimVolumeSource(
-                    claim_name=pd_name
-                )
+                # volume_name = job_spec.volume if job_spec.volume else self.current_mount
+                pvc = client.V1PersistentVolumeClaimVolumeSource(claim_name=pd_name)
                 volume = client.V1Volume(
-                    persistent_volume_claim=pvc,
-                    name="volume-" + pd_name,
+                    persistent_volume_claim=pvc, name="volume-" + pd_name,
                 )
                 volumes.append(volume)
                 mount = client.V1VolumeMount(
-                    mount_path=mount_info["bind"],
-                    name=volume.name,
+                    mount_path=mount_info["bind"], name=volume.name,
                 )
                 if mount_info["mode"] == "r":
                     mount.read_only = True
@@ -165,15 +157,13 @@ class Backend(core.Backend):
 
         logger.debug("[k8s]calling create_namespaced_pod: %s", body.metadata.name)
         try:
-            v1pod = self.core_api.create_namespaced_pod(
-                self.default_namespace, body
-            )
+            v1pod = self.core_api.create_namespaced_pod(self.default_namespace, body)
         except ApiException as e:
             raise e
 
         return core.Job(v1pod, v1pod.metadata.uid)
 
-    def get_job_status(self, job):
+    def get_job_status(self, job: core.Job) -> ProcessStatus:
         v1pod = job.data
         name = v1pod.metadata.name
         namespace = v1pod.metadata.namespace
@@ -197,7 +187,7 @@ class Backend(core.Backend):
         pod_status = v1pod.status
         return PHASE_STATUS_MAP[pod_status.phase]
 
-    def get_job_logs(self, job):
+    def get_job_logs(self, job: core.Job) -> str:
         v1job = job.data
         name = v1job.metadata.name
         namespace = v1job.metadata.namespace
@@ -214,7 +204,7 @@ class Backend(core.Backend):
 
         return logs
 
-    def wait_for_job(self, job, timeout):
+    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
         logger.debug("[k8s]wait_for_job timeout=%s", timeout)
 
         total = 0
@@ -249,11 +239,13 @@ class Backend(core.Backend):
             logger.debug("[k8s]wait_for_job done: container is not terminated")
             return None
 
-        logger.debug("[k8s]wait_for_job done: container terminated with "
-                     "code: {}".format(terminated.exit_code))
+        logger.debug(
+            "[k8s]wait_for_job done: container terminated with "
+            "code: {}".format(terminated.exit_code)
+        )
         return terminated.exit_code
 
-    def terminate_job(self, job):
+    def terminate_job(self, job: core.Job) -> None:
         v1job = job.data
         name = v1job.metadata.name
         namespace = v1job.metadata.namespace
@@ -263,21 +255,22 @@ class Backend(core.Backend):
         try:
             logger.debug(
                 "calling delete_namespaced_pod(%s, %s, grace_period_seconds=%s)",
-                name, namespace, grace_period_seconds,
+                name,
+                namespace,
+                grace_period_seconds,
             )
             self.core_api.delete_namespaced_pod(
-                name, namespace, grace_period_seconds=grace_period_seconds,
-                body=body,
+                name, namespace, grace_period_seconds=grace_period_seconds, body=body,
             )
         except ApiException as e:
             logger.debug(
-                "[k8s] Exception when calling " "delete_namespaced_pod: %s",
-                str(e),
+                "[k8s] Exception when calling " "delete_namespaced_pod: %s", str(e),
             )
             raise e
 
-    def get_listen_addr(self):
+    def get_listen_addr(self) -> Tuple[str, int, str]:
         ip = None
+        ifce: Optional[str] = None
 
         # if fiber.current_process() is multiprocessing.current_process():
         if not isinstance(fiber.current_process(), fiber.Process):
@@ -297,5 +290,15 @@ class Backend(core.Backend):
                 "Can't find a usable IPv4 address to listen. ifce_name: {}, "
                 "ifces: {}".format(ifce, psutil.net_if_addrs())
             )
+
+        if ifce is None:
+            raise mp.ProcessError(
+                "Can't find a usable network interface to listen."
+                "ifces: {}".format(psutil.net_if_addrs())
+            )
+
+        ip_ret: str = ip
+        ifce_ret: str = ifce
+
         # use 0 to bind to a random free port number
-        return ip, 0, ifce
+        return ip_ret, 0, ifce_ret

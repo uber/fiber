@@ -13,10 +13,13 @@
 # limitations under the License.
 
 
+from typing import Any, Callable, Dict
+
+
 VALID_META_KEYS = ["cpu", "memory", "gpu"]
 
 
-def post_process(metadata):
+def post_process(metadata: Dict) -> Dict:
     # memory should be in MB
     if "memory" in metadata:
         memory = metadata.pop("memory")
@@ -25,7 +28,7 @@ def post_process(metadata):
     return metadata
 
 
-def meta(**kwargs):
+def meta(**kwargs) -> Callable[[Any], Any]:
     """
     fiber.meta API allows you to decorate your function and provide some hints to
     Fiber. Currently this is mainly used for specify the resource usage of user

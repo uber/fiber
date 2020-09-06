@@ -138,7 +138,7 @@ class Backend(core.Backend):
             logger.debug("start container reloading thread %s", container.name)
         return status
 
-    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
+    def wait_for_job(self, job: core.Job, timeout: Optional[float]) -> Optional[int]:
         container = job.data
         if container is None:
             # Job not started

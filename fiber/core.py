@@ -114,7 +114,7 @@ class Backend(ABC):
         return ""
 
     @abstractmethod
-    def wait_for_job(self, job: Job, timeout: float) -> Optional[int]:
+    def wait_for_job(self, job: Job, timeout: Optional[float]) -> Optional[int]:
         """Wait for a specific job until timeout. If timeout is None,
         wait until job is done. Returns `None` if timed out or `exitcode`
         if job is finished.

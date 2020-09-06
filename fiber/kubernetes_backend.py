@@ -204,7 +204,7 @@ class Backend(core.Backend):
 
         return logs
 
-    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
+    def wait_for_job(self, job: core.Job, timeout: Optional[float]) -> Optional[int]:
         logger.debug("[k8s]wait_for_job timeout=%s", timeout)
 
         total = 0

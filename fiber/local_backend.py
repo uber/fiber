@@ -51,7 +51,7 @@ class Backend(core.Backend):
 
         return ProcessStatus.STARTED
 
-    def wait_for_job(self, job: core.Job, timeout: float) -> Optional[int]:
+    def wait_for_job(self, job: core.Job, timeout: Optional[float]) -> Optional[int]:
         proc = job.data
 
         if timeout == 0:

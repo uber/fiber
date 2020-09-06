@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC, abstractmethod
 import random
 import logging
 import multiprocessing as mp
 import threading
 
 from fiber.backend import get_backend
+from typing import Any, NoReturn, Optional, Tuple
 
 
 MIN_PORT = 40000
@@ -25,7 +27,7 @@ MAX_PORT = 65535
 logger = logging.getLogger("fiber")
 
 socket_lib = "nanomsg"
-default_socket_ctx = None
+default_socket_ctx: "SockContext"
 
 
 if socket_lib == "nanomsg":
@@ -41,11 +43,11 @@ else:
     raise ValueError("bad socket_lib value: {}".format(socket_lib))
 
 
-def get_ctx():
+def get_ctx() -> "SockContext":
     return default_socket_ctx
 
 
-def bind_to_random_port(sock, addr_base, max_tries=100, nng=True):
+def bind_to_random_port(sock, addr_base: str, max_tries:int = 100, nng: bool = True) -> Optional[int]:
     num_tries = 0
     while num_tries < max_tries:
         try:
@@ -60,32 +62,36 @@ def bind_to_random_port(sock, addr_base, max_tries=100, nng=True):
             num_tries += 1
             continue
 
-    return
+    return None
 
 
-class SockContext:
-    default_addr = None
+class SockContext(ABC):
 
-    def new(self, mode):
-        raise NotImplementedError
+    default_addr:str = ""
 
-    @staticmethod
-    def bind_random(sock, addr):
-        raise NotImplementedError
+    @abstractmethod
+    def new(self, mode: str) -> "Socket":
+        pass
 
     @staticmethod
-    def connect(sock, addr):
-        raise NotImplementedError
+    @abstractmethod
+    def bind_random(sock, addr: str) -> int:
+        pass
 
     @staticmethod
-    def close(sock):
+    @abstractmethod
+    def connect(sock, addr: str) -> None:
+        pass
+
+    @staticmethod
+    def close(sock) -> None:
         sock.close()
 
 
 class ZMQContext(SockContext):
     default_addr = "tcp://0.0.0.0"
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._mode_to_type = {
             "r": zmq.DEALER,
@@ -96,24 +102,28 @@ class ZMQContext(SockContext):
         }
         self.context = zmq.Context.instance()
 
-    def new(self, mode):
+    def new(self, mode: str) -> "zmq.Socket":
         sock_type = self._mode_to_type[mode]
         if sock_type is None:
             return None
         return self.context.socket(sock_type)
 
     @staticmethod
-    def bind_random(sock, addr):
+    def bind_random(sock, addr: str) -> int:
         assert type(addr) == str
-        return sock.bind_to_random_port(
+        port = sock.bind_to_random_port(
             addr, min_port=MIN_PORT, max_port=MAX_PORT, max_tries=100
         )
+        if port is None:
+            raise RuntimeError("ZMQContext Failed to bind to a random port")
+
+        return port
 
     @staticmethod
-    def connect(sock, addr):
+    def connect(sock, addr) -> Any:
         return sock.connect(addr)
 
-    def device(self, s1_mode, s2_mode):
+    def device(self, s1_mode: str, s2_mode: str) -> Tuple["zmq.devices.ThreadDevice", str, str]:
 
         backend = get_backend()
         ip_ext, _, _ = backend.get_listen_addr()
@@ -140,7 +150,7 @@ class NNGDevice:
     STATE_AFTER_INIT = 1
     STATE_FINISHED = 2
 
-    def __init__(self, ctx, s1_mode, s2_mode, default_addr="tcp://0.0.0.0"):
+    def __init__(self, ctx: "NNGContext", s1_mode: str, s2_mode: str, default_addr: str = "tcp://0.0.0.0") -> None:
 
         self._mode_to_opener = {
             "r": pynng.lib.nng_pull0_open_raw,
@@ -153,7 +163,7 @@ class NNGDevice:
         self.default_addr = default_addr
         self._start_process()
 
-    def _start_process(self):
+    def _start_process(self) -> None:
         parent_conn, child_conn = mp.Pipe()
         self._proc = threading.Thread(
             target=self._run, args=(child_conn,), daemon=True
@@ -168,15 +178,7 @@ class NNGDevice:
         #child_conn.close()
         self.conn = parent_conn
 
-    def _mode_to_opener(self, mode):
-        opener = self._mode_to_opener[mode]
-        if opener is None:
-            raise ValueError(
-                "Mode {} not supported by {}", mode, self.__class__.__name__
-            )
-        return opener
-
-    def _create_socks(self):
+    def _create_socks(self) -> Tuple["pynng.Socket", "pynng.Socket"]:
 
         opener1 = self._mode_to_opener[self.s1_mode]
         opener2 = self._mode_to_opener[self.s2_mode]
@@ -186,18 +188,18 @@ class NNGDevice:
 
         return s1, s2
 
-    def _bind_socks(self, s1, s2):
+    def _bind_socks(self, s1: "pynng.Socket", s2: "pynng.Socket") -> Tuple[Optional[int], Optional[int]]:
         port1 = bind_to_random_port(s1, self.default_addr)
         port2 = bind_to_random_port(s2, self.default_addr)
 
         return port1, port2
 
-    def _run_device(self, s1, s2):
+    def _run_device(self, s1: "pynng.Socket", s2: "pynng.Socket") -> None:
 
         ret = pynng.lib.nng_device(s1.socket, s2.socket)
         check_err(ret)
 
-    def _run(self, conn):
+    def _run(self, conn: "mp.connection.Connection") -> None:
         s1, s2 = self._create_socks()
 
         state = NNGDevice.STATE_INIT
@@ -233,7 +235,7 @@ class NNGDevice:
             else:
                 break
 
-    def bind(self):
+    def bind(self) -> Tuple[str, str]:
         self.conn.send("#bind")
         in_addr, out_addr = self.conn.recv()
         if in_addr is None:
@@ -242,7 +244,7 @@ class NNGDevice:
         self.out_addr = out_addr
         return in_addr, out_addr
 
-    def start(self):
+    def start(self) -> None:
         self.conn.send("#start")
         code = self.conn.recv()
         if code is not None:
@@ -252,7 +254,7 @@ class NNGDevice:
 class NNGContext(SockContext):
     default_addr = "tcp://0.0.0.0"
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._mode_to_creator = {
             "r": pynng.Pull0,
@@ -262,21 +264,25 @@ class NNGContext(SockContext):
             "rep": pynng.Rep0,
         }
 
-    def new(self, mode):
+    def new(self, mode: str) -> "pynng.Socket":
         func = self._mode_to_creator[mode]
         if func is None:
             return None
         return func()
 
     @staticmethod
-    def bind_random(sock, addr):
-        return bind_to_random_port(sock, addr)
+    def bind_random(sock, addr: str) -> int:
+        port = bind_to_random_port(sock, addr)
+        if port is None:
+            raise RuntimeError("NNGContext Failed to bind to a random port")
+
+        return port
 
     @staticmethod
-    def connect(sock, addr):
+    def connect(sock, addr: str) -> "pynng.Dialer":
         return sock.dial(addr)
 
-    def device(self, s1_mode, s2_mode):
+    def device(self, s1_mode: str, s2_mode: str) -> Tuple[NNGDevice, str, str]:
         self.s1_mode = s1_mode
         self.s2_mode = s2_mode
 
@@ -295,7 +301,7 @@ class NNGContext(SockContext):
 
 
 class NanomsgDevice(NNGDevice):
-    def __init__(self, ctx, s1_mode, s2_mode, default_addr="tcp://0.0.0.0"):
+    def __init__(self, ctx: "NanomsgContext", s1_mode: str, s2_mode: str, default_addr: str ="tcp://0.0.0.0") -> None:
         self.s1_mode = s1_mode
         self.s2_mode = s2_mode
         self.default_addr = default_addr
@@ -303,18 +309,25 @@ class NanomsgDevice(NNGDevice):
 
         self._start_process()
 
-    def _create_socks(self):
+    def _create_socks(self) -> Tuple[nnpy.Socket, nnpy.Socket]:
 
         s1 = nnpy.Socket(nnpy.AF_SP_RAW, self.ctx._mode_to_type[self.s1_mode])
         s2 = nnpy.Socket(nnpy.AF_SP_RAW, self.ctx._mode_to_type[self.s2_mode])
         return s1, s2
 
-    def _bind_socks(self, s1, s2):
+    def _bind_socks(self, s1: nnpy.Socket, s2: nnpy.Socket) -> Tuple[int, int]:
         port1 = bind_to_random_port(s1, self.default_addr, nng=False)
         port2 = bind_to_random_port(s2, self.default_addr, nng=False)
+
+        if port1 is None:
+            raise RuntimeError("NanomsgDevice failed to bind port1")
+
+        if port2 is None:
+            raise RuntimeError("NanomsgDevice failed to bind port2")
+
         return port1, port2
 
-    def _run_device(self, s1, s2):
+    def _run_device(self, s1: nnpy.Socket, s2: nnpy.Socket) -> Any:
 
         rc = nnpy.nanomsg.nn_device(s1.sock, s2.sock)
         return nnpy.errors.convert(rc, rc)
@@ -323,7 +336,7 @@ class NanomsgDevice(NNGDevice):
 class NanomsgContext(SockContext):
     default_addr = "tcp://0.0.0.0"
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._mode_to_type = {
             "r": nnpy.PULL,
@@ -333,22 +346,30 @@ class NanomsgContext(SockContext):
             "req": nnpy.REQ,
         }
 
-    def new(self, mode):
+    def new(self, mode) -> nnpy.Socket:
 
         sock_type = self._mode_to_type[mode]
         if sock_type is None:
-            return None
+            raise RuntimeError(
+                "NangmsgContext got Invalid mode: {}".format(mode)
+            )
+
         return nnpy.Socket(nnpy.AF_SP, sock_type)
 
     @staticmethod
-    def bind_random(sock, addr):
-        return bind_to_random_port(sock, addr, nng=False)
+    def bind_random(sock, addr) -> int:
+        port = bind_to_random_port(sock, addr, nng=False)
+
+        if port is None:
+            raise RuntimeError("NanomsgContext Failed to bind to a random port")
+
+        return port
 
     @staticmethod
-    def connect(sock, addr):
+    def connect(sock, addr) -> Any:
         return sock.connect(addr)
 
-    def device(self, s1_mode, s2_mode):
+    def device(self, s1_mode, s2_mode) -> Tuple[NanomsgDevice, str, str]:
         self.s1_mode = s1_mode
         self.s2_mode = s2_mode
 
@@ -377,13 +398,13 @@ else:
 
 
 class Socket:
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{}<{},{}>".format(
             self.__class__.__name__,
             self._ctx.__class__.__name__,
             self._mode)
 
-    def __init__(self, ctx=get_ctx(), mode="rw"):
+    def __init__(self, ctx=get_ctx(), mode="rw") -> None:
         self._mode = mode
         self._ctx = ctx
         self._sock = ctx.new(mode)
@@ -391,35 +412,35 @@ class Socket:
             raise ValueError("Socket mode \"{}\" not supported by {}".format(
                 mode, ctx.__class__.__name__))
 
-    def send(self, data):
+    def send(self, data) -> None:
         self._sock.send(data)
 
-    def recv(self):
+    def recv(self) -> bytes:
         return self._sock.recv()
 
-    def bind(self):
+    def bind(self) -> int:
         addr = self._ctx.default_addr
         bind_random = self._ctx.bind_random
         port = bind_random(self._sock, addr)
 
         return port
 
-    def connect(self, addr):
+    def connect(self, addr) -> None:
         _connect = self._ctx.connect
         _connect(self._sock, addr)
 
-    def close(self):
+    def close(self) -> None:
         _close = self._ctx.close
         _close(self._sock)
 
 
 class ProcessDevice:
-    def __init__(self, s1_mode, s2_mode, ctx=get_ctx()):
+    def __init__(self, s1_mode: Any, s2_mode: Any, ctx=get_ctx()) -> None:
         device, in_addr, out_addr = ctx.device(s1_mode, s2_mode)
         self.device = device
         self.in_addr = in_addr
         self.out_addr = out_addr
 
-    def start(self):
+    def start(self) -> None:
         self.device.start()
         logger.debug("started device in:%s out:%s", self.in_addr, self.out_addr)

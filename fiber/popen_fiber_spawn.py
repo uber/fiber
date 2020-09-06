@@ -288,12 +288,12 @@ class Popen(object):
             cpu=config.cpu_per_job,
             mem=config.mem_per_job,
         )
-        if hasattr(self.process_obj._target, "__self__"):
+        if hasattr(self.process_obj.target, "__self__"):
             metadata = getattr(
-                self.process_obj._target.__self__, "__fiber_meta__", None
+                self.process_obj.target.__self__, "__fiber_meta__", None
             )
         else:
-            metadata = getattr(self.process_obj._target, "__fiber_meta__", None)
+            metadata = getattr(self.process_obj.target, "__fiber_meta__", None)
         if metadata:
             for k, v in metadata.items():
                 setattr(spec, k, v)

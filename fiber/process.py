@@ -36,23 +36,29 @@ import multiprocessing as mp
 import logging
 
 from multiprocessing.process import BaseProcess
+from .popen_fiber_spawn import Popen
+from typing import Callable, Sequence, Tuple, Optional, List, Set, Iterator
 
 
 logger = logging.getLogger('fiber')
 
 
+_children: Set["Process"]
+_current_process: "BaseProcess"
+_process_counter: Iterator[int]
+
 _children = set()
 _current_process = mp.current_process()
 
 
-def _cleanup():
+def _cleanup() -> None:
     # check for processes which have finished
     for p in list(_children):
         if p._popen.poll() is not None:
             _children.discard(p)
 
 
-def active_children():
+def active_children() -> List["Process"]:
     """
     Get a list of children processes of the current process.
 
@@ -69,7 +75,7 @@ def active_children():
     return list(_children)
 
 
-def current_process():
+def current_process() -> "BaseProcess":
     """Return a Process object representing the current process.
 
     Example:
@@ -158,23 +164,27 @@ class Process(BaseProcess):
     can call `select` and other eligible functions that works on fds on this
     file descriptor.
     """
+    _popen: fiber.popen_fiber_spawn.Popen
+    _name: str
+    _pid: Optional[int]
+
     _start_method = None
     _pid = None
 
     @staticmethod
-    def _Popen(process_obj):
-        from .popen_fiber_spawn import Popen
+    def _Popen(process_obj: "Process") -> Popen:
         return Popen(process_obj)
 
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs={},
-                 *, daemon=None):
+    def __init__(self, group: None = None, target: Callable = None,
+                 name: str = None, args: Tuple = (), kwargs={},
+                 *, daemon: bool = None):
         super(Process, self).__init__(group=group, target=target, name=name,
                                       args=args, kwargs=kwargs, daemon=daemon)
         self._parent_pid = current_process().pid
         # set when Process.start() failed
         self._start_failed = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{}({}, {})>".format(type(self).__name__, self._name, self.ident)
 
     def run(self):
@@ -184,7 +194,7 @@ class Process(BaseProcess):
         """
         return super().run()
 
-    def start(self):
+    def start(self) -> None:
         """Start this process.
 
         Under the hood, Fiber calls the API on the computer cluster to start a
@@ -214,7 +224,7 @@ class Process(BaseProcess):
         del self._target, self._args, self._kwargs
         _children.add(self)
 
-    def terminate(self):
+    def terminate(self) -> None:
         """Terminate current process.
 
         When running locally, Fiber sends an SIGTERM signal to the child
@@ -227,7 +237,7 @@ class Process(BaseProcess):
             return
         self._popen.terminate()
 
-    def join(self, timeout=None):
+    def join(self, timeout=None) -> None:
         """Wait for this process to terminate.
 
         :param timeout: The maximum duration of time in seconds that this call
@@ -236,11 +246,11 @@ class Process(BaseProcess):
             `timeout` is `0`, it will check if the process has exited and
             return immediately.
 
-        :returns: The exit code of this process
+        :returns: None if process terminates or the method times out
         """
         return super().join(timeout=timeout)
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         """Check if current process is still alive
 
         :returns: `True` if current process is still alive. Returns `False` if
@@ -249,19 +259,24 @@ class Process(BaseProcess):
         return super().is_alive()
 
     @property
-    def ident(self):
+    def ident(self) -> Optional[int]:
         if self._pid is None:
-            self._pid = self._popen and self._popen.pid
+            self._pid = self._popen.pid if self._popen else None
 
         return self._pid
 
     @ident.setter
-    def ident(self, pid):
+    def ident(self, pid: int):
         self._pid = pid
 
     pid = ident
 
-    def _bootstrap(self):
+    @property
+    def target(self):
+        return self._target
+
+
+    def _bootstrap(self) -> Tuple[int, Optional[str]]:
         from multiprocessing import util, context
         global _current_process, _process_counter, _children
         err = None
@@ -279,7 +294,8 @@ class Process(BaseProcess):
                 fiber.util._finalizer_registry.clear()
                 fiber.util._run_after_forkers()
             except Exception as e:
-                err = e
+                import traceback
+                err = traceback.format_exc()
             finally:
                 # delay finalization of the old process object until after
                 # _run_after_forkers() is executed
@@ -304,7 +320,8 @@ class Process(BaseProcess):
                 sys.stderr.write(str(e.args[0]) + '\n')
                 exitcode = 1
         except Exception as e: # noqa E722
-            err = e
+            import traceback
+            err = traceback.format_exc()
             exitcode = 1
             import traceback
             msg = traceback.format_exc()

@@ -269,7 +269,9 @@ class Process(BaseProcess):
     def ident(self, pid: int):
         self._pid = pid
 
-    pid = ident
+    @property
+    def pid(self) -> Optional[int]:
+        return self.ident
 
     @property
     def target(self):

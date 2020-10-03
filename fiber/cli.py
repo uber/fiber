@@ -366,6 +366,9 @@ def run(attach, image, gpu, cpu, memory, volume, args):
                     '"[aws_account_id].dkr.ecr.[region].amazonaws.com"\n> '
                 )
             builder = AWSImageBuilder(registry)
+        elif platform == "generic":
+            registry = CONFIG["docker_registry"]
+            builder = DockerImageBuilder() if not registry else DockerImageBuilder(registry=registry)
         else:
             raise ValueError('Unknow platform "{}"'.format(platform))
 

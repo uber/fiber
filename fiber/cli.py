@@ -171,8 +171,8 @@ def cp(src, dst):
 
 
 def detect_platforms():
-    commands = ["gcloud", "aws"]
-    platforms = ["gcp", "aws"]
+    commands = ["gcloud", "aws", "kubectl"]
+    platforms = ["gcp", "aws", "generic"]
     found_platforms = []
 
     for i, cmd in enumerate(commands):
@@ -425,7 +425,7 @@ def auto_select_platform():
         choice = platforms[0]
     else:
         choice = prompt_choices(
-            ["gcp", "aws"], "Which provider do you want to use"
+            ["gcp", "aws", "generic"], "Which provider do you want to use"
         )
 
     return choice
@@ -437,8 +437,11 @@ def auto_select_platform():
 @click.option(
     "--gcp", is_flag=True, help="Run commands on Google Cloud Platform"
 )
+@click.option(
+    "--generic", is_flag=True, help="Run commands on generic Kubernetes cluster"
+)
 @click.version_option(version=fiber.__version__, prog_name="fiber")
-def main(docker_registry, aws, gcp):
+def main(docker_registry, aws, gcp, generic):
     """fiber command line tool that helps to manage workflow of distributed
     fiber applications.
     """
@@ -447,8 +450,8 @@ def main(docker_registry, aws, gcp):
     else:
         CONFIG["docker_registry"] = None
 
-    platforms = [aws, gcp]
-    platform_names = ["aws", "gcp"]
+    platforms = [aws, gcp, generic]
+    platform_names = ["aws", "gcp", "generic"]
     n = sum(platforms)
     if n > 1:
         raise ValueError(

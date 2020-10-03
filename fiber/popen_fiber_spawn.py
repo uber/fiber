@@ -142,6 +142,9 @@ def get_python_exe(backend_name):
     if backend_name == "docker":
         # TODO(jiale) fix python path
         python_exe = "/usr/local/bin/python"
+    if backend_name == "ssh":
+        # TODO fix python path
+        python_exe = "python3"
     else:
         python_exe = sys.executable
 
@@ -390,8 +393,14 @@ class Popen(object):
             assert admin_host is not None
             assert admin_port is not None
 
+        if config.spmd:
+            cwd = os.getcwd()
+        else:
+            # TODO use a different dir
+            cwd = "/tmp"
+
         cmd = self.get_command_line(
-            cwd=os.getcwd(), host=admin_host, port=port, id=ident
+            cwd=cwd, host=admin_host, port=port, id=ident
         )
 
         job = self._get_job(cmd)
@@ -412,6 +421,11 @@ class Popen(object):
         # TODO(jiale) what is a better way to setup sys_path inside containers?
         prep_data.pop("sys_path", None)
         logger.debug("%s prep_data: %s", self, str(prep_data))
+        if not config.spmd:
+            prep_data.pop("orig_dir")
+            prep_data.pop("dir")
+            if "init_main_from_path" in prep_data:
+                prep_data.pop("init_main_from_path")
         fp = io.BytesIO()
         set_spawning_popen(self)
         try:

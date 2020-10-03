@@ -134,6 +134,8 @@ class Config(object):
         self.mem_per_job = None
         self.use_push_queue = True
         self.kubernetes_namespace = "default"
+        self.ssh_nodes = ""
+        self.spmd = True
 
         if conf_file is None:
             conf_file = ".fiberconfig"
@@ -174,6 +176,9 @@ class Config(object):
 
         if isinstance(self.ipc_active, str):
             self.ipc_active = str2bool(self.ipc_active)
+
+        if isinstance(self.spmd, str):
+            self.spmd = str2bool(self.spmd)
 
         if isinstance(self.cpu_per_job, str):
             self.cpu_per_job = int(self.cpu_per_job)

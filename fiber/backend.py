@@ -68,6 +68,10 @@ def get_backend(name=None, **kwargs):
         if name not in available_backend:
             raise mp.ProcessError("Invalid backend: {}".format(name))
 
+    # TODO make this generalized
+    if name == "ssh":
+        kwargs["nodes"] = config.ssh_nodes
+
     _backend = _backends.get(name, None)
     if _backend is None:
         _backend = importlib.import_module("fiber.{}_backend".format(

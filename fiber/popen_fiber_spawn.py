@@ -345,11 +345,6 @@ class Popen(object):
             self.returncode = code
         return self.returncode
 
-    def _spawn(self, cmd):
-        p = subprocess.Popen(cmd)
-
-        return p
-
     def _pickle_data(self, data, fp):
         if fiber.util.is_in_interactive_console():
             logger.debug("in interactive shell, use cloudpickle")

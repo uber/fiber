@@ -249,7 +249,12 @@ class DockerImageBuilder:
         return self.full_image_name
 
     def tag(self):
-        self.full_image_name = self.image_name
+        if self.registry != "":
+            self.full_image_name = "{}/{}".format(
+                self.registry, self.image_name
+            )
+
+        self.docker_tag(self.image_name, self.full_image_name)
 
     def push(self):
         sp.check_call(

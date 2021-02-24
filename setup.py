@@ -10,7 +10,7 @@ install_requires = [
     "psutil",
     "docker <= 4.2.2",
     "cloudpickle",
-    "kubernetes",
+    "kubernetes == 10.0.1",
     "requests",
     "click",
 ]

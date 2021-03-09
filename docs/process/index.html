@@ -499,7 +499,14 @@ image as the parent process to guarantee a consistent running environment.</p>
 <p>Because each process is a cluster job, its life cycle is the same as any job on
 the cluster.
 <h2 id="fiber.Process">Process</h2></p>
-<div class="codehilite"><pre><span></span><span class="n">Process</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="o">*</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">Process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">daemon</span><span class="p">)</span>
 </pre></div>
 
 

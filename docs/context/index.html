@@ -491,7 +491,11 @@
 <p>The managers methods such as <code>Lock()</code>, <code>Condition()</code> and <code>Queue()</code>
 can be used to create shared objects.
 <h3 id="fiber.context.FiberContext.Pool">Pool</h3></p>
-<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span> <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_handling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span>
+                  <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">error_handling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 
@@ -503,6 +507,10 @@ can be used to create shared objects.
 
 <p>Returns a queue object
 <h3 id="fiber.context.FiberContext.active_children">active_children</h3></p>
+<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">active_children</span><span class="p">()</span>
+</pre></div>
+
+
 <p>Get a list of children processes of the current process.</p>
 <p><strong>Returns</strong>:</p>
 <p>A list of children processes.</p>
@@ -521,6 +529,10 @@ can be used to create shared objects.
 
 <p>Returns two connection object connected by a pipe
 <h3 id="fiber.context.FiberContext.current_process">current_process</h3></p>
+<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span>
+</pre></div>
+
+
 <p>Return a Process object representing the current process.</p>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">fiber</span><span class="o">.</span><span class="n">current_process</span><span class="p">())</span>
@@ -529,7 +541,13 @@ can be used to create shared objects.
 
 <h3 id="fiber.context.FiberContext.Process">Process</h3>
 
-<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="o">*</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">FiberContext</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">args</span><span class="o">=</span><span class="p">(),</span>
+                     <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span>
+                     <span class="o">*</span><span class="p">,</span>
+                     <span class="n">daemon</span><span class="p">)</span>
 </pre></div>
 
 

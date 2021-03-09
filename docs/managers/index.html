@@ -472,7 +472,11 @@ built-in in-memory storage for applications to use (based on
 multiprocessing.managers). The interface is the same as multiprocessing's
 Manager type.
 <h2 id="fiber.managers.BaseManager">BaseManager</h2></p>
-<div class="codehilite"><pre><span></span><span class="n">BaseManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">BaseManager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 
@@ -483,7 +487,11 @@ computer cluster.</p>
 <p>The API of this class is the same as
 <a href="https://docs.python.org/3.6/library/multiprocessing.html#multiprocessing.managers.BaseManager">multiprocessing.managers.BaseManager</a>
 <h2 id="fiber.managers.SyncManager">SyncManager</h2></p>
-<div class="codehilite"><pre><span></span><span class="n">SyncManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">SyncManager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 
@@ -523,7 +531,11 @@ print(l)
 
 <h2 id="fiber.managers.AsyncManager">AsyncManager</h2>
 
-<div class="codehilite"><pre><span></span><span class="n">AsyncManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">AsyncManager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span>
+             <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 

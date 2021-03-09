@@ -484,7 +484,7 @@ workers.</p>
 
 <h2 id="fiber.pool.ApplyResult">ApplyResult</h2>
 
-<div class="codehilite"><pre><span></span><span class="n">ApplyResult</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">inventory</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ApplyResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">inventory</span><span class="p">)</span>
 </pre></div>
 
 
@@ -500,13 +500,19 @@ represents an handle that can be used to get the actual result.
 <p>Actual result. This method will block if the actual result
     is not ready.
 <h2 id="fiber.pool.MapResult">MapResult</h2></p>
-<div class="codehilite"><pre><span></span><span class="n">MapResult</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">inventory</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">MapResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">inventory</span><span class="p">)</span>
 </pre></div>
 
 
 <h2 id="fiber.pool.ZPool">ZPool</h2>
 
-<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span> <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">master_sock_type</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+      <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span>
+      <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">cluster</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">master_sock_type</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -514,7 +520,11 @@ represents an handle that can be used to get the actual result.
 <p>ZPool directly uses Fiber sockets instead of SimpleQueue for tasks and
 results handling. This makes it faster.
 <h3 id="fiber.pool.ZPool.apply_async">apply_async</h3></p>
-<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwds</span><span class="o">=</span><span class="p">{},</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                  <span class="n">args</span><span class="o">=</span><span class="p">(),</span>
+                  <span class="n">kwds</span><span class="o">=</span><span class="p">{},</span>
+                  <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 
@@ -534,7 +544,11 @@ on a remote Pool worker. This is an asynchronous version of <code>apply</code>.<
 <p>An ApplyResult object which has a method <code>.get()</code> to get
     the actual results.
 <h3 id="fiber.pool.ZPool.map_async">map_async</h3></p>
-<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                <span class="n">iterable</span><span class="p">,</span>
+                <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 
@@ -632,7 +646,11 @@ the <code>iterable</code>.</p>
 <p><strong>Returns</strong>:</p>
 <p>an unordered iterator which user can use to get results.
 <h3 id="fiber.pool.ZPool.starmap_async">starmap_async</h3></p>
-<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">starmap_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ZPool</span><span class="o">.</span><span class="n">starmap_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                    <span class="n">iterable</span><span class="p">,</span>
+                    <span class="n">chunksize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">error_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 
@@ -707,7 +725,12 @@ dispatched will be discarded.
 <p>Wait for all the pool workers of this pool to exit. This should be
 used after <code>terminate()</code> or <code>close()</code> are called on this pool.
 <h2 id="fiber.pool.ResilientZPool">ResilientZPool</h2></p>
-<div class="codehilite"><pre><span></span><span class="n">ResilientZPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span> <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cluster</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ResilientZPool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span>
+               <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">cluster</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
 

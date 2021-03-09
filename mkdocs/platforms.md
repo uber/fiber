@@ -49,7 +49,7 @@ docker image and push it to the appropriate container image registry for your
 Kubernetes platform. Example usage of this backend can be found
 [here](/getting-started/#running-on-a-computer-cluster).
 
-See how to configure Fiber to use each backend [here](/config)
+See how to configure Fiber to use each backend [here](config.md)
 
 ## Automatic backend selection
 

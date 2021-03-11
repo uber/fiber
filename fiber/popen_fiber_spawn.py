@@ -36,6 +36,21 @@ import fiber.config as config
 from fiber.backend import get_backend
 from fiber.core import JobSpec
 from fiber.core import ProcessStatus
+from typing import (
+    Any,
+    Dict,
+    List,
+    Iterator,
+    NoReturn,
+    Optional,
+    BinaryIO,
+    Tuple,
+)
+
+_event_counter: Iterator[int]
+_event_dict: Dict[int, "EventConn"]
+_fiber_background_thread: Optional[threading.Thread]
+_fiber_background_thread_lock: threading.Lock
 
 logger = logging.getLogger("fiber")
 
@@ -84,7 +99,17 @@ _event_dict = {}
 _event_counter = itertools.count(1)
 
 
-def get_fiber_init():
+class EventConn():
+    def __init__(
+            self,
+            conn: socket.socket = None
+        ):
+        self.event = threading.Event()
+        self.event.clear()
+        self.conn = conn
+
+
+def get_fiber_init() -> str:
     if config.ipc_active:
         fiber_init = fiber_init_start + fiber_init_net_active + fiber_init_end
     else:
@@ -94,7 +119,9 @@ def get_fiber_init():
     return fiber_init
 
 
-def fiber_background(listen_addr, event_dict):
+def fiber_background(
+    listen_addr: Tuple[str, int], event_dict: Dict[int, "EventConn"]
+) -> None:
     global admin_host, admin_port
 
     # Background thread for handling inter fiber process admin traffic
@@ -117,7 +144,7 @@ def fiber_background(listen_addr, event_dict):
 
     sentinel = event_dict[-1]
     # notifi master thread that background thread is ready
-    sentinel.set()
+    sentinel.event.set()
     logger.debug("fiber_background thread ready")
     while True:
         conn, addr = sock.accept()
@@ -127,30 +154,31 @@ def fiber_background(listen_addr, event_dict):
         # struct.unpack returns a tuple event if the result only has
         # one element
         ident = struct.unpack("<I", buf)[0]
-        event = event_dict.get(ident, None)
-        if event is None:
+        ec = event_dict.get(ident, None)
+        if ec is None:
             logger.warn(
                 "something is wrong, no event found for this id: %s", ident
             )
             continue
         logger.debug("got connection for id %s", ident)
-        event_dict[ident] = conn
-        event.set()
+        ec.conn = conn
+        ec.event.set()
 
 
-def get_python_exe(backend_name):
+def get_python_exe(backend_name: str) -> str:
     if backend_name == "docker":
         # TODO(jiale) fix python path
         python_exe = "/usr/local/bin/python"
     else:
         python_exe = sys.executable
 
-    logger.debug("backend is \"%s\", use python exe \"%s\"",
-                 backend_name, python_exe)
+    logger.debug(
+        'backend is "%s", use python exe "%s"', backend_name, python_exe
+    )
     return python_exe
 
 
-def get_pid_from_jid(jid):
+def get_pid_from_jid(jid: Any) -> int:
     # Some Linux system has 32768 as max pid number. 32749 is a prime number
     # close to 32768.
     return hash(jid) % 32749
@@ -159,20 +187,26 @@ def get_pid_from_jid(jid):
 class Popen(object):
     method = "spawn"
 
-    def __del__(self):
-        if getattr(self, "ident", None):
+    def __del__(self) -> None:
+        ident = getattr(self, "ident", None)
+        if ident is not None:
             # clean up entry in event_dict
             global _event_dict
-            #logger.debug("cleanup entry _event_dict[%s]", self.ident)
-            _event_dict.pop(self.ident, None)
+            if ident in _event_dict:
+                del _event_dict[ident]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<{}({})>".format(
             type(self).__name__, getattr(self, "process_obj", None)
         )
 
-    def __init__(self, process_obj, backend=None, launch=False):
-        self.returncode = None
+    def __init__(
+        self,
+        process_obj: "fiber.process.Process",
+        backend=None,
+        launch: bool = False,
+    ) -> None:
+        self.returncode: Optional[int] = None
         self.backend = get_backend()
 
         ip, _, _ = self.backend.get_listen_addr()
@@ -181,20 +215,20 @@ class Popen(object):
         self.master_port = config.ipc_admin_master_port
         self.worker_port = config.ipc_admin_worker_port
 
-        self.sock = None
-        self.host = ""
+        self.sock: Optional[socket.socket] = None
+        self.host: str = ""
 
-        self.job = None
-        self.pid = None
+        self.job: Optional[fiber.core.Job] = None
+        self.pid: Optional[int] = None
         self.process_obj = process_obj
-        self._exiting = None
-        self.sentinel = None
-        self.ident = None
+        self._exiting: bool = False
+        self.sentinel: Optional[socket.socket] = None
+        self.ident: int = -1
 
         if launch:
             self._launch(process_obj)
 
-    def launch_fiber_background_thread_if_needed(self):
+    def launch_fiber_background_thread_if_needed(self) -> None:
         global _fiber_background_thread_lock
         _fiber_background_thread_lock.acquire()
 
@@ -203,34 +237,32 @@ class Popen(object):
             _fiber_background_thread_lock.release()
             return
 
-        try:
-            logger.debug(
-                "_fiber_background_thread is None, creating "
-                "background thread"
-            )
-            # Create a background thread to handle incoming connections
-            # from fiber child processes
-            event = threading.Event()
-            event.clear()
-            _event_dict[-1] = event
-            td = threading.Thread(
-                target=fiber_background,
-                args=((self.master_host, self.master_port), _event_dict),
-                daemon=True,
-            )
-            td.start()
-        except Exception as e:
-            raise e
-        finally:
-            logger.debug("waiting for background thread")
-            event.wait()
-            logger.debug(
-                "master received message that fiber_background thread is ready"
-            )
-            _fiber_background_thread = td
-            _fiber_background_thread_lock.release()
+        ec = EventConn()
 
-    def get_command_line(self, **kwds):
+        logger.debug(
+            "_fiber_background_thread is None, creating "
+            "background thread"
+        )
+        # Create a background thread to handle incoming connections
+        # from fiber child processes
+        _event_dict[-1] = ec
+
+        td = threading.Thread(
+            target=fiber_background,
+            args=((self.master_host, self.master_port), _event_dict),
+            daemon=True,
+        )
+        td.start()
+
+        logger.debug("waiting for background thread")
+        ec.event.wait()
+        logger.debug(
+            "master received message that fiber_background thread is ready"
+        )
+        _fiber_background_thread = td
+        _fiber_background_thread_lock.release()
+
+    def get_command_line(self, **kwds) -> List[str]:
         """Returns prefix of command line used for spawning a child process."""
         prog = get_fiber_init()
         prog = prog.format(**kwds)
@@ -248,13 +280,7 @@ class Popen(object):
             + ["-c", prog, "--multiprocessing-fork"]
         )
 
-    def _accept(self):
-        conn, addr = self.sock.accept()
-        logger.debug("successfully accept")
-        # TODO verify if it's the same client
-        return conn
-
-    def _get_job(self, cmd):
+    def _get_job(self, cmd: List[str]) -> fiber.core.JobSpec:
         spec = JobSpec(
             command=cmd,
             image=config.image,
@@ -262,36 +288,41 @@ class Popen(object):
             cpu=config.cpu_per_job,
             mem=config.mem_per_job,
         )
-        if hasattr(self.process_obj._target, "__self__"):
+        if hasattr(self.process_obj.target, "__self__"):
             metadata = getattr(
-                self.process_obj._target.__self__, "__fiber_meta__", None
+                self.process_obj.target.__self__, "__fiber_meta__", None
             )
         else:
-            metadata = getattr(self.process_obj._target, "__fiber_meta__", None)
+            metadata = getattr(self.process_obj.target, "__fiber_meta__", None)
         if metadata:
             for k, v in metadata.items():
                 setattr(spec, k, v)
 
         return spec
 
-    def _run_job(self, job):
+    def _run_job(self, job_spec: fiber.core.JobSpec) -> fiber.core.Job:
+
         try:
-            job = self.backend.create_job(job)
+            job = self.backend.create_job(job_spec)
         except requests.exceptions.ReadTimeout as e:
             raise mp.TimeoutError(str(e))
+
         self.job = job
 
         return job
 
-    def _sentinel_readable(self, timeout=0):
+    def _sentinel_readable(self, timeout: int = 0) -> int:
         # Use fcntl(fd, F_GETFD) instead of select.* becuase:
         # * select.select() can't work with fd > 1024
         # * select.poll() is not thread safe
         # * select.epoll() is Linux only
         # Also, fcntl(fd, F_GETFD) is cheaper than the above calls.
+        if self.sentinel is None:
+            return False
+
         return fcntl.fcntl(self.sentinel, fcntl.F_GETFD)
 
-    def poll(self, flag=os.WNOHANG):
+    def poll(self, flag: int = os.WNOHANG) -> Optional[int]:
 
         # returns None if the process is not stopped yet. Otherwise, returns
         # process exit code.
@@ -327,7 +358,7 @@ class Popen(object):
                 return None
         return self.wait(timeout=0)
 
-    def wait(self, timeout=None):
+    def wait(self, timeout: int = None) -> Optional[int]:
         if self.job is None:
             # self.job is None meaning this process hasn't been fully started
             # yet.
@@ -345,7 +376,7 @@ class Popen(object):
             self.returncode = code
         return self.returncode
 
-    def _pickle_data(self, data, fp):
+    def _pickle_data(self, data, fp: BinaryIO) -> None:
         if fiber.util.is_in_interactive_console():
             logger.debug("in interactive shell, use cloudpickle")
             cloudpickle.dump(data, fp)
@@ -353,7 +384,7 @@ class Popen(object):
             logger.debug("not in interactive shell, use reduction")
             reduction.dump(data, fp)
 
-    def _launch(self, process_obj):
+    def _launch(self, process_obj) -> None:
         logger.debug("%s %s _launch called", process_obj, self)
 
         if config.ipc_active:
@@ -389,15 +420,15 @@ class Popen(object):
             cwd=os.getcwd(), host=admin_host, port=port, id=ident
         )
 
-        job = self._get_job(cmd)
+        job_spec = self._get_job(cmd)
 
-        event = threading.Event()
-        event.clear()
-        _event_dict[ident] = event
+        ec = EventConn()
+
+        _event_dict[ident] = ec
         logger.debug(
             "%s popen_fiber_spawn created event %s and set _event_dict[%s]",
             self,
-            event,
+            ec.event,
             ident,
         )
 
@@ -427,7 +458,7 @@ class Popen(object):
         process_obj._popen = self
 
         # launch job
-        job = self._run_job(job)
+        job = self._run_job(job_spec)
         self.pid = get_pid_from_jid(job.jid)
         # Fix process obj's pid
         process_obj.ident = self.pid
@@ -447,16 +478,22 @@ class Popen(object):
                         "connect back"
                     )
                     return
-                done = event.wait(0.5)
+                done = ec.event.wait(0.5)
                 status = self.check_status()
                 if status == ProcessStatus.STOPPED:
                     return
 
             logger.debug(
                 "popen_fiber_spawn is waiting for accept event %s to finish",
-                event,
+                ec.event,
             )
-            conn = _event_dict[ident]
+            conn = ec.conn
+            if conn is None:
+                raise mp.ProcessError(
+                    "ec.conn should be set at this moment but it is None. "
+                    "Please report this bug to Fiber developers."
+                )
+
             logger.debug("got conn from _event_counter[%s]", ident)
             del _event_dict[ident]
             logger.debug("remove entry _event_counter[%s]", ident)
@@ -511,7 +548,10 @@ class Popen(object):
         self.sentinel = conn
         logger.debug("_launch finished")
 
-    def check_status(self):
+    def check_status(self) -> fiber.core.ProcessStatus:
+        if self.job is None:
+            return ProcessStatus.UNKNOWN
+
         status = self.backend.get_job_status(self.job)
         if status == ProcessStatus.STOPPED:
             # something happened that caused Fiber process to hit an early stop
@@ -525,7 +565,7 @@ class Popen(object):
 
         return status
 
-    def terminate(self):
+    def terminate(self) -> None:
         logger.debug("[Popen]terminate() called")
 
         self._exiting = True

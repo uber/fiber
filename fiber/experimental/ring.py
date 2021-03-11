@@ -21,6 +21,9 @@ import random
 
 import fiber
 from fiber.backend import get_backend
+from typing import Any, NoReturn, Callable, Sequence, Dict, Iterator, Optional, List
+
+_manager: Any
 
 
 __all__ = [
@@ -32,10 +35,10 @@ __all__ = [
 _manager = None
 
 
-def _get_manager():
+def _get_manager() -> fiber.managers.BaseManager:
     global _manager
     if _manager is None:
-        _manager = fiber.Manager()
+        _manager = fiber.Manager() # type: ignore
 
     return _manager
 
@@ -48,7 +51,7 @@ class RingNode:
     :param rank: The id assigned to this node. Each node will be assigned a
         unique id called `rank`. Rank 0 is the control node of the `Ring`.
     """
-    def __init__(self, rank):
+    def __init__(self, rank) -> None:
         self.rank = rank
         self.connected = False
         self.ip = None
@@ -68,7 +71,17 @@ class Ring:
     :param initargs: positional arguments that are passed to initializer.
         Currently this is not used.
     """
-    def __init__(self, processes, func, initializer, initargs=None):
+
+    __fiber_meta__: Dict
+
+    def __init__(
+        self,
+        processes: int,
+        func: Callable[[int, int], Any],
+        initializer: Callable[[Optional[Iterator[Any]]], None],
+        initargs: Iterator[Any] = None
+    ) -> None:
+
         self.size = processes
         self.initializer = initializer
         self.initargs = initargs
@@ -79,12 +92,12 @@ class Ring:
             # Propogate meta info
             # We can't set attributes to bound/unbound methods (PEP 232),
             # so we set it to Ring object
-            self.__fiber_meta__ = func.__fiber_meta__
+            self.__fiber_meta__ = func.__fiber_meta__ # type: ignore
 
         manager = _get_manager()
-        self.members = manager.list([RingNode(i) for i in range(self.size)])
+        self.members = manager.list([RingNode(i) for i in range(self.size)]) # type: ignore
 
-    def _target(self):
+    def _target(self) -> None:
         rank = self.rank
         node = self.members[rank]
 
@@ -97,10 +110,10 @@ class Ring:
         node.port = port
         self.members[rank] = node
 
-        self.initializer(self)
+        self.initializer(self.initargs)
         self.func(rank, self.size)
 
-    def run(self):
+    def run(self) -> None:
         """
         Start this Ring. This will start the ring 0 process on the same machine
         and start all the other ring nodes with Fiber processes.
@@ -113,15 +126,15 @@ class Ring:
         # Start process rank 0
         self.rank = 0
         ctx = mp.get_context("spawn")
-        p = ctx.Process(target=self._target)
-        p.start()
-        procs.append(p)
+        p0 = ctx.Process(target=self._target)
+        p0.start()
+        procs.append(p0)
 
         for i in range(1, self.size):
             self.rank = i
             p = fiber.Process(target=self._target)
             p.start()
-            procs.append(p)
+            procs.append(p) # type: ignore[arg-type]
 
         self.rank = rank
         # wait for all processes to finish

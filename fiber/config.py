@@ -67,6 +67,11 @@ any Fiber processes.
 import os
 import logging
 import configparser
+from typing import Any, Dict, List, Type, TypeVar, Optional
+from typing import TYPE_CHECKING
+
+_current_config: None
+_TConfig = TypeVar('_TConfig', bound="Config")
 
 
 _current_config = None
@@ -84,7 +89,7 @@ LOG_LEVELS = {
 DEFAULT_IMAGE = "fiber-test:latest"
 
 
-def str2bool(text):
+def str2bool(text: str) -> bool:
     """Simple function to convert a range of values to True/False."""
     return text.lower() in ["true", "yes", "1"]
 
@@ -106,34 +111,34 @@ class Config(object):
 
 
     """
-    def __init__(self, conf_file=None):
+    def __init__(self, conf_file: str = None) -> None:
         # Not documented, people should not use this
-        self.merge_output = False
-        self.debug = False
-        self.image = None
-        self.default_image = DEFAULT_IMAGE
-        self.backend = None
-        self.default_backend = "local"
+        self.merge_output: bool = False
+        self.debug: bool = False
+        self.image: Optional[str] = None
+        self.default_image: str = DEFAULT_IMAGE
+        self.backend: Optional[str] = None
+        self.default_backend: str = "local"
         # Not documented, this should be removed because it's not used for now
-        self.use_bash = False
-        self.log_level = logging.INFO
-        self.log_file = "/tmp/fiber.log"
+        self.use_bash: bool = False
+        self.log_level: int = logging.INFO
+        self.log_file: str = "/tmp/fiber.log"
         # If ipc_active is True, Fiber worker processes will connect
         # to the master process. Otherwise, the master process will connect
         # to worker processes.
         # Not documented, should only be used internally
-        self.ipc_active = True
+        self.ipc_active: bool = True
         # if ipc_active is True, this can be 0, otherwise, it can only be a
         # valid TCP port number. Default 0.
-        self.ipc_admin_master_port = 0
+        self.ipc_admin_master_port: int = 0
         # Not documented, this is only used when `ipc_active` is False
-        self.ipc_admin_worker_port = 8000
+        self.ipc_admin_worker_port: int = 8000
         # Not documented, need to fine tune this
-        self.cpu_per_job = 1
+        self.cpu_per_job: int = 1
         # Not documented, need to fine tune this
-        self.mem_per_job = None
-        self.use_push_queue = True
-        self.kubernetes_namespace = "default"
+        self.mem_per_job: Optional[int] = None
+        self.use_push_queue: bool = True
+        self.kubernetes_namespace: str = "default"
 
         if conf_file is None:
             conf_file = ".fiberconfig"
@@ -185,7 +190,7 @@ class Config(object):
         return repr(self.__dict__)
 
     @classmethod
-    def from_dict(cls, kv):
+    def from_dict(cls: Type[_TConfig], kv: Dict[str, Any]) -> _TConfig:
         obj = cls()
         for k in kv:
             setattr(obj, k, kv[k])
@@ -193,7 +198,7 @@ class Config(object):
         return obj
 
 
-def get_object():
+def get_object() -> Config:
     """
     Get a Config object representing current Fiber config
 
@@ -207,7 +212,7 @@ def get_object():
     return Config.from_dict(get_dict())
 
 
-def get_dict():
+def get_dict() -> Dict[str, Any]:
     """
     Get current Fiber config in a dictionary
 
@@ -218,7 +223,7 @@ def get_dict():
     return {k: global_vars[k] for k in vars(_current_config)}
 
 
-def init(**kwargs):
+def init(**kwargs) -> List[str]:
     """
     Init Fiber system and set config values.
 
@@ -247,3 +252,22 @@ def init(**kwargs):
     logger.debug("Inited fiber with config: %s", vars(_config))
 
     return updates
+
+
+if TYPE_CHECKING:
+    merge_output = Config.merge_output
+    debug = Config.debug
+    image = Config.image
+    default_image = Config.default_image
+    backend = Config.backend
+    default_backend = Config.default_backend
+    use_bash = Config.use_bash
+    log_level = Config.log_level
+    log_file = Config.log_file
+    ipc_active = Config.ipc_active
+    ipc_admin_master_port = Config.ipc_admin_master_port
+    ipc_admin_worker_port = Config.ipc_admin_worker_port
+    cpu_per_job = Config.cpu_per_job
+    mem_per_job = Config.mem_per_job
+    use_push_queue = Config.use_push_queue
+    kubernetes_namespace = Config.kubernetes_namespace

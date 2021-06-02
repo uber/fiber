@@ -26,7 +26,7 @@ requests-oauthlib==1.3.0  # via kubernetes
 requests==2.22.0
 rsa==4.0                  # via google-auth
 six==1.14.0               # via docker, google-auth, kubernetes, python-dateutil, websocket-client
-urllib3==1.25.8           # via kubernetes, requests
+urllib3==1.26.5           # via kubernetes, requests
 websocket-client==0.57.0  # via docker, kubernetes
 
 # The following packages are considered to be unsafe in a requirements file:

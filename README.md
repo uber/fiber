@@ -79,7 +79,7 @@ if __name__ == '__main__':
 ```
 
 
-Fiber implements most of multiprocessing's API including `Process`, `SimpleQueue`, `Pool`, `Pipe`, `Manager` and it has its own extension to the multiprocessing's API to make it easy to compose large scale distributed applications. For the detailed API guild, check out [here](https://uber.github.io/fiber/process/).
+Fiber implements most of multiprocessing's API including `Process`, `SimpleQueue`, `Pool`, `Pipe`, `Manager` and it has its own extension to the multiprocessing's API to make it easy to compose large scale distributed applications. For the detailed API guide, check out [here](https://uber.github.io/fiber/process/).
 
 ### Running on a Kubernetes cluster
 

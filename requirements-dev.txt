@@ -27,7 +27,7 @@ mkdocs-material==4.6.0
 mkdocs-minify-plugin==0.4.0
 nltk==3.5
 nnpy-bundle==1.4.2.post1
-numpy==1.19.5
+numpy==1.22.0
 oauthlib==3.1.0
 packaging==20.9
 pep562==1.0

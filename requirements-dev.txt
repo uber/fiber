@@ -14,7 +14,7 @@ idna==2.10
 importlib-metadata==3.7.2
 iniconfig==1.1.1
 Jinja2==2.11.3
-joblib==1.0.1
+joblib==1.2.0
 jsmin==2.2.2
 kubernetes==10.0.1
 livereload==2.6.3
